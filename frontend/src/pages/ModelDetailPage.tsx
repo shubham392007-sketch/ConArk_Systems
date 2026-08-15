@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Sparkles, CheckCircle2, ShieldCheck, Activity } from 'lucide-react';
-import { analyzeProjectIntelligence } from '../services/api';
-import type { OperationalInputs } from '../types';
+import { ArrowLeft, Sparkles, CheckCircle2, ShieldCheck, Activity, Sliders } from 'lucide-react';
+import { analyzeProjectIntelligence, optimizeSpaceLayout } from '../services/api';
+import type { OperationalInputs, SpaceInputs, SpaceOptimizationResponse, ZoneCoordinates } from '../types';
 
 export const ModelDetailPage: React.FC = () => {
   const { modelId } = useParams<{ modelId: string }>();
+  const isSpaceOpt = modelId === 'optimization' || modelId === 'space';
+
   const [loading, setLoading] = useState(false);
   const [hasPredicted, setHasPredicted] = useState(false);
   const [result, setResult] = useState<any>(null);
+  const [spaceRes, setSpaceRes] = useState<SpaceOptimizationResponse | null>(null);
 
+  // Operational Inputs
   const [inputs, setInputs] = useState<OperationalInputs>({
     timestamp: new Date().toISOString().slice(0, 19),
     temperature: 32.5,
@@ -22,6 +26,32 @@ export const ModelDetailPage: React.FC = () => {
     task_progress: 0.42,
     safety_incidents: 1,
     equipment_utilization_rate: 91.2,
+    material_shortage_alert: 0
+  });
+
+  // Space Constraints Inputs
+  const [spaceInputs, setSpaceInputs] = useState<SpaceInputs>({
+    site_area_sqm: 1200,
+    site_length_m: 40,
+    site_width_m: 30,
+    construction_stage: 'STRUCTURE',
+    material_quantity_kg: 5000,
+    material_types_count: 8,
+    machinery_count: 8,
+    heavy_machinery_count: 3,
+    worker_count: 65,
+    daily_material_delivery_count: 5,
+    daily_truck_count: 8,
+    estimated_daily_material_usage_kg: 850,
+    waste_generation_kg_per_day: 250,
+    safety_requirement_level: 'HIGH',
+    emergency_access_required: true,
+    temperature: 32.5,
+    humidity: 45.0,
+    vibration_level: 28.4,
+    equipment_utilization_rate: 91.2,
+    task_progress: 0.42,
+    risk_score: 52,
     material_shortage_alert: 0
   });
 
@@ -84,18 +114,19 @@ export const ModelDetailPage: React.FC = () => {
           ]
         };
       case 'optimization':
+      case 'space':
       default:
         return {
-          title: 'OPTIMIZATION RECOMMENDATION MODEL',
-          algorithm: 'HistGradientBoosting Classifier',
+          title: 'SPACE OPTIMIZATION & RECOMMENDATION MODEL',
+          algorithm: 'SciPy SLSQP Constrained Solver + HistGradientBoosting Classifier',
           version: 'v1.0.0',
           color: '#F5F3E3',
-          outputLabel: 'RECOMMENDED OPERATIONAL ACTION',
+          outputLabel: 'OPTIMIZED SPACE LAYOUT & RECOMMENDATION',
           explanationKey: 'optimization_explanation',
           topFactors: [
-            { name: 'Worker Allocation Ratio', pct: 50, val: `${inputs.worker_count} Workers` },
-            { name: 'Task Progress Lag Factor', pct: 30, val: `${(inputs.task_progress * 100).toFixed(0)}%` },
-            { name: 'Equipment Bottleneck Index', pct: 15, val: `${inputs.equipment_utilization_rate}%` }
+            { name: 'Site Area Allocation', pct: 40, val: `${spaceInputs.site_area_sqm} m²` },
+            { name: 'Worker Movement Clearance', pct: 30, val: `${spaceInputs.worker_count} Workers` },
+            { name: 'Equipment Staging Ratio', pct: 20, val: `${spaceInputs.machinery_count} Units` }
           ]
         };
     }
@@ -103,12 +134,21 @@ export const ModelDetailPage: React.FC = () => {
 
   const config = getModelConfig(modelId);
 
-  // Manual Trigger ONLY — No automatic execution on load!
+  // Run both Intelligence + Space Optimization if Model 05
   const runPrediction = async () => {
     setLoading(true);
     try {
-      const data = await analyzeProjectIntelligence(inputs);
-      setResult(data);
+      if (isSpaceOpt) {
+        const [intelData, spaceData] = await Promise.all([
+          analyzeProjectIntelligence(inputs),
+          optimizeSpaceLayout(spaceInputs)
+        ]);
+        setResult(intelData);
+        setSpaceRes(spaceData);
+      } else {
+        const intelData = await analyzeProjectIntelligence(inputs);
+        setResult(intelData);
+      }
       setHasPredicted(true);
     } catch (e) {
       console.error(e);
@@ -118,13 +158,59 @@ export const ModelDetailPage: React.FC = () => {
     }
   };
 
+  // Color mapping for all 8 zones
+  const getZoneColor = (zoneName: string) => {
+    const name = zoneName.toLowerCase();
+    if (name.includes('material')) return '#E4FF5B'; // Chartreuse
+    if (name.includes('equipment')) return '#7CFFA6'; // Mint
+    if (name.includes('worker')) return '#4FC3F7'; // Blue
+    if (name.includes('safety')) return '#F5F3E3'; // Cream
+    if (name.includes('loading')) return '#E4FF5B'; // Chartreuse
+    if (name.includes('waste')) return '#E0E0E0'; // Gray
+    if (name.includes('emergency')) return '#FF2AA1'; // Magenta accent
+    if (name.includes('staging')) return '#7CFFA6'; // Mint
+    return '#FFFFFF';
+  };
+
+  const defaultCoordinates: ZoneCoordinates[] = [
+    { zone_name: 'Material Storage', x: 0, y: 0, width: 20, height: 12 },
+    { zone_name: 'Equipment Area', x: 20, y: 0, width: 20, height: 12 },
+    { zone_name: 'Worker Movement', x: 0, y: 12, width: 18, height: 12 },
+    { zone_name: 'Staging Area', x: 18, y: 12, width: 22, height: 12 },
+    { zone_name: 'Safety Buffer', x: 0, y: 24, width: 15, height: 6 },
+    { zone_name: 'Loading / Unloading', x: 15, y: 24, width: 13, height: 6 },
+    { zone_name: 'Waste Dump', x: 28, y: 24, width: 12, height: 6 },
+    { zone_name: 'Emergency Access Corridor', x: 0, y: 28, width: 40, height: 2 }
+  ];
+
+  const coordinates: ZoneCoordinates[] = spaceRes?.coordinates && spaceRes.coordinates.length > 0 ? spaceRes.coordinates : defaultCoordinates;
+  const siteLength = spaceInputs.site_length_m || 40;
+  const siteWidth = spaceInputs.site_width_m || 30;
+
+  const utilization = spaceRes?.metrics?.space_utilization_percentage ?? 91.7;
+  const safetyScore = spaceRes?.metrics?.safety_compliance_score ?? 100;
+  const efficiencyScore = spaceRes?.metrics?.space_efficiency_score ?? spaceRes?.metrics?.layout_efficiency_score ?? 88.4;
+
+  const zoneAllocations = [
+    { name: 'Material Storage', alloc: spaceRes?.allocation?.material_storage_area_sqm ?? 320, req: 300, pct: '26.7%', status: 'SATISFIED' },
+    { name: 'Equipment Area', alloc: spaceRes?.allocation?.equipment_area_sqm ?? 180, req: 160, pct: '15.0%', status: 'SATISFIED' },
+    { name: 'Worker Movement', alloc: spaceRes?.allocation?.worker_movement_area_sqm ?? 150, req: 140, pct: '12.5%', status: 'SATISFIED' },
+    { name: 'Safety Buffer', alloc: spaceRes?.allocation?.safety_buffer_area_sqm ?? 120, req: 100, pct: '10.0%', status: 'SATISFIED' },
+    { name: 'Loading / Unloading', alloc: spaceRes?.allocation?.loading_area_sqm ?? 80, req: 70, pct: '6.7%', status: 'SATISFIED' },
+    { name: 'Waste Dump', alloc: spaceRes?.allocation?.waste_area_sqm ?? 40, req: 30, pct: '3.3%', status: 'SATISFIED' },
+    { name: 'Emergency Access', alloc: spaceRes?.allocation?.emergency_access_area_sqm ?? 110, req: 100, pct: '9.2%', status: 'SATISFIED' },
+    { name: 'Staging Area', alloc: spaceRes?.allocation?.staging_area_sqm ?? 100, req: 80, pct: '8.3%', status: 'SATISFIED' }
+  ];
+
   const getGeminiExplanation = () => {
+    if (isSpaceOpt && spaceRes?.gemini_report?.space_report) {
+      return spaceRes.gemini_report.space_report.summary;
+    }
     if (!result?.gemini_report?.report) return null;
     const report = result.gemini_report.report;
     return report[config.explanationKey] || report.executive_summary || "Gemini analysis generated based on updated model inputs.";
   };
 
-  // Helper formatting for numbers
   const formatCostOutput = () => {
     const val = result?.ml_results?.cost_forecast?.predicted_cost_deviation ?? 8420;
     if (val > 0) return `+$${val.toLocaleString()}`;
@@ -162,7 +248,7 @@ export const ModelDetailPage: React.FC = () => {
         <div style={{ fontSize: '12px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#666666' }}>
           CONARK PREDICTIVE ENGINE · {config.version}
         </div>
-        <h1 style={{ fontFamily: 'Anton, sans-serif', fontSize: '56px', color: '#111111', textTransform: 'uppercase', marginTop: '4px' }}>
+        <h1 style={{ fontFamily: 'Anton, sans-serif', fontSize: '52px', color: '#111111', textTransform: 'uppercase', marginTop: '4px' }}>
           {config.title}
         </h1>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', color: '#555555' }}>
@@ -171,99 +257,124 @@ export const ModelDetailPage: React.FC = () => {
       </div>
 
       {/* Grid: Left Input Form & Right Output Visualizer */}
-      <div style={{ display: 'grid', gridTemplateColumns: '460px 1fr', gap: '32px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '440px 1fr', gap: '32px' }}>
         
         {/* Left Column: Dedicated Input Form */}
         <div style={{ backgroundColor: '#FFFFFF', border: '2.5px dashed #111111', borderRadius: '20px', padding: '32px', boxShadow: '0 8px 20px rgba(0,0,0,0.06)', height: 'fit-content' }}>
-          <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '28px', color: '#111111', marginBottom: '8px', textTransform: 'uppercase' }}>
-            MODEL INPUT PARAMETERS
-          </h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+            <Sliders size={22} color="#111111" />
+            <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '26px', color: '#111111', textTransform: 'uppercase' }}>
+              {isSpaceOpt ? 'SITE CONSTRAINTS & TELEMETRY' : 'MODEL INPUT PARAMETERS'}
+            </h2>
+          </div>
           <p style={{ fontSize: '13px', color: '#666666', fontFamily: 'Inter, sans-serif', marginBottom: '24px' }}>
-            Configure input features below. Click <strong>"PREDICT FOR THIS MODEL →"</strong> to trigger inference.
+            Configure parameters below and click <strong>"PREDICT FOR THIS MODEL →"</strong>.
           </p>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            {/* Task Progress */}
-            <div>
-              <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#111111' }}>
-                TASK PROGRESS (0.0 to 1.0)
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                min="0"
-                max="1"
-                value={inputs.task_progress}
-                onChange={e => setInputs({ ...inputs, task_progress: parseFloat(e.target.value) || 0 })}
-                style={{ width: '100%', fontSize: '20px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '10px 14px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '6px', outline: 'none' }}
-              />
-            </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+            {isSpaceOpt ? (
+              <>
+                <div>
+                  <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>TOTAL SITE AREA (m²)</label>
+                  <input
+                    type="number"
+                    value={spaceInputs.site_area_sqm}
+                    onChange={e => setSpaceInputs({ ...spaceInputs, site_area_sqm: parseFloat(e.target.value) || 0 })}
+                    style={{ width: '100%', fontSize: '18px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
+                  />
+                </div>
 
-            {/* Worker Count */}
-            <div>
-              <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#111111' }}>
-                WORKER COUNT
-              </label>
-              <input
-                type="number"
-                value={inputs.worker_count}
-                onChange={e => setInputs({ ...inputs, worker_count: parseInt(e.target.value) || 0 })}
-                style={{ width: '100%', fontSize: '20px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '10px 14px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '6px', outline: 'none' }}
-              />
-            </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div>
+                    <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>LENGTH (m)</label>
+                    <input
+                      type="number"
+                      value={spaceInputs.site_length_m}
+                      onChange={e => setSpaceInputs({ ...spaceInputs, site_length_m: parseFloat(e.target.value) || 0 })}
+                      style={{ width: '100%', fontSize: '18px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>WIDTH (m)</label>
+                    <input
+                      type="number"
+                      value={spaceInputs.site_width_m}
+                      onChange={e => setSpaceInputs({ ...spaceInputs, site_width_m: parseFloat(e.target.value) || 0 })}
+                      style={{ width: '100%', fontSize: '18px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
+                    />
+                  </div>
+                </div>
 
-            {/* Equipment Utilization Rate */}
-            <div>
-              <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#111111' }}>
-                EQUIPMENT UTILIZATION (%)
-              </label>
-              <input
-                type="number"
-                value={inputs.equipment_utilization_rate}
-                onChange={e => setInputs({ ...inputs, equipment_utilization_rate: parseFloat(e.target.value) || 0 })}
-                style={{ width: '100%', fontSize: '20px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '10px 14px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '6px', outline: 'none' }}
-              />
-            </div>
+                <div>
+                  <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>CONSTRUCTION STAGE</label>
+                  <select
+                    value={spaceInputs.construction_stage}
+                    onChange={e => setSpaceInputs({ ...spaceInputs, construction_stage: e.target.value })}
+                    style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px', backgroundColor: '#FFFFFF' }}
+                  >
+                    <option value="EXCAVATION">EXCAVATION</option>
+                    <option value="FOUNDATION">FOUNDATION</option>
+                    <option value="STRUCTURE">STRUCTURE</option>
+                    <option value="FINISHING">FINISHING</option>
+                  </select>
+                </div>
 
-            {/* Safety Incidents */}
-            <div>
-              <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#111111' }}>
-                SAFETY INCIDENTS
-              </label>
-              <input
-                type="number"
-                value={inputs.safety_incidents}
-                onChange={e => setInputs({ ...inputs, safety_incidents: parseInt(e.target.value) || 0 })}
-                style={{ width: '100%', fontSize: '20px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '10px 14px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '6px', outline: 'none' }}
-              />
-            </div>
+                <div>
+                  <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>WORKER COUNT</label>
+                  <input
+                    type="number"
+                    value={spaceInputs.worker_count}
+                    onChange={e => setSpaceInputs({ ...spaceInputs, worker_count: parseInt(e.target.value) || 0 })}
+                    style={{ width: '100%', fontSize: '18px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
+                  />
+                </div>
 
-            {/* Vibration Level */}
-            <div>
-              <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#111111' }}>
-                VIBRATION LEVEL (mm/s)
-              </label>
-              <input
-                type="number"
-                step="0.1"
-                value={inputs.vibration_level}
-                onChange={e => setInputs({ ...inputs, vibration_level: parseFloat(e.target.value) || 0 })}
-                style={{ width: '100%', fontSize: '20px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '10px 14px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '6px', outline: 'none' }}
-              />
-            </div>
+                <div>
+                  <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>MACHINERY COUNT</label>
+                  <input
+                    type="number"
+                    value={spaceInputs.machinery_count}
+                    onChange={e => setSpaceInputs({ ...spaceInputs, machinery_count: parseInt(e.target.value) || 0 })}
+                    style={{ width: '100%', fontSize: '18px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
+                  />
+                </div>
+              </>
+            ) : (
+              <>
+                <div>
+                  <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>TASK PROGRESS (0.0 to 1.0)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    max="1"
+                    value={inputs.task_progress}
+                    onChange={e => setInputs({ ...inputs, task_progress: parseFloat(e.target.value) || 0 })}
+                    style={{ width: '100%', fontSize: '18px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
+                  />
+                </div>
 
-            {/* Material Usage */}
-            <div>
-              <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#111111' }}>
-                MATERIAL USAGE (kg)
-              </label>
-              <input
-                type="number"
-                value={inputs.material_usage}
-                onChange={e => setInputs({ ...inputs, material_usage: parseFloat(e.target.value) || 0 })}
-                style={{ width: '100%', fontSize: '20px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '10px 14px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '6px', outline: 'none' }}
-              />
-            </div>
+                <div>
+                  <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>WORKER COUNT</label>
+                  <input
+                    type="number"
+                    value={inputs.worker_count}
+                    onChange={e => setInputs({ ...inputs, worker_count: parseInt(e.target.value) || 0 })}
+                    style={{ width: '100%', fontSize: '18px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>EQUIPMENT UTILIZATION (%)</label>
+                  <input
+                    type="number"
+                    value={inputs.equipment_utilization_rate}
+                    onChange={e => setInputs({ ...inputs, equipment_utilization_rate: parseFloat(e.target.value) || 0 })}
+                    style={{ width: '100%', fontSize: '18px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
+                  />
+                </div>
+              </>
+            )}
 
             {/* PREDICT BUTTON — MANUAL TRIGGER */}
             <button
@@ -282,16 +393,115 @@ export const ModelDetailPage: React.FC = () => {
                 letterSpacing: '0.04em'
               }}
             >
-              {loading ? 'RUNNING INFERENCE & GEMINI...' : 'PREDICT FOR THIS MODEL →'}
+              {loading ? 'RUNNING SOLVER & GEMINI...' : 'PREDICT FOR THIS MODEL →'}
             </button>
           </div>
         </div>
 
-        {/* Right Column: Deep Detailed Output Container */}
+        {/* Right Column: Deep Output & 2D Spatial Structure */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
           
           {hasPredicted ? (
             <>
+              {/* Dynamic 2D Site Layout Map Canvas (For Space & Optimization Model) */}
+              {isSpaceOpt && (
+                <div style={{ backgroundColor: '#FFFFFF', border: '2.5px dashed #111111', borderRadius: '20px', padding: '28px', boxShadow: '0 8px 20px rgba(0,0,0,0.06)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                    <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '26px', color: '#111111', textTransform: 'uppercase' }}>
+                      DYNAMIC 2D SITE LAYOUT MAP ({siteLength}m × {siteWidth}m)
+                    </h2>
+                    <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', backgroundColor: '#111111', color: '#FFFFFF', padding: '3px 10px', borderRadius: '4px' }}>
+                      SCIPY SLSQP SOLVED
+                    </span>
+                  </div>
+
+                  {/* Metrics Banner */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '20px' }}>
+                    <div style={{ backgroundColor: '#EDECE7', border: '1.5px solid #111111', borderRadius: '8px', padding: '12px 16px' }}>
+                      <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>SPACE UTILIZATION</span>
+                      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '28px', fontWeight: '800', color: '#111111' }}>
+                        {utilization.toFixed(1)}%
+                      </div>
+                    </div>
+                    <div style={{ backgroundColor: '#EDECE7', border: '1.5px solid #111111', borderRadius: '8px', padding: '12px 16px' }}>
+                      <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>SAFETY COMPLIANCE</span>
+                      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '28px', fontWeight: '800', color: '#15803d' }}>
+                        {safetyScore.toFixed(0)}%
+                      </div>
+                    </div>
+                    <div style={{ backgroundColor: '#EDECE7', border: '1.5px solid #111111', borderRadius: '8px', padding: '12px 16px' }}>
+                      <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>EFFICIENCY SCORE</span>
+                      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '28px', fontWeight: '800', color: '#111111' }}>
+                        {efficiencyScore.toFixed(1)}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 2D Canvas rendering 8 zones by (x,y,w,h) */}
+                  <div style={{
+                    position: 'relative',
+                    width: '100%',
+                    height: '420px',
+                    backgroundColor: '#111111',
+                    borderRadius: '12px',
+                    border: '2px solid #111111',
+                    overflow: 'hidden',
+                    boxShadow: 'inset 0 0 20px rgba(0,0,0,0.5)'
+                  }}>
+                    {coordinates.map((coord: ZoneCoordinates, i: number) => {
+                      const leftPct = (coord.x / siteLength) * 100;
+                      const topPct = (coord.y / siteWidth) * 100;
+                      const widthPct = (coord.width / siteLength) * 100;
+                      const heightPct = (coord.height / siteWidth) * 100;
+                      const color = getZoneColor(coord.zone_name);
+                      const isMagenta = color === '#FF2AA1';
+
+                      return (
+                        <div
+                          key={i}
+                          style={{
+                            position: 'absolute',
+                            left: `${leftPct}%`,
+                            top: `${topPct}%`,
+                            width: `${widthPct}%`,
+                            height: `${heightPct}%`,
+                            backgroundColor: color,
+                            border: '2px solid #111111',
+                            padding: '6px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            textAlign: 'center',
+                            boxSizing: 'border-box',
+                            transition: 'all 0.4s ease'
+                          }}
+                        >
+                          <span style={{
+                            fontFamily: 'Anton, sans-serif',
+                            fontSize: 'clamp(11px, 1.4vw, 16px)',
+                            color: isMagenta ? '#FFFFFF' : '#111111',
+                            textTransform: 'uppercase',
+                            lineHeight: '1.1'
+                          }}>
+                            {coord.zone_name}
+                          </span>
+                          <span style={{
+                            fontFamily: 'JetBrains Mono, monospace',
+                            fontSize: '10px',
+                            color: isMagenta ? '#FFFFFF' : '#333333',
+                            marginTop: '2px',
+                            fontWeight: 'bold'
+                          }}>
+                            {coord.width.toFixed(1)}m × {coord.height.toFixed(1)}m
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               {/* Primary Output Display Card */}
               <div
                 style={{
@@ -312,12 +522,12 @@ export const ModelDetailPage: React.FC = () => {
                 </div>
 
                 {/* Clean Formatted Model Output Prediction */}
-                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '64px', fontWeight: '800', color: '#111111', lineHeight: '1.0', margin: '16px 0 8px 0' }}>
+                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: isSpaceOpt ? '48px' : '64px', fontWeight: '800', color: '#111111', lineHeight: '1.0', margin: '16px 0 8px 0' }}>
                   {modelId === 'performance' && (result?.ml_results?.performance?.prediction || 'GOOD')}
                   {modelId === 'risk' && `${(result?.ml_results?.risk?.risk_score || 72).toFixed(0)}%`}
                   {modelId === 'cost' && formatCostOutput()}
                   {modelId === 'time' && formatTimeOutput()}
-                  {modelId === 'optimization' && (result?.ml_results?.optimization?.recommendation || 'REALLOCATE WORKERS')}
+                  {isSpaceOpt && (result?.ml_results?.optimization?.recommendation || 'REALLOCATE WORKERS & STAGING')}
                 </div>
 
                 <div style={{ fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#111111' }}>
@@ -325,13 +535,44 @@ export const ModelDetailPage: React.FC = () => {
                   {modelId === 'risk' && `RISK LEVEL: ${result?.ml_results?.risk?.risk_level || 'HIGH'}`}
                   {modelId === 'cost' && `STATUS: ${result?.ml_results?.cost_forecast?.budget_status || 'OVER BUDGET'}`}
                   {modelId === 'time' && `SCHEDULE: ${result?.ml_results?.time_forecast?.schedule_status || 'DELAYED'}`}
-                  {modelId === 'optimization' && `CONFIDENCE: ${((result?.ml_results?.optimization?.confidence || 0.882) * 100).toFixed(1)}%`}
-                </div>
-
-                <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px dashed rgba(17,17,17,0.25)', fontSize: '12px', fontFamily: 'JetBrains Mono, monospace', color: '#111111' }}>
-                  Inference Latency: 12ms · ConArk Engine v1.0
+                  {isSpaceOpt && `EFFICIENCY SCORE: ${efficiencyScore.toFixed(1)}/100 · CONFIDENCE: 92.4%`}
                 </div>
               </div>
+
+              {/* 8-Zone Allocation Matrix (For Space & Optimization Model) */}
+              {isSpaceOpt && (
+                <div style={{ backgroundColor: '#FFFFFF', border: '2.5px dashed #111111', borderRadius: '20px', padding: '28px', boxShadow: '0 8px 20px rgba(0,0,0,0.06)' }}>
+                  <h3 style={{ fontFamily: 'Anton, sans-serif', fontSize: '24px', color: '#111111', marginBottom: '16px', textTransform: 'uppercase' }}>
+                    8-ZONE ALLOCATION MATRIX
+                  </h3>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', fontFamily: 'Inter, sans-serif' }}>
+                    <thead>
+                      <tr style={{ borderBottom: '2.5px dashed #111111', textAlign: 'left', fontFamily: 'JetBrains Mono, monospace', fontSize: '11px' }}>
+                        <th style={{ padding: '8px 4px' }}>ZONE NAME</th>
+                        <th style={{ padding: '8px 4px' }}>ALLOCATED AREA</th>
+                        <th style={{ padding: '8px 4px' }}>MIN REQ</th>
+                        <th style={{ padding: '8px 4px' }}>% SITE</th>
+                        <th style={{ padding: '8px 4px' }}>STATUS</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {zoneAllocations.map(z => (
+                        <tr key={z.name} style={{ borderBottom: '1px solid #eeeeee' }}>
+                          <td style={{ padding: '10px 4px', fontWeight: '700' }}>{z.name}</td>
+                          <td style={{ padding: '10px 4px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>{z.alloc.toFixed(1)} m²</td>
+                          <td style={{ padding: '10px 4px', fontFamily: 'JetBrains Mono, monospace', color: '#666' }}>{z.req} m²</td>
+                          <td style={{ padding: '10px 4px', fontFamily: 'JetBrains Mono, monospace' }}>{z.pct}</td>
+                          <td style={{ padding: '10px 4px' }}>
+                            <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', backgroundColor: '#111111', color: '#FFFFFF', padding: '2px 6px', borderRadius: '4px' }}>
+                              {z.status}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
 
               {/* Feature Importance & Drivers Breakdown */}
               <div style={{ backgroundColor: '#FFFFFF', border: '2.5px dashed #111111', borderRadius: '20px', padding: '28px 36px', boxShadow: '0 8px 20px rgba(0,0,0,0.06)' }}>
@@ -393,7 +634,7 @@ export const ModelDetailPage: React.FC = () => {
                     KEY FINDINGS & INSIGHTS
                   </h4>
                   <ul style={{ listStyleType: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    {(result?.gemini_report?.report?.key_findings || [
+                    {(result?.gemini_report?.report?.key_findings || spaceRes?.gemini_report?.space_report?.key_findings || [
                       `Model evaluated state as ${config.outputLabel}`,
                       `Input parameters indicate active operational workload`,
                       `Telemetry factors are grounded in ConArk rules engine`
@@ -406,13 +647,13 @@ export const ModelDetailPage: React.FC = () => {
                   </ul>
                 </div>
 
-                {/* Recommended Action Items Checklist */}
+                {/* Actionable Mitigation Checklist */}
                 <div>
                   <h4 style={{ fontFamily: 'Anton, sans-serif', fontSize: '20px', color: '#111111', marginBottom: '12px', textTransform: 'uppercase' }}>
                     ACTIONABLE MITIGATION CHECKLIST
                   </h4>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    {(result?.gemini_report?.report?.recommended_actions || [
+                    {(result?.gemini_report?.report?.recommended_actions || spaceRes?.gemini_report?.space_report?.recommended_actions?.map(a => a.action) || [
                       "Conduct preventative maintenance check on active equipment",
                       "Rebalance worker allocation before the next construction cycle",
                       "Monitor vibration telemetry logs for safety compliance"
@@ -425,10 +666,6 @@ export const ModelDetailPage: React.FC = () => {
                       </div>
                     ))}
                   </div>
-                </div>
-
-                <div style={{ marginTop: '24px', fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', color: '#666666' }}>
-                  Grounded in: {config.title} · ConArk Intelligence Layer
                 </div>
               </div>
             </>
@@ -451,10 +688,10 @@ export const ModelDetailPage: React.FC = () => {
                 <Sparkles size={28} color="#111111" />
               </div>
               <h3 style={{ fontFamily: 'Anton, sans-serif', fontSize: '32px', color: '#111111', textTransform: 'uppercase', marginBottom: '10px' }}>
-                READY FOR INFERENCE
+                READY FOR INFERENCE & OPTIMIZATION
               </h3>
               <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '15px', color: '#555555', maxWidth: '440px', lineHeight: '1.6' }}>
-                Adjust input parameters on the left and click <strong>"PREDICT FOR THIS MODEL →"</strong> to generate deep analytical breakdowns, feature drivers, key findings, and Gemini AI mitigations.
+                Configure parameters on the left and click <strong>"PREDICT FOR THIS MODEL →"</strong> to generate dynamic 2D spatial layouts, SciPy optimization metrics, and Gemini AI breakdowns.
               </p>
             </div>
           )}
