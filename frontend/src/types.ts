@@ -108,6 +108,14 @@ export interface MasterIntelligenceResponse {
   system_status: string;
 }
 
+export interface ZoneCoordinates {
+  zone_name: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 export interface SpaceOptimizationResponse {
   request_id: string;
   status: string;
@@ -122,11 +130,13 @@ export interface SpaceOptimizationResponse {
     emergency_access_area_sqm: number;
     staging_area_sqm: number;
   };
+  coordinates?: ZoneCoordinates[];
   metrics?: {
     total_allocated_area_sqm: number;
     unused_area_sqm: number;
     space_utilization_percentage: number;
     space_efficiency_score: number;
+    layout_efficiency_score?: number;
     congestion_score: number;
     safety_compliance_score: number;
   };
