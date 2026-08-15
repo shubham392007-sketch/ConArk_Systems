@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { StatusModal } from './StatusModal';
 
 export const TopNav: React.FC = () => {
   const [showStatus, setShowStatus] = useState(false);
+  const location = useLocation();
 
   return (
     <>
@@ -23,9 +24,14 @@ export const TopNav: React.FC = () => {
           alignItems: 'center'
         }}>
           {/* Left Tagline Header */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: '700', letterSpacing: '0.05em' }}>
-            <span style={{ color: '#111111' }}>NUMBERS FROM MODELS.</span>
-            <span style={{ color: '#777777', textDecoration: 'line-through' }}>WORDS FROM GEMINI.</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '13px', fontWeight: '700', letterSpacing: '0.05em' }}>
+            <Link to="/" style={{ color: '#111111', textDecoration: 'none', fontFamily: 'Anton, sans-serif', fontSize: '20px', letterSpacing: '0.04em' }}>
+              CONARK
+            </Link>
+            <span style={{ color: '#999' }}>|</span>
+            <span style={{ color: '#111111', fontFamily: 'JetBrains Mono, monospace', fontSize: '11px' }}>
+              NUMBERS FROM MODELS. WORDS FROM GEMINI.
+            </span>
           </div>
 
           {/* Center Logo: ENLARGED Magenta Diamond with CA */}
@@ -54,8 +60,26 @@ export const TopNav: React.FC = () => {
             </div>
           </Link>
 
-          {/* Right Status Trigger */}
+          {/* Right Navigation & Status Trigger */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <Link
+              to="/brains"
+              style={{
+                fontSize: '12px',
+                fontFamily: 'JetBrains Mono, monospace',
+                fontWeight: '800',
+                textTransform: 'uppercase',
+                border: '1.5px solid #111111',
+                padding: '8px 14px',
+                borderRadius: '6px',
+                backgroundColor: location.pathname === '/brains' ? '#111111' : '#FFFFFF',
+                color: location.pathname === '/brains' ? '#E4FF5B' : '#111111',
+                textDecoration: 'none'
+              }}
+            >
+              THE BRAINS
+            </Link>
+
             <button
               onClick={() => setShowStatus(true)}
               style={{
@@ -70,6 +94,7 @@ export const TopNav: React.FC = () => {
                 padding: '8px 14px',
                 borderRadius: '6px',
                 backgroundColor: '#FFFFFF',
+                color: '#111111',
                 cursor: 'pointer'
               }}
             >
