@@ -5,7 +5,8 @@ import type {
   SpaceOptimizationResponse
 } from '../types';
 
-const API_BASE = 'http://localhost:8000/api/v1';
+// Use relative /api/v1 for Render single-origin deployment or fallback to VITE_API_BASE_URL / localhost
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api/v1';
 
 export async function fetchHealth(): Promise<{ status: string; system: string; version: string }> {
   const res = await fetch(`${API_BASE}/health`);

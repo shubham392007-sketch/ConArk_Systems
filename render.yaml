@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: conark-systems
+    env: docker
+    dockerfilePath: Dockerfile
+    plan: free
+    region: oregon
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-2.5-flash
+      - key: APP_ENV
+        value: production
+      - key: PYTHONPATH
+        value: /app/src
