@@ -106,15 +106,16 @@ export const CommandCenter: React.FC = () => {
         marginBottom: '36px',
         borderBottom: '2.5px dashed #111111'
       }}>
-        {/* FULL WORDMARK TITLE: CONARK SYSTEMS */}
+        {/* FULL WORDMARK TITLE IN ANTON FONT: CONARK SYSTEMS */}
         <h1 style={{
           fontFamily: 'Anton, sans-serif',
-          fontSize: 'clamp(64px, 14vw, 195px)',
+          fontSize: 'clamp(52px, 11vw, 175px)',
           lineHeight: '0.85',
           color: '#111111',
-          letterSpacing: '-0.03em',
+          letterSpacing: '-0.02em',
           textTransform: 'uppercase',
-          margin: '0 auto'
+          margin: '0 auto',
+          whiteSpace: 'nowrap'
         }}>
           CONARK SYSTEMS
         </h1>
