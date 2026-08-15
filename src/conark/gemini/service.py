@@ -1,0 +1,254 @@
+"""
+Gemini 2.5 Flash service orchestrator.
+Provides structured report generation, SHA-256 caching, exponential backoff retries,
+and robust fallback handling so API calls never fail if Gemini is offline or unconfigured.
+"""
+
+import json
+import hashlib
+import asyncio
+from typing import Dict, Any, Optional
+from google.genai import types
+
+from conark.config.settings import settings
+from conark.gemini.client import GeminiClient
+from conark.gemini.prompts import GEMINI_SYSTEM_PROMPT, format_gemini_input_prompt
+from conark.gemini.schemas import GeminiConstructionReport, GeminiReportWrapper
+from conark.utils.logging import get_logger
+
+logger = get_logger("gemini_service")
+
+
+class GeminiService:
+    """Service layer for Gemini 2.5 Flash structured report generation."""
+
+    def __init__(self):
+        self.client_wrapper = GeminiClient()
+        self._cache: Dict[str, GeminiConstructionReport] = {}
+
+    def _compute_hash(self, payload: Dict[str, Any]) -> str:
+        """Computes SHA-256 hash of payload for caching."""
+        payload_str = json.dumps(payload, sort_keys=True)
+        return hashlib.sha256(payload_str.encode("utf-8")).hexdigest()
+
+    def generate_fallback_report(self, ml_payload: Dict[str, Any], reason: str = "AI explanation temporarily unavailable.") -> GeminiReportWrapper:
+        """Generates safe deterministic fallback report when Gemini API is unavailable or fails."""
+        ml_results = ml_payload.get("ml_results", {})
+        perf = ml_results.get("performance", {}).get("prediction", "Good")
+        risk_score = ml_results.get("risk", {}).get("risk_score", 50.0)
+        risk_lvl = ml_results.get("risk", {}).get("risk_level", "Moderate")
+        cost_status = ml_results.get("cost_forecast", {}).get("budget_status", "On Budget")
+        cost_dev = ml_results.get("cost_forecast", {}).get("predicted_cost_deviation", 0.0)
+        time_status = ml_results.get("time_forecast", {}).get("schedule_status", "On Schedule")
+        time_dev = ml_results.get("time_forecast", {}).get("predicted_time_deviation_days", 0.0)
+        opt_rec = ml_results.get("optimization", {}).get("recommendation", "Increase Machinery Efficiency")
+        opt_factors = ml_results.get("optimization", {}).get("supporting_factors", [])
+        alerts = ml_payload.get("alerts", [])
+
+        crit_alerts = [f"{a.get('type')}: {a.get('title')}" for a in alerts if a.get("priority", 4) <= 2]
+
+        fallback = GeminiConstructionReport(
+            overall_status=f"Status: {perf} | Risk: {risk_lvl}",
+            executive_summary=f"Project is performing in the {perf} range with a risk score of {risk_score:.1f} ({risk_lvl}). Schedule status is {time_status} ({time_dev:+.1f} days) and cost status is {cost_status} (${cost_dev:+,.2f}).",
+            key_findings=[
+                f"Performance score: {perf}",
+                f"Risk score: {risk_score:.1f} ({risk_lvl})",
+                f"Schedule deviation: {time_dev:+.1f} days",
+                f"Cost deviation: ${cost_dev:+,.2f}"
+            ],
+            critical_alerts=crit_alerts if crit_alerts else ["No critical alerts detected."],
+            risk_explanation=f"Deterministically evaluated risk score of {risk_score:.1f} ({risk_lvl}) based on operational factors.",
+            performance_explanation=f"Performance model evaluated operational state as {perf}.",
+            cost_explanation=f"Cost forecast indicates project is currently {cost_status}.",
+            schedule_explanation=f"Schedule forecast indicates project is currently {time_status}.",
+            optimization_explanation=f"Recommended action is '{opt_rec}' supported by: {', '.join(opt_factors) if opt_factors else 'operational metrics'}.",
+            recommended_actions=[opt_rec] + ([f"Review alert: {crit_alerts[0]}"] if crit_alerts else []),
+            priority=risk_lvl if risk_lvl in ["High", "Critical"] else "Medium",
+            confidence_note="Report generated using deterministic fallback rules because Gemini LLM explanation service is unconfigured or unavailable."
+        )
+
+        return GeminiReportWrapper(
+            status="unavailable",
+            message=reason,
+            report=fallback
+        )
+
+    async def generate_construction_report(self, intelligence_payload: Dict[str, Any]) -> GeminiReportWrapper:
+        """
+        Generates structured construction report using Gemini 2.5 Flash.
+        Applies request caching, retries, timeout, and safe fallback.
+        """
+        cache_key = self._compute_hash(intelligence_payload)
+        if cache_key in self._cache:
+            logger.info("Returning cached Gemini report.")
+            return GeminiReportWrapper(
+                status="success",
+                message="Retrieved from response cache",
+                report=self._cache[cache_key]
+            )
+
+        if not self.client_wrapper.is_available():
+            logger.info("Gemini API key not configured. Returning safe fallback report.")
+            return self.generate_fallback_report(intelligence_payload, reason="GEMINI_API_KEY is not configured.")
+
+        prompt = format_gemini_input_prompt(intelligence_payload)
+        max_retries = settings.GEMINI_MAX_RETRIES
+        timeout = settings.GEMINI_TIMEOUT_SECONDS
+
+        for attempt in range(1, max_retries + 1):
+            try:
+                logger.info(f"Calling Gemini 2.5 Flash (Attempt {attempt}/{max_retries})...")
+                
+                # Execute in thread executor to prevent blocking async loop
+                loop = asyncio.get_event_loop()
+                def _call_gemini():
+                    client = self.client_wrapper.client
+                    response = client.models.generate_content(
+                        model=self.client_wrapper.model_name,
+                        contents=prompt,
+                        config=types.GenerateContentConfig(
+                            system_instruction=GEMINI_SYSTEM_PROMPT,
+                            response_mime_type="application/json",
+                            response_schema=GeminiConstructionReport,
+                            temperature=0.2,
+                        )
+                    )
+                    return response
+
+                response = await asyncio.wait_for(loop.run_in_executor(None, _call_gemini), timeout=timeout)
+                
+                # Parse structured output from response text
+                report_data = json.loads(response.text)
+                report = GeminiConstructionReport(**report_data)
+                
+                # Cache response
+                self._cache[cache_key] = report
+                logger.info("Successfully received structured response from Gemini 2.5 Flash.")
+                
+                return GeminiReportWrapper(
+                    status="success",
+                    message="Generated via Gemini 2.5 Flash",
+                    report=report
+                )
+
+            except asyncio.TimeoutError:
+                logger.warning(f"Gemini API request timed out after {timeout} seconds (Attempt {attempt}).")
+            except Exception as e:
+                logger.error(f"Gemini API call failed (Attempt {attempt}): {str(e)}")
+            
+            if attempt < max_retries:
+                await asyncio.sleep(2 ** attempt)
+
+        logger.error("All Gemini API attempts failed. Falling back to deterministic report.")
+        return self.generate_fallback_report(intelligence_payload, reason="Gemini API request failed or timed out.")
+
+    def generate_fallback_space_report(self, space_payload: Dict[str, Any], reason: str = "AI space explanation temporarily unavailable.") -> GeminiReportWrapper:
+        """Generates safe deterministic fallback report for space optimization."""
+        from conark.gemini.schemas import GeminiSpaceReport, SpacePriorityItem, RecommendedActionItem
+        
+        opt_status = space_payload.get("status", "OPTIMAL")
+        alloc = space_payload.get("allocation") or {}
+        metrics = space_payload.get("metrics") or {}
+        reasoning = space_payload.get("reasoning", [])
+        
+        util_pct = metrics.get("space_utilization_percentage", 0.0)
+        eff_score = metrics.get("space_efficiency_score", 0.0)
+        safety_score = metrics.get("safety_compliance_score", 100.0)
+        unused = metrics.get("unused_area_sqm", 0.0)
+
+        fallback_report = GeminiSpaceReport(
+            summary=f"Space allocation completed with status '{opt_status}'. Site space utilization is {util_pct:.1f}% with an overall efficiency score of {eff_score:.1f}/100 and safety compliance of {safety_score:.1f}/100.",
+            layout_explanation=f"Allocated {alloc.get('material_storage_area_sqm', 0.0):.1f} sqm for material storage, {alloc.get('equipment_area_sqm', 0.0):.1f} sqm for equipment parking, and {alloc.get('safety_buffer_area_sqm', 0.0):.1f} sqm for safety buffer.",
+            key_findings=[
+                f"Optimization Status: {opt_status}",
+                f"Space Utilization: {util_pct:.1f}% ({unused:.1f} sqm unused)",
+                f"Safety Compliance Score: {safety_score:.1f}/100",
+                f"Space Efficiency Score: {eff_score:.1f}/100"
+            ],
+            space_priorities=[
+                SpacePriorityItem(zone="Material Storage", priority="HIGH", reason="Essential for continuous operational throughput"),
+                SpacePriorityItem(zone="Safety Buffer", priority="CRITICAL", reason="Mandatory safety clearance for worker protection")
+            ],
+            recommended_actions=[
+                RecommendedActionItem(action="Implement designated material staging boundaries", priority="HIGH", reason="Prevents material spillover into circulation zones"),
+                RecommendedActionItem(action="Verify site entrance clearance for emergency vehicles", priority="CRITICAL", reason="Ensures unhindered emergency vehicle passage")
+            ],
+            safety_considerations=[
+                f"Safety buffer allocated: {alloc.get('safety_buffer_area_sqm', 0.0):.1f} sqm",
+                f"Emergency access corridor allocated: {alloc.get('emergency_access_area_sqm', 0.0):.1f} sqm"
+            ],
+            optimization_assumptions=[
+                "Calculated using deterministic space coefficients and SciPy constrained optimization",
+                "Single-floor ground level layout assumption"
+            ],
+            limitations=[
+                "Optimization results provide decision support and must be reviewed by qualified site engineers prior to physical implementation."
+            ]
+        )
+
+        return GeminiReportWrapper(
+            status="unavailable",
+            message=reason,
+            space_report=fallback_report
+        )
+
+    async def generate_space_report(self, space_payload: Dict[str, Any]) -> GeminiReportWrapper:
+        """Generates structured space intelligence report using Gemini 2.5 Flash."""
+        from conark.gemini.prompts import GEMINI_SPACE_SYSTEM_PROMPT, format_gemini_space_prompt
+        from conark.gemini.schemas import GeminiSpaceReport
+
+        cache_key = self._compute_hash(space_payload) + "_space"
+        if cache_key in self._cache:
+            logger.info("Returning cached Gemini space report.")
+            return GeminiReportWrapper(
+                status="success",
+                message="Retrieved from response cache",
+                space_report=self._cache[cache_key]
+            )
+
+        if not self.client_wrapper.is_available():
+            logger.info("Gemini API key not configured. Returning fallback space report.")
+            return self.generate_fallback_space_report(space_payload, reason="GEMINI_API_KEY is not configured.")
+
+        prompt = format_gemini_space_prompt(space_payload)
+        max_retries = settings.GEMINI_MAX_RETRIES
+        timeout = settings.GEMINI_TIMEOUT_SECONDS
+
+        for attempt in range(1, max_retries + 1):
+            try:
+                logger.info(f"Calling Gemini 2.5 Flash for Space Report (Attempt {attempt}/{max_retries})...")
+                loop = asyncio.get_event_loop()
+                def _call_gemini():
+                    client = self.client_wrapper.client
+                    response = client.models.generate_content(
+                        model=self.client_wrapper.model_name,
+                        contents=prompt,
+                        config=types.GenerateContentConfig(
+                            system_instruction=GEMINI_SPACE_SYSTEM_PROMPT,
+                            response_mime_type="application/json",
+                            response_schema=GeminiSpaceReport,
+                            temperature=0.2,
+                        )
+                    )
+                    return response
+
+                response = await asyncio.wait_for(loop.run_in_executor(None, _call_gemini), timeout=timeout)
+                report_data = json.loads(response.text)
+                space_report = GeminiSpaceReport(**report_data)
+                
+                self._cache[cache_key] = space_report
+                logger.info("Successfully received structured space report from Gemini 2.5 Flash.")
+                
+                return GeminiReportWrapper(
+                    status="success",
+                    message="Generated via Gemini 2.5 Flash",
+                    space_report=space_report
+                )
+            except Exception as e:
+                logger.error(f"Gemini Space API call failed (Attempt {attempt}): {str(e)}")
+            
+            if attempt < max_retries:
+                await asyncio.sleep(2 ** attempt)
+
+        return self.generate_fallback_space_report(space_payload, reason="Gemini API request failed or timed out.")
+

@@ -1,0 +1,67 @@
+# Construction Site Space Demand Coefficients Configuration
+
+base_coefficients:
+  material_space_per_1000kg: 15.0      # sqm per 1000 kg material
+  equipment_space_per_machine: 20.0     # sqm per standard machine
+  heavy_equipment_space_per_machine: 45.0 # sqm per heavy machine
+  worker_space_per_person: 3.5          # sqm per worker for movement/work
+  loading_space_per_truck: 35.0         # sqm per daily truck delivery
+  waste_space_per_100kg: 5.0            # sqm per 100 kg daily waste
+  min_emergency_access_sqm: 80.0       # base minimum emergency corridor
+  base_staging_sqm: 60.0               # base staging area
+
+stage_multipliers:
+  FOUNDATION:
+    equipment: 1.4
+    material: 0.9
+    heavy_equipment: 1.5
+    staging: 0.8
+  STRUCTURE:
+    equipment: 1.2
+    material: 1.4
+    heavy_equipment: 1.3
+    staging: 1.3
+  MASONRY:
+    equipment: 0.9
+    material: 1.3
+    heavy_equipment: 0.8
+    staging: 1.1
+  ELECTRICAL:
+    equipment: 0.7
+    material: 0.9
+    heavy_equipment: 0.5
+    staging: 0.9
+  PLUMBING:
+    equipment: 0.7
+    material: 0.9
+    heavy_equipment: 0.5
+    staging: 0.9
+  FINISHING:
+    equipment: 0.6
+    material: 1.2
+    heavy_equipment: 0.4
+    staging: 1.2
+  MIXED:
+    equipment: 1.0
+    material: 1.0
+    heavy_equipment: 1.0
+    staging: 1.0
+  OTHER:
+    equipment: 1.0
+    material: 1.0
+    heavy_equipment: 1.0
+    staging: 1.0
+
+safety_multipliers:
+  LOW:
+    buffer_percentage: 0.10   # 10% of operational space
+    emergency_multiplier: 1.0
+  MEDIUM:
+    buffer_percentage: 0.15   # 15% of operational space
+    emergency_multiplier: 1.15
+  HIGH:
+    buffer_percentage: 0.22   # 22% of operational space
+    emergency_multiplier: 1.30
+  CRITICAL:
+    buffer_percentage: 0.30   # 30% of operational space
+    emergency_multiplier: 1.50

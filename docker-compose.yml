@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  conark-api:
+    build: .
+    container_name: conark_systems_api
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_NAME=ConArk Systems
+      - APP_ENV=production
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GEMINI_MODEL=gemini-2.5-flash
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./models:/app/models
+      - ./data:/app/data
+      - ./reports:/app/reports
+    restart: unless-stopped

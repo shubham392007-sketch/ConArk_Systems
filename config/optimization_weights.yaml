@@ -1,0 +1,8 @@
+# Multi-Objective Function Weights Configuration
+
+weights:
+  unused_space_weight: 10.0          # Penalty weight for wasted/empty space
+  congestion_weight: 5.0             # Penalty weight for worker/machinery density
+  movement_distance_weight: 3.0      # Penalty weight for inefficient layout distances
+  safety_buffer_penalty_weight: 20.0 # High penalty weight for under-allocating safety buffer
+  emergency_corridor_penalty: 25.0  # Critical penalty for emergency access reduction
