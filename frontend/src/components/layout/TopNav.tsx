@@ -10,7 +10,7 @@ export const TopNav: React.FC = () => {
       <header style={{
         backgroundColor: '#EDECE7',
         borderBottom: '1.5px solid #111111',
-        padding: '16px 32px',
+        padding: '18px 36px',
         position: 'sticky',
         top: 0,
         zIndex: 50
@@ -23,29 +23,31 @@ export const TopNav: React.FC = () => {
           alignItems: 'center'
         }}>
           {/* Left Tagline Header */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: '700', letterSpacing: '0.05em' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: '700', letterSpacing: '0.05em' }}>
             <span style={{ color: '#111111' }}>NUMBERS FROM MODELS.</span>
             <span style={{ color: '#777777', textDecoration: 'line-through' }}>WORDS FROM GEMINI.</span>
           </div>
 
-          {/* Center Logo: Magenta Diamond with CA */}
+          {/* Center Logo: ENLARGED Magenta Diamond with CA */}
           <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
             <div style={{
-              width: '36px',
-              height: '36px',
+              width: '60px',
+              height: '60px',
               backgroundColor: '#FF2AA1',
               transform: 'rotate(45deg)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 2px 6px rgba(0,0,0,0.15)'
+              boxShadow: '0 4px 12px rgba(255, 42, 161, 0.35)',
+              margin: '6px 0'
             }}>
               <span style={{
                 color: '#FFFFFF',
                 fontFamily: 'Anton, sans-serif',
-                fontSize: '16px',
+                fontSize: '26px',
                 fontWeight: 'bold',
-                transform: 'rotate(-45deg)'
+                transform: 'rotate(-45deg)',
+                letterSpacing: '-0.02em'
               }}>
                 CA
               </span>
@@ -59,14 +61,14 @@ export const TopNav: React.FC = () => {
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '6px',
-                fontSize: '11px',
+                gap: '8px',
+                fontSize: '12px',
                 fontFamily: 'JetBrains Mono, monospace',
                 fontWeight: '700',
                 textTransform: 'uppercase',
                 border: '1.5px solid #111111',
-                padding: '6px 12px',
-                borderRadius: '4px',
+                padding: '8px 14px',
+                borderRadius: '6px',
                 backgroundColor: '#FFFFFF',
                 cursor: 'pointer'
               }}
