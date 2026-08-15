@@ -36,11 +36,7 @@ frontend/node_modules/
 frontend/dist/
 frontend/.vite/
 
-# Models & Data cache (keep placeholder directories)
-models/*
-!models/.gitkeep
-data/raw/*
-!data/raw/.gitkeep
+# Data cache (keep placeholder directories)
 data/processed/*
 !data/processed/.gitkeep
 

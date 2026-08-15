@@ -1,0 +1,24 @@
+{
+  "model_name": "conark_space_demand_model",
+  "version": "1.0.0",
+  "algorithm": "HistGradientBoostingRegressor",
+  "trained_at": "2026-08-14T20:51:59.744870",
+  "features": [
+    "material_quantity_kg",
+    "worker_count",
+    "machinery_count",
+    "heavy_machinery_count",
+    "daily_truck_count",
+    "waste_generation_kg_per_day",
+    "equipment_utilization_rate",
+    "task_progress",
+    "risk_score"
+  ],
+  "target": "required_space_sqm",
+  "metrics": {
+    "rmse": 34.9744,
+    "mae": 28.0967,
+    "r2": 0.9813,
+    "mape": 2.8031
+  }
+}

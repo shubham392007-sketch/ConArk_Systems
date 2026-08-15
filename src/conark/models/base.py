@@ -25,24 +25,11 @@ class BaseModel(ABC):
         self.feature_names = []
 
     def _auto_train(self) -> None:
-        """Triggers model-specific auto-training if joblib artifact is missing."""
-        logger.info(f"Model artifact for '{self.model_name}' missing. Auto-training model...")
+        """Triggers master pipeline auto-training if joblib artifact is missing."""
+        logger.info(f"Model artifact for '{self.model_name}' missing. Auto-training models...")
         try:
-            if self.model_name == "performance":
-                from conark.training.train_performance import train_performance_model
-                train_performance_model()
-            elif self.model_name == "risk":
-                from conark.training.train_risk import train_risk_model
-                train_risk_model()
-            elif self.model_name == "cost":
-                from conark.training.train_cost import train_cost_model
-                train_cost_model()
-            elif self.model_name == "time":
-                from conark.training.train_time import train_time_model
-                train_time_model()
-            elif self.model_name == "optimization":
-                from conark.training.train_optimization import train_optimization_model
-                train_optimization_model()
+            from conark.training.train_all import run_training_pipeline
+            run_training_pipeline()
         except Exception as e:
             logger.error(f"Auto-training failed for '{self.model_name}': {str(e)}")
 
