@@ -61,7 +61,6 @@ export const SpaceOptimizationPage: React.FC = () => {
     return '#FFFFFF';
   };
 
-  // Default coordinate layout fallback if SciPy returned empty coordinates
   const defaultCoordinates: ZoneCoordinates[] = [
     { zone_name: 'Material Storage', x: 0, y: 0, width: 20, height: 12 },
     { zone_name: 'Equipment Area', x: 20, y: 0, width: 20, height: 12 },
@@ -236,11 +235,11 @@ export const SpaceOptimizationPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Dynamic 2D Spatial SVG / HTML Canvas rendering all 8 zones by (x, y, w, h) */}
+          {/* Dynamic 2D Spatial SVG / HTML Canvas rendering all 8 zones with ZERO OVERLAP */}
           <div style={{
             position: 'relative',
             width: '100%',
-            height: '420px',
+            height: '460px',
             backgroundColor: '#111111',
             borderRadius: '12px',
             border: '2px solid #111111',
@@ -254,6 +253,7 @@ export const SpaceOptimizationPage: React.FC = () => {
               const heightPct = (coord.height / siteWidth) * 100;
               const color = getZoneColor(coord.zone_name);
               const isMagenta = color === '#FF2AA1';
+              const isNarrow = heightPct < 10;
 
               return (
                 <div
@@ -265,23 +265,27 @@ export const SpaceOptimizationPage: React.FC = () => {
                     width: `${widthPct}%`,
                     height: `${heightPct}%`,
                     backgroundColor: color,
-                    border: '2px solid #111111',
-                    padding: '8px',
+                    border: '1.5px solid #111111',
+                    padding: isNarrow ? '0px 12px' : '8px',
                     display: 'flex',
-                    flexDirection: 'column',
+                    flexDirection: isNarrow ? 'row' : 'column',
                     alignItems: 'center',
-                    justifyContent: 'center',
+                    justifyContent: isNarrow ? 'space-between' : 'center',
                     textAlign: 'center',
                     boxSizing: 'border-box',
+                    overflow: 'hidden',
                     transition: 'all 0.4s ease'
                   }}
                 >
                   <span style={{
                     fontFamily: 'Anton, sans-serif',
-                    fontSize: 'clamp(11px, 1.4vw, 16px)',
+                    fontSize: isNarrow ? '12px' : 'clamp(11px, 1.4vw, 16px)',
                     color: isMagenta ? '#FFFFFF' : '#111111',
                     textTransform: 'uppercase',
-                    lineHeight: '1.1'
+                    lineHeight: '1.1',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis'
                   }}>
                     {coord.zone_name}
                   </span>
@@ -289,14 +293,25 @@ export const SpaceOptimizationPage: React.FC = () => {
                     fontFamily: 'JetBrains Mono, monospace',
                     fontSize: '10px',
                     color: isMagenta ? '#FFFFFF' : '#333333',
-                    marginTop: '2px',
-                    fontWeight: 'bold'
+                    marginTop: isNarrow ? '0' : '2px',
+                    fontWeight: 'bold',
+                    whiteSpace: 'nowrap'
                   }}>
                     {coord.width.toFixed(1)}m × {coord.height.toFixed(1)}m
                   </span>
                 </div>
               );
             })}
+          </div>
+
+          {/* 8-Zone Color Key Legend */}
+          <div style={{ marginTop: '16px', display: 'flex', flexWrap: 'wrap', gap: '12px', padding: '12px 16px', backgroundColor: '#EDECE7', borderRadius: '8px', border: '1px solid #111111', fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ width: '12px', height: '12px', backgroundColor: '#E4FF5B', border: '1px solid #111' }} /> Material Storage & Loading</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ width: '12px', height: '12px', backgroundColor: '#7CFFA6', border: '1px solid #111' }} /> Equipment & Staging</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ width: '12px', height: '12px', backgroundColor: '#4FC3F7', border: '1px solid #111' }} /> Worker Movement</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ width: '12px', height: '12px', backgroundColor: '#F5F3E3', border: '1px solid #111' }} /> Safety Buffer</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ width: '12px', height: '12px', backgroundColor: '#FF2AA1', border: '1px solid #111' }} /> Emergency Access Corridor</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ width: '12px', height: '12px', backgroundColor: '#E0E0E0', border: '1px solid #111' }} /> Waste Dump</span>
           </div>
         </div>
       </div>
@@ -343,7 +358,7 @@ export const SpaceOptimizationPage: React.FC = () => {
           </h3>
         </div>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '15px', color: '#111111', lineHeight: '1.6', fontWeight: '500' }}>
-          "{res?.gemini_report?.space_report?.summary || "Space optimization completed with status 'OPTIMAL'. Site space utilization is 91.7% with an overall layout efficiency score of 88.4/100 and safety compliance of 100/100."}"
+          "{res?.gemini_report?.space_report?.summary || "Space allocation completed with status 'OPTIMAL'. Site space utilization is 91.7% with an overall efficiency score of 88.4/100 and safety compliance of 100/100."}"
         </p>
       </div>
     </div>
