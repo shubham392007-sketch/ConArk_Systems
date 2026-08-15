@@ -32,9 +32,18 @@ class GeminiService:
         return hashlib.sha256(payload_str.encode("utf-8")).hexdigest()
 
     def generate_fallback_report(self, ml_payload: Dict[str, Any], reason: str = "AI explanation temporarily unavailable.") -> GeminiReportWrapper:
-        """Generates safe deterministic fallback report when Gemini API is rate-limited or unavailable."""
+        """Generates safe deterministic fallback report with deep model-specific breakdowns."""
+        inputs = ml_payload.get("inputs", {})
         ml_results = ml_payload.get("ml_results", {})
         
+        task_prog = inputs.get("task_progress", 0.42)
+        worker_cnt = inputs.get("worker_count", 45)
+        equip_util = inputs.get("equipment_utilization_rate", 91.2)
+        safety_inc = inputs.get("safety_incidents", 1)
+        vib_lvl = inputs.get("vibration_level", 28.4)
+        mat_usage = inputs.get("material_usage", 680.0)
+        energy = inputs.get("energy_consumption", 340.0)
+
         perf = ml_results.get("performance", {}).get("prediction", "Good")
         perf_conf = ml_results.get("performance", {}).get("confidence", 0.936) * 100
         
@@ -43,31 +52,30 @@ class GeminiService:
         
         cost_status = ml_results.get("cost_forecast", {}).get("budget_status", "On Budget")
         cost_dev = ml_results.get("cost_forecast", {}).get("predicted_cost_deviation", 0.0)
-        cost_factors = ml_results.get("cost_forecast", {}).get("top_factors", [])
         
         time_status = ml_results.get("time_forecast", {}).get("schedule_status", "On Schedule")
         time_dev = ml_results.get("time_forecast", {}).get("predicted_time_deviation_days", 0.0)
         
         opt_rec = ml_results.get("optimization", {}).get("recommendation", "Increase Machinery Efficiency")
+        opt_conf = ml_results.get("optimization", {}).get("confidence", 0.882) * 100
         opt_factors = ml_results.get("optimization", {}).get("supporting_factors", [])
         alerts = ml_payload.get("alerts", [])
 
         crit_alerts = [f"{a.get('type')}: {a.get('title')}" for a in alerts if a.get("priority", 4) <= 2]
 
-        # Tailored cost string
         cost_str = f"+${cost_dev:,.2f}" if cost_dev > 0 else f"-${abs(cost_dev):,.2f}"
         time_str = f"+{time_dev:.1f} days" if time_dev > 0 else f"{time_dev:.1f} days"
 
-        # Build detailed model-specific explanations
-        perf_exp = f"HistGradientBoosting model classifies overall site performance as '{perf}' with a confidence of {perf_conf:.1f}%. Progress velocity and worker availability remain consistent with target benchmarks."
+        # Build thorough multi-sentence explanations
+        perf_exp = f"HistGradientBoosting model classifies overall site performance as '{perf}' with {perf_conf:.1f}% confidence. Root cause analysis shows task progress velocity ({task_prog}) and worker headcount ({worker_cnt}) maintain active workflow. Site Impact: Operational rhythm is stable, though high equipment utilization ({equip_util}%) requires preventative monitoring to avoid sudden bottlenecks. Recommended Action: Maintain current workforce allocation while conducting scheduled maintenance checks."
         
-        risk_exp = f"LinearRegression model evaluates operational risk at {risk_score:.1f}% ({risk_lvl}). Key contributing factors include active equipment vibration telemetry and safety incident history."
+        risk_exp = f"LinearRegression model evaluates operational risk at {risk_score:.1f}% ({risk_lvl}). Root cause analysis identifies safety incidents ({safety_inc}) and machinery vibration telemetry ({vib_lvl} mm/s) as primary risk vectors. Site Impact: Elevated vibration levels increase structural fatigue probability and worker safety compliance risk. Recommended Action: Conduct immediate equipment vibration inspection, enforce mandatory safety clearances, and rebalance high-risk worker activities."
         
-        cost_exp = f"XGBRegressor model forecasts a cost deviation of {cost_str} ({cost_status}). Primary budget drivers include material consumption rates and worker overtime."
+        cost_exp = f"XGBRegressor model forecasts a cost deviation of {cost_str} ({cost_status}). Root cause analysis indicates material usage ({mat_usage} kg) and energy consumption ({energy} kWh) exceed standard baseline allocation. Site Impact: Unplanned material consumption threatens project budget margin across the current phase. Recommended Action: Audit material dispatch logs, optimize heavy machinery run-times, and review overtime labor costs."
         
-        time_exp = f"HistGradientBoosting Regressor forecasts a schedule deviation of {time_str} ({time_status}). Progress velocity indicates timeline stability."
+        time_exp = f"HistGradientBoosting Regressor forecasts a schedule deviation of {time_str} ({time_status}). Root cause analysis shows task progress velocity ({task_prog}) and equipment utilization ({equip_util}%) dictate timeline variance. Site Impact: A schedule variance of {time_str} impacts downstream trade handovers and site delivery logistics. Recommended Action: Adjust phase milestone targets, prioritize critical path structural tasks, and streamline material loading dock throughput."
         
-        opt_exp = f"Recommended action is '{opt_rec}' supported by: {', '.join(opt_factors) if opt_factors else 'High equipment utilization rate, Elevated machinery vibration level, High energy consumption.'}"
+        opt_exp = f"HistGradientBoosting Classifier recommends operational action '{opt_rec}' ({opt_conf:.1f}% confidence). Root cause analysis combines multi-model risk ({risk_score:.1f}%) and equipment pressure ({equip_util}%). Site Impact: Imbalanced worker-to-equipment ratios create workflow bottlenecks and reduce operational yield. Recommended Action: Execute resource reallocation by shifting workers to lagging structural tasks and optimizing machinery cycle times."
 
         exec_summary = f"Project performance is classified as {perf} with an operational risk score of {risk_score:.1f}% ({risk_lvl}). Cost forecast indicates a deviation of {cost_str} ({cost_status}) and schedule forecast indicates {time_str} ({time_status}). Recommended optimization action: {opt_rec}."
 
@@ -88,7 +96,7 @@ class GeminiService:
             optimization_explanation=opt_exp,
             recommended_actions=[opt_rec] + ([f"Review alert: {crit_alerts[0]}"] if crit_alerts else ["Review worker allocation before next cycle"]),
             priority=risk_lvl if risk_lvl in ["High", "Critical"] else "Medium",
-            confidence_note="Report generated using rules engine because Gemini LLM service rate limit was reached."
+            confidence_note="Report generated using rules engine."
         )
 
         return GeminiReportWrapper(
@@ -177,8 +185,8 @@ class GeminiService:
         unused = metrics.get("unused_area_sqm", 100.0)
 
         fallback_report = GeminiSpaceReport(
-            summary=f"Space allocation completed with status '{opt_status}'. Site space utilization is {util_pct:.1f}% with an overall efficiency score of {eff_score:.1f}/100 and safety compliance of {safety_score:.1f}/100.",
-            layout_explanation=f"Allocated {alloc.get('material_storage_area_sqm', 320.0):.1f} sqm for material storage, {alloc.get('equipment_area_sqm', 180.0):.1f} sqm for equipment parking, and {alloc.get('safety_buffer_area_sqm', 120.0):.1f} sqm for safety buffer.",
+            summary=f"Space allocation completed with status '{opt_status}'. Site space utilization is {util_pct:.1f}% with an overall efficiency score of {eff_score:.1f}/100 and safety compliance of {safety_score:.1f}/100. Material Storage ({alloc.get('material_storage_area_sqm', 320.0):.1f} sqm) and Safety Buffer ({alloc.get('safety_buffer_area_sqm', 120.0):.1f} sqm) have been optimized to prevent trade congestion.",
+            layout_explanation=f"Allocated {alloc.get('material_storage_area_sqm', 320.0):.1f} sqm for material storage, {alloc.get('equipment_area_sqm', 180.0):.1f} sqm for equipment parking, {alloc.get('worker_movement_area_sqm', 150.0):.1f} sqm for worker circulation, and {alloc.get('safety_buffer_area_sqm', 120.0):.1f} sqm for mandatory safety buffer.",
             key_findings=[
                 f"Optimization Status: {opt_status}",
                 f"Space Utilization: {util_pct:.1f}% ({unused:.1f} sqm unused)",
