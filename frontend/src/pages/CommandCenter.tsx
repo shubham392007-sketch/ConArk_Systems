@@ -35,13 +35,23 @@ export const CommandCenter: React.FC = () => {
     loadIntelligence();
   }, []);
 
+  // Live predictions or fallback defaults
+  const perfPred = data?.ml_results.performance.prediction ?? 'GOOD';
+  const perfConf = (data?.ml_results.performance.confidence ?? 0.936) * 100;
   const healthScore = data?.health.overall_health_score ?? 74;
-  const healthStatus = data?.health.health_status ?? 'GOOD';
+
   const riskScore = data?.ml_results.risk.risk_score ?? 72;
   const riskLevel = data?.ml_results.risk.risk_level ?? 'HIGH';
+
   const costDev = data?.ml_results.cost_forecast.predicted_cost_deviation ?? 8420;
+  const costStatus = data?.ml_results.cost_forecast.budget_status ?? 'OVER BUDGET';
+
   const timeDev = data?.ml_results.time_forecast.predicted_time_deviation_days ?? 4.8;
-  const alertCount = data?.alerts.length ?? 3;
+  const timeStatus = data?.ml_results.time_forecast.schedule_status ?? 'DELAYED';
+
+  const optRec = data?.ml_results.optimization.recommendation ?? 'REALLOCATE WORKERS';
+  const optConf = (data?.ml_results.optimization.confidence ?? 0.882) * 100;
+
   const geminiText = data?.gemini_report.report?.executive_summary || "Review worker allocation before the next construction cycle.";
 
   return (
@@ -70,173 +80,286 @@ export const CommandCenter: React.FC = () => {
         </p>
       </div>
 
-      {/* Primary Stacked Card Deck — Enlarged Cards with Consistent Dashed Borders */}
+      {/* 5-MODEL STACKED CARD DECK */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0px', marginBottom: '40px' }}>
         
-        {/* CARD 01: WHITE - PROJECT HEALTH */}
+        {/* MODEL 01: PERFORMANCE MODEL (WHITE #FFFFFF) */}
         <div
           className="card-rotate-neg1 card-hover-lift"
           style={{
             backgroundColor: '#FFFFFF',
             border: '2.5px dashed #111111',
             borderRadius: '20px',
-            padding: '36px 48px',
+            padding: '32px 44px',
             boxShadow: '0 12px 24px rgba(0, 0, 0, 0.08)',
             position: 'relative',
-            zIndex: 4,
-            minHeight: '180px'
+            zIndex: 5
           }}
         >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
             <div>
-              <span style={{ fontSize: '13px', fontFamily: 'JetBrains Mono, monospace', color: '#666666', fontWeight: 'bold' }}>01</span>
-              <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '42px', color: '#111111', textTransform: 'uppercase', lineHeight: '1.05', marginTop: '4px' }}>
-                PROJECT HEALTH
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '13px', fontFamily: 'JetBrains Mono, monospace', color: '#666666', fontWeight: 'bold' }}>01</span>
+                <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', backgroundColor: '#111111', color: '#FFFFFF', padding: '2px 8px', borderRadius: '4px' }}>
+                  CLASSIFICATION MODEL
+                </span>
+              </div>
+              <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '38px', color: '#111111', textTransform: 'uppercase', lineHeight: '1.05', marginTop: '4px' }}>
+                PERFORMANCE MODEL
               </h2>
-              <p style={{ fontSize: '15px', color: '#555555', fontFamily: 'Inter, sans-serif', marginTop: '4px' }}>Current project condition</p>
+              <p style={{ fontSize: '14px', color: '#555555', fontFamily: 'Inter, sans-serif', marginTop: '2px' }}>
+                HistGradientBoosting Classifier · v1.0
+              </p>
+
+              {/* Explicit Model Telemetry Inputs */}
+              <div style={{ marginTop: '16px', display: 'flex', flexWrap: 'wrap', gap: '8px', fontSize: '11px', fontFamily: 'JetBrains Mono, monospace' }}>
+                <span style={{ backgroundColor: '#EDECE7', border: '1px solid #111111', padding: '4px 10px', borderRadius: '4px' }}>
+                  INPUT: Task Progress (42%)
+                </span>
+                <span style={{ backgroundColor: '#EDECE7', border: '1px solid #111111', padding: '4px 10px', borderRadius: '4px' }}>
+                  INPUT: Workers ({defaultInput.worker_count})
+                </span>
+                <span style={{ backgroundColor: '#EDECE7', border: '1px solid #111111', padding: '4px 10px', borderRadius: '4px' }}>
+                  INPUT: Equipment ({defaultInput.equipment_utilization_rate}%)
+                </span>
+              </div>
             </div>
+
+            {/* Model Output Prediction */}
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '72px', fontWeight: '800', color: '#111111', lineHeight: '0.9' }}>
-                {healthScore}
+              <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#666666' }}>MODEL OUTPUT</div>
+              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '56px', fontWeight: '800', color: '#111111', lineHeight: '0.9', marginTop: '4px' }}>
+                {perfPred}
               </div>
-              <div style={{ fontSize: '16px', fontWeight: '800', color: '#15803d', fontFamily: 'JetBrains Mono, monospace', marginTop: '6px' }}>
-                {healthStatus}
+              <div style={{ fontSize: '14px', fontWeight: '800', color: '#15803d', fontFamily: 'JetBrains Mono, monospace', marginTop: '6px' }}>
+                CONFIDENCE: {perfConf.toFixed(1)}% · HEALTH: {healthScore}/100
               </div>
             </div>
-          </div>
-          <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px dashed rgba(17,17,17,0.2)', fontSize: '12px', color: '#777777', fontFamily: 'JetBrains Mono, monospace' }}>
-            Health Score Engine · Updated {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </div>
         </div>
 
-        {/* CARD 02: BLUE - RISK */}
+        {/* MODEL 02: RISK MODEL (BLUE #4FC3F7) */}
         <div
           className="card-rotate-pos1 card-hover-lift"
           style={{
             backgroundColor: '#4FC3F7',
             border: '2.5px dashed #111111',
             borderRadius: '20px',
-            padding: '36px 48px',
+            padding: '32px 44px',
             boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)',
             position: 'relative',
-            marginTop: '-20px',
-            zIndex: 3,
-            minHeight: '180px'
+            marginTop: '-18px',
+            zIndex: 4
           }}
         >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
             <div>
-              <span style={{ fontSize: '13px', fontFamily: 'JetBrains Mono, monospace', color: '#111111', fontWeight: 'bold' }}>02</span>
-              <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '42px', color: '#111111', textTransform: 'uppercase', lineHeight: '1.05', marginTop: '4px' }}>
-                RISK
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '13px', fontFamily: 'JetBrains Mono, monospace', color: '#111111', fontWeight: 'bold' }}>02</span>
+                <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', backgroundColor: '#111111', color: '#FFFFFF', padding: '2px 8px', borderRadius: '4px' }}>
+                  REGRESSION MODEL
+                </span>
+              </div>
+              <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '38px', color: '#111111', textTransform: 'uppercase', lineHeight: '1.05', marginTop: '4px' }}>
+                OPERATIONAL RISK MODEL
               </h2>
-              <p style={{ fontSize: '15px', color: '#111111', fontFamily: 'Inter, sans-serif', marginTop: '4px' }}>Current operational risk</p>
+              <p style={{ fontSize: '14px', color: '#111111', fontFamily: 'Inter, sans-serif', marginTop: '2px' }}>
+                LinearRegression Model · v1.0
+              </p>
+
+              {/* Explicit Model Telemetry Inputs */}
+              <div style={{ marginTop: '16px', display: 'flex', flexWrap: 'wrap', gap: '8px', fontSize: '11px', fontFamily: 'JetBrains Mono, monospace' }}>
+                <span style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1px solid #111111', padding: '4px 10px', borderRadius: '4px' }}>
+                  INPUT: Safety Incidents ({defaultInput.safety_incidents})
+                </span>
+                <span style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1px solid #111111', padding: '4px 10px', borderRadius: '4px' }}>
+                  INPUT: Vibration ({defaultInput.vibration_level} mm/s)
+                </span>
+                <span style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1px solid #111111', padding: '4px 10px', borderRadius: '4px' }}>
+                  INPUT: Temp ({defaultInput.temperature}°C)
+                </span>
+              </div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-              {/* Crane Micro-Illustration SVG */}
-              <svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="#111111" strokeWidth="1.6">
+
+            {/* Model Output Prediction */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#111111" strokeWidth="1.6">
                 <path d="M4 21h16M7 21V7l10-4M17 3v18M7 11h10M7 16h10" />
               </svg>
               <div style={{ textAlign: 'right' }}>
-                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '72px', fontWeight: '800', color: '#111111', lineHeight: '0.9' }}>
+                <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#111111' }}>MODEL OUTPUT</div>
+                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '56px', fontWeight: '800', color: '#111111', lineHeight: '0.9', marginTop: '4px' }}>
                   {riskScore.toFixed(0)}%
                 </div>
-                <div style={{ fontSize: '16px', fontWeight: '800', color: '#111111', fontFamily: 'JetBrains Mono, monospace', marginTop: '6px' }}>
-                  {riskLevel}
+                <div style={{ fontSize: '14px', fontWeight: '800', color: '#111111', fontFamily: 'JetBrains Mono, monospace', marginTop: '6px' }}>
+                  RISK LEVEL: {riskLevel}
                 </div>
               </div>
             </div>
           </div>
-          <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px dashed rgba(17,17,17,0.25)', fontSize: '12px', color: '#111111', fontFamily: 'JetBrains Mono, monospace' }}>
-            Risk Model · LinearRegression v1.0
-          </div>
         </div>
 
-        {/* CARD 03: CHARTREUSE - COST & SCHEDULE */}
+        {/* MODEL 03: COST FORECAST MODEL (CHARTREUSE #E4FF5B) */}
         <div
           className="card-rotate-neg07 card-hover-lift"
           style={{
             backgroundColor: '#E4FF5B',
             border: '2.5px dashed #111111',
             borderRadius: '20px',
-            padding: '36px 48px',
+            padding: '32px 44px',
             boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)',
             position: 'relative',
-            marginTop: '-20px',
-            zIndex: 2,
-            minHeight: '180px'
+            marginTop: '-18px',
+            zIndex: 3
           }}
         >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
             <div>
-              <span style={{ fontSize: '13px', fontFamily: 'JetBrains Mono, monospace', color: '#111111', fontWeight: 'bold' }}>03</span>
-              <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '42px', color: '#111111', textTransform: 'uppercase', lineHeight: '1.05', marginTop: '4px' }}>
-                COST & SCHEDULE
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '13px', fontFamily: 'JetBrains Mono, monospace', color: '#111111', fontWeight: 'bold' }}>03</span>
+                <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', backgroundColor: '#111111', color: '#FFFFFF', padding: '2px 8px', borderRadius: '4px' }}>
+                  XGBOOST REGRESSOR
+                </span>
+              </div>
+              <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '38px', color: '#111111', textTransform: 'uppercase', lineHeight: '1.05', marginTop: '4px' }}>
+                COST FORECAST MODEL
               </h2>
-              <p style={{ fontSize: '15px', color: '#111111', fontFamily: 'Inter, sans-serif', marginTop: '4px' }}>Budget and timeline forecast</p>
+              <p style={{ fontSize: '14px', color: '#111111', fontFamily: 'Inter, sans-serif', marginTop: '2px' }}>
+                XGBRegressor Model · v1.0
+              </p>
+
+              {/* Explicit Model Telemetry Inputs */}
+              <div style={{ marginTop: '16px', display: 'flex', flexWrap: 'wrap', gap: '8px', fontSize: '11px', fontFamily: 'JetBrains Mono, monospace' }}>
+                <span style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1px solid #111111', padding: '4px 10px', borderRadius: '4px' }}>
+                  INPUT: Material Usage ({defaultInput.material_usage} kg)
+                </span>
+                <span style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1px solid #111111', padding: '4px 10px', borderRadius: '4px' }}>
+                  INPUT: Energy ({defaultInput.energy_consumption} kWh)
+                </span>
+              </div>
             </div>
+
+            {/* Model Output Prediction */}
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '54px', fontWeight: '800', color: '#111111', lineHeight: '0.9' }}>
+              <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#111111' }}>MODEL OUTPUT</div>
+              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '50px', fontWeight: '800', color: '#111111', lineHeight: '0.9', marginTop: '4px' }}>
                 {costDev > 0 ? `+$${costDev.toLocaleString()}` : `-$${Math.abs(costDev).toLocaleString()}`}
               </div>
-              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '42px', fontWeight: '800', color: '#111111', marginTop: '6px' }}>
-                {timeDev > 0 ? `+${timeDev.toFixed(1)} DAYS` : `${timeDev.toFixed(1)} DAYS`}
-              </div>
               <div style={{ fontSize: '14px', fontWeight: '800', color: '#111111', fontFamily: 'JetBrains Mono, monospace', marginTop: '6px' }}>
-                OVER BUDGET / DELAYED
+                STATUS: {costStatus}
               </div>
             </div>
-          </div>
-          <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px dashed rgba(17,17,17,0.25)', fontSize: '12px', color: '#111111', fontFamily: 'JetBrains Mono, monospace' }}>
-            Cost Forecast + Time Forecast Models
           </div>
         </div>
 
-        {/* CARD 04: MINT - ACTIVE ALERTS */}
+        {/* MODEL 04: TIME FORECAST MODEL (MINT #7CFFA6) */}
         <div
           className="card-rotate-pos08 card-hover-lift"
           style={{
             backgroundColor: '#7CFFA6',
             border: '2.5px dashed #111111',
             borderRadius: '20px',
-            padding: '36px 48px',
+            padding: '32px 44px',
             boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)',
             position: 'relative',
-            marginTop: '-20px',
-            zIndex: 1,
-            minHeight: '180px'
+            marginTop: '-18px',
+            zIndex: 2
           }}
         >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
             <div>
-              <span style={{ fontSize: '13px', fontFamily: 'JetBrains Mono, monospace', color: '#111111', fontWeight: 'bold' }}>04</span>
-              <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '42px', color: '#111111', textTransform: 'uppercase', lineHeight: '1.05', marginTop: '4px' }}>
-                ACTIVE ALERTS
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '13px', fontFamily: 'JetBrains Mono, monospace', color: '#111111', fontWeight: 'bold' }}>04</span>
+                <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', backgroundColor: '#111111', color: '#FFFFFF', padding: '2px 8px', borderRadius: '4px' }}>
+                  TIME SERIES REGRESSOR
+                </span>
+              </div>
+              <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '38px', color: '#111111', textTransform: 'uppercase', lineHeight: '1.05', marginTop: '4px' }}>
+                TIME FORECAST MODEL
               </h2>
-              <p style={{ fontSize: '15px', color: '#111111', fontFamily: 'Inter, sans-serif', marginTop: '4px' }}>Signals that require attention</p>
+              <p style={{ fontSize: '14px', color: '#111111', fontFamily: 'Inter, sans-serif', marginTop: '2px' }}>
+                HistGradientBoosting Regressor · v1.0
+              </p>
+
+              {/* Explicit Model Telemetry Inputs */}
+              <div style={{ marginTop: '16px', display: 'flex', flexWrap: 'wrap', gap: '8px', fontSize: '11px', fontFamily: 'JetBrains Mono, monospace' }}>
+                <span style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1px solid #111111', padding: '4px 10px', borderRadius: '4px' }}>
+                  INPUT: Task Velocity ({defaultInput.task_progress})
+                </span>
+                <span style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1px solid #111111', padding: '4px 10px', borderRadius: '4px' }}>
+                  INPUT: Machinery ({defaultInput.machinery_status === 1 ? 'ACTIVE' : 'IDLE'})
+                </span>
+              </div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-              {/* Traffic Cone Micro-Illustration SVG */}
-              <svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="#111111" strokeWidth="1.6">
-                <path d="M12 2L4 19h16L12 2zM6 15h12M8 10h8" />
-              </svg>
-              <div style={{ textAlign: 'right' }}>
-                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '72px', fontWeight: '800', color: '#111111', lineHeight: '0.9' }}>
-                  {alertCount < 10 ? `0${alertCount}` : alertCount}
-                </div>
-                <div style={{ fontSize: '16px', fontWeight: '800', color: '#111111', fontFamily: 'JetBrains Mono, monospace', marginTop: '6px' }}>
-                  ATTENTION
-                </div>
+
+            {/* Model Output Prediction */}
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#111111' }}>MODEL OUTPUT</div>
+              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '50px', fontWeight: '800', color: '#111111', lineHeight: '0.9', marginTop: '4px' }}>
+                {timeDev > 0 ? `+${timeDev.toFixed(1)} DAYS` : `${timeDev.toFixed(1)} DAYS`}
+              </div>
+              <div style={{ fontSize: '14px', fontWeight: '800', color: '#111111', fontFamily: 'JetBrains Mono, monospace', marginTop: '6px' }}>
+                SCHEDULE: {timeStatus}
               </div>
             </div>
           </div>
-          <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px dashed rgba(17,17,17,0.25)', fontSize: '12px', color: '#111111', fontFamily: 'JetBrains Mono, monospace' }}>
-            Alert Engine · Deterministic Rules
+        </div>
+
+        {/* MODEL 05: OPTIMIZATION RECOMMENDATION MODEL (CREAM #F5F3E3) */}
+        <div
+          className="card-rotate-neg07 card-hover-lift"
+          style={{
+            backgroundColor: '#F5F3E3',
+            border: '2.5px dashed #111111',
+            borderRadius: '20px',
+            padding: '32px 44px',
+            boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)',
+            position: 'relative',
+            marginTop: '-18px',
+            zIndex: 1
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '13px', fontFamily: 'JetBrains Mono, monospace', color: '#111111', fontWeight: 'bold' }}>05</span>
+                <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', backgroundColor: '#111111', color: '#FFFFFF', padding: '2px 8px', borderRadius: '4px' }}>
+                  OPTIMIZATION ENGINE
+                </span>
+              </div>
+              <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '38px', color: '#111111', textTransform: 'uppercase', lineHeight: '1.05', marginTop: '4px' }}>
+                OPTIMIZATION RECOMMENDATION MODEL
+              </h2>
+              <p style={{ fontSize: '14px', color: '#111111', fontFamily: 'Inter, sans-serif', marginTop: '2px' }}>
+                HistGradientBoosting Classifier · v1.0
+              </p>
+
+              {/* Explicit Model Telemetry Inputs */}
+              <div style={{ marginTop: '16px', display: 'flex', flexWrap: 'wrap', gap: '8px', fontSize: '11px', fontFamily: 'JetBrains Mono, monospace' }}>
+                <span style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1px solid #111111', padding: '4px 10px', borderRadius: '4px' }}>
+                  INPUT: Multi-model outputs & Risk
+                </span>
+                <span style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1px solid #111111', padding: '4px 10px', borderRadius: '4px' }}>
+                  INPUT: Equipment utilization ({defaultInput.equipment_utilization_rate}%)
+                </span>
+              </div>
+            </div>
+
+            {/* Model Output Prediction */}
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#111111' }}>MODEL OUTPUT</div>
+              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '36px', fontWeight: '800', color: '#111111', lineHeight: '1.0', marginTop: '4px' }}>
+                {optRec}
+              </div>
+              <div style={{ fontSize: '14px', fontWeight: '800', color: '#111111', fontFamily: 'JetBrains Mono, monospace', marginTop: '6px' }}>
+                CONFIDENCE: {optConf.toFixed(1)}%
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Downstream Gemini 2.5 Flash AI Explanation Card (Enlarged with dashed border) */}
+      {/* Downstream Gemini 2.5 Flash AI Explanation Card */}
       <div style={{
         backgroundColor: '#FFFFFF',
         border: '2.5px dashed #111111',
@@ -266,7 +389,7 @@ export const CommandCenter: React.FC = () => {
             PRIORITY: HIGH
           </span>
           <span style={{ fontSize: '12px', fontFamily: 'JetBrains Mono, monospace', color: '#666666' }}>
-            Grounded in: Optimization Model · Risk Model · Alert Engine
+            Grounded in: 5 ML Models · SciPy Space Engine · Alert Engine
           </span>
         </div>
       </div>
