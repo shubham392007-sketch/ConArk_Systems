@@ -10,6 +10,7 @@ import { AlertCenter } from './pages/AlertCenter';
 import { AIInsightsPage } from './pages/AIInsightsPage';
 import { ReportsPage } from './pages/ReportsPage';
 import { ModelRegistryPage } from './pages/ModelRegistryPage';
+import { ModelDetailPage } from './pages/ModelDetailPage';
 
 export const App: React.FC = () => {
   return (
@@ -26,6 +27,7 @@ export const App: React.FC = () => {
             <Route path="/ai-insights" element={<AIInsightsPage />} />
             <Route path="/reports" element={<ReportsPage />} />
             <Route path="/models" element={<ModelRegistryPage />} />
+            <Route path="/model/:modelId" element={<ModelDetailPage />} />
           </Routes>
         </main>
         <Footer />
