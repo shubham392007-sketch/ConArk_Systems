@@ -1,6 +1,7 @@
 """
 Base wrapper class for ConArk ML models.
 Provides unified prediction, explainability, and metadata management interfaces.
+Supports automatic on-demand model training if model artifacts are missing.
 """
 
 from abc import ABC, abstractmethod
@@ -23,8 +24,34 @@ class BaseModel(ABC):
         self.metadata = {}
         self.feature_names = []
 
+    def _auto_train(self) -> None:
+        """Triggers model-specific auto-training if joblib artifact is missing."""
+        logger.info(f"Model artifact for '{self.model_name}' missing. Auto-training model...")
+        try:
+            if self.model_name == "performance":
+                from conark.training.train_performance import train_performance_model
+                train_performance_model()
+            elif self.model_name == "risk":
+                from conark.training.train_risk import train_risk_model
+                train_risk_model()
+            elif self.model_name == "cost":
+                from conark.training.train_cost import train_cost_model
+                train_cost_model()
+            elif self.model_name == "time":
+                from conark.training.train_time import train_time_model
+                train_time_model()
+            elif self.model_name == "optimization":
+                from conark.training.train_optimization import train_optimization_model
+                train_optimization_model()
+        except Exception as e:
+            logger.error(f"Auto-training failed for '{self.model_name}': {str(e)}")
+
     def load(self) -> None:
         """Load trained model artifact and metadata from model registry."""
+        model_path = self.registry.get_model_path(self.model_name)
+        if not model_path.exists():
+            self._auto_train()
+
         self.model = self.registry.load_model(self.model_name)
         self.metadata = self.registry.load_metadata(self.model_name)
         self.feature_names = self.metadata.get("features", [])

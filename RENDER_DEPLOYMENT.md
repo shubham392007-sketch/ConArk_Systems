@@ -1,37 +1,20 @@
-# 🚀 CONARK SYSTEMS — RENDER DEPLOYMENT GUIDE
+# 🚀 CONARK SYSTEMS — INDEPENDENT UVICORN & RENDER DEPLOYMENT GUIDE
 
-This guide provides step-by-step instructions to deploy **ConArk Systems** to [Render](https://render.com) as a unified full-stack application (FastAPI + React SPA + 5 ML Models + SciPy Space Engine + Gemini 2.5 Flash).
-
----
-
-## ⚡ Option 1: Render Docker Deployment (RECOMMENDED & EASIEST)
-
-Render will automatically build both the React frontend and Python FastAPI backend into a single container image using the multi-stage `Dockerfile`.
-
-### Steps:
-1. **Push your latest code to GitHub** (already synchronized on branch `main`).
-2. Log in to [Render Dashboard](https://dashboard.render.com).
-3. Click **New +** $\rightarrow$ **Web Service**.
-4. Connect your GitHub repository `shubham392007-sketch/ConArk_Systems`.
-5. Select **Docker** as the Environment.
-6. Render will automatically detect the root `Dockerfile` and `render.yaml`.
-7. Add your Environment Variable:
-   - `GEMINI_API_KEY`: `AQ.Ab8RN6JFFQ5ouLZZkaqw8uJFfJoWa2p8GI24mV_bOGm_UbqYCg` (or your preferred key).
-8. Click **Create Web Service**.
+This project runs **completely independently** using standard Python and `uvicorn` commands—**zero Docker required**.
 
 ---
 
-## 🐍 Option 2: Render Native Python Web Service Deployment
+## ⚡ 1. Render Deployment (Native Python Web Service)
 
-If you prefer deploying without Docker using Render's native Python runtime:
+Render automatically builds your React frontend and runs your Python FastAPI backend via `uvicorn`.
 
-### Web Service Settings:
+### Web Service Settings on Render:
 - **Environment:** `Python 3`
 - **Build Command:** `./build_render.sh`
 - **Start Command:** `PYTHONPATH=src uvicorn conark.api.main:app --host 0.0.0.0 --port $PORT`
 - **Health Check Path:** `/api/v1/health`
 
-### Required Environment Variables on Render:
+### Environment Variables to set on Render:
 | Variable Name | Value / Notes |
 | ------------- | ------------- |
 | `GEMINI_API_KEY` | `AQ.Ab8RN6JFFQ5ouLZZkaqw8uJFfJoWa2p8GI24mV_bOGm_UbqYCg` |
@@ -41,10 +24,28 @@ If you prefer deploying without Docker using Render's native Python runtime:
 
 ---
 
-## ✅ Deployment Features Pre-Configured for Render
+## 💻 2. Independent Local Execution (No Docker)
 
-1. **Dynamic `$PORT` Binding:** Automatically binds to Render's allocated port (`$PORT` or default `8000`).
-2. **Single Origin SPA Routing:** FastAPI automatically mounts `frontend/dist` and handles single-page application routes (`/`, `/brains`, `/predictions`, `/model/*`).
-3. **Pre-trained ML Models:** All 5 ML models train during build so startup is instant and memory-efficient.
-4. **Health Check:** Provides `/api/v1/health` endpoint for zero-downtime health monitoring.
-5. **Robust AI Fallback:** Deterministic report generator runs automatically if Gemini API rate limits are hit or key is unconfigured.
+You can run the backend and frontend independently on any local machine or server using pure Python + Uvicorn.
+
+### Step 1: Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### Step 2: Run Machine Learning Models & Backend Server
+```bash
+# Train ML models & start uvicorn server
+PYTHONPATH=src python -m conark.training.train_all
+PYTHONPATH=src uvicorn conark.api.main:app --host 0.0.0.0 --port 8000
+```
+*(Note: If model artifacts are ever missing, FastAPI automatically auto-trains missing models on demand during startup!)*
+
+### Step 3: Run Frontend React App (Optional for dev)
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+In production, running `npm run build` inside `frontend/` creates `frontend/dist`. FastAPI automatically detects `frontend/dist` and serves the entire SPA frontend on `http://localhost:8000` directly!
