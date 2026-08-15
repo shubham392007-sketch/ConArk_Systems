@@ -111,7 +111,7 @@ export const TheBrainsPage: React.FC = () => {
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
 
   return (
-    <div style={{ width: '100%', maxWidth: '1450px', margin: '0 auto', padding: '24px 20px 64px 20px', boxSizing: 'border-box' }}>
+    <div style={{ width: '100%', maxWidth: '1450px', margin: '0 auto', padding: '24px 16px 64px 16px', boxSizing: 'border-box' }}>
       
       {/* 1. PAGE HERO */}
       <motion.div 
@@ -121,28 +121,31 @@ export const TheBrainsPage: React.FC = () => {
         style={{
           position: 'relative',
           textAlign: 'center',
-          padding: '24px 20px 40px 20px',
+          padding: '24px 16px 40px 16px',
           marginBottom: '40px',
           borderBottom: '2.5px dashed #111111'
         }}
       >
-        {/* SINGLE LINE TITLE: THE BRAINS BEHIND CONARK */}
-        <h1 style={{
-          fontFamily: 'Anton, sans-serif',
-          fontSize: 'clamp(40px, 8.5vw, 150px)',
-          lineHeight: '0.85',
-          color: '#111111',
-          letterSpacing: '-0.02em',
-          textTransform: 'uppercase',
-          margin: '0 auto',
-          whiteSpace: 'nowrap'
-        }}>
+        {/* SINGLE LINE TITLE WITH RESPONSIVE CLAMP: THE BRAINS BEHIND CONARK */}
+        <h1
+          className="responsive-title-nowrap"
+          style={{
+            fontFamily: 'Anton, sans-serif',
+            fontSize: 'clamp(32px, 7.5vw, 150px)',
+            lineHeight: '0.85',
+            color: '#111111',
+            letterSpacing: '-0.02em',
+            textTransform: 'uppercase',
+            margin: '0 auto',
+            whiteSpace: 'nowrap'
+          }}
+        >
           THE BRAINS BEHIND CONARK
         </h1>
 
         <p style={{
           fontFamily: 'Inter, sans-serif',
-          fontSize: '22px',
+          fontSize: 'clamp(16px, 3vw, 22px)',
           fontWeight: '700',
           color: '#111111',
           marginTop: '18px',
@@ -169,7 +172,7 @@ export const TheBrainsPage: React.FC = () => {
       <div style={{
         maxWidth: '1200px',
         margin: '0 auto 48px auto',
-        padding: '32px 36px',
+        padding: '28px 24px',
         backgroundColor: '#FFFFFF',
         border: '2.5px dashed #111111',
         borderRadius: '16px',
@@ -178,25 +181,28 @@ export const TheBrainsPage: React.FC = () => {
         <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#FF2AA1', marginBottom: '8px' }}>
           EDITORIAL STATEMENT
         </div>
-        <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(28px, 4vw, 44px)', color: '#111111', textTransform: 'uppercase', lineHeight: '1.05', margin: 0 }}>
+        <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(24px, 4vw, 44px)', color: '#111111', textTransform: 'uppercase', lineHeight: '1.05', margin: 0 }}>
           CONSTRUCTION IS COMPLEX.
         </h2>
-        <h3 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(22px, 3vw, 36px)', color: '#555555', textTransform: 'uppercase', lineHeight: '1.1', marginTop: '4px', marginBottom: '16px' }}>
+        <h3 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(18px, 3vw, 36px)', color: '#555555', textTransform: 'uppercase', lineHeight: '1.1', marginTop: '4px', marginBottom: '16px' }}>
           SO IS BUILDING THE INTELLIGENCE THAT UNDERSTANDS IT.
         </h3>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', color: '#333333', lineHeight: '1.6', margin: 0, maxWidth: '980px' }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '15px', color: '#333333', lineHeight: '1.6', margin: 0, maxWidth: '980px' }}>
           ConArk Systems brings together distinct technical disciplines—from predictive machine learning and artificial intelligence engineering to data architecture and research support. Rather than presenting a single individual as the entire system, ConArk represents a unified engineering framework engineered collaboratively.
         </p>
       </div>
 
-      {/* 3. 2x2 EDITORIAL CARD GRID */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(480px, 1fr))',
-        gap: '40px 32px',
-        marginBottom: '64px',
-        padding: '12px 8px'
-      }}>
+      {/* 3. 2x2 EDITORIAL CARD GRID (RESPONSIVE GRID) */}
+      <div
+        className="founder-grid-responsive"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+          gap: '32px 24px',
+          marginBottom: '64px',
+          padding: '8px'
+        }}
+      >
         {teamMembers.map((member, idx) => (
           <motion.div
             key={member.id}
@@ -209,14 +215,14 @@ export const TheBrainsPage: React.FC = () => {
               backgroundColor: member.cardBg,
               border: '2.5px solid #111111',
               borderRadius: '8px',
-              padding: '36px 36px 28px 36px',
-              boxShadow: '10px 10px 0px #111111',
+              padding: '28px 24px',
+              boxShadow: '8px 8px 0px #111111',
               transform: `rotate(${member.rotation})`,
               cursor: 'pointer',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
-              minHeight: '380px',
+              minHeight: '360px',
               position: 'relative'
             }}
           >
@@ -241,18 +247,21 @@ export const TheBrainsPage: React.FC = () => {
               </div>
             </div>
 
-            {/* SINGLE LINE FOUNDER NAME */}
+            {/* SINGLE LINE FOUNDER NAME WITH CLAMP */}
             <div style={{ marginBottom: '12px' }}>
-              <h2 style={{
-                fontFamily: 'Anton, sans-serif',
-                fontSize: 'clamp(32px, 3.2vw, 44px)',
-                lineHeight: '1.0',
-                color: '#111111',
-                textTransform: 'uppercase',
-                margin: 0,
-                letterSpacing: '-0.01em',
-                whiteSpace: 'nowrap'
-              }}>
+              <h2
+                className="responsive-title-nowrap"
+                style={{
+                  fontFamily: 'Anton, sans-serif',
+                  fontSize: 'clamp(26px, 3.5vw, 44px)',
+                  lineHeight: '1.0',
+                  color: '#111111',
+                  textTransform: 'uppercase',
+                  margin: 0,
+                  letterSpacing: '-0.01em',
+                  whiteSpace: 'nowrap'
+                }}
+              >
                 {member.fullName}
               </h2>
             </div>
@@ -260,7 +269,7 @@ export const TheBrainsPage: React.FC = () => {
             {/* Role Title */}
             <div style={{
               fontFamily: 'JetBrains Mono, monospace',
-              fontSize: '13px',
+              fontSize: '12px',
               fontWeight: '800',
               color: '#111111',
               textTransform: 'uppercase',
@@ -274,10 +283,10 @@ export const TheBrainsPage: React.FC = () => {
             {/* Short Introduction Paragraph */}
             <p style={{
               fontFamily: 'Inter, sans-serif',
-              fontSize: '15px',
+              fontSize: '14px',
               color: '#333333',
-              lineHeight: '1.6',
-              marginBottom: '24px',
+              lineHeight: '1.55',
+              marginBottom: '20px',
               fontWeight: '400'
             }}>
               {member.shortIntro}
@@ -285,14 +294,14 @@ export const TheBrainsPage: React.FC = () => {
 
             {/* Specialization Pill Badge */}
             <div style={{
-              fontSize: '11px',
+              fontSize: '10px',
               fontFamily: 'JetBrains Mono, monospace',
               fontWeight: '700',
               backgroundColor: 'rgba(255,255,255,0.7)',
               border: '1.5px solid #111111',
-              padding: '6px 12px',
+              padding: '6px 10px',
               borderRadius: '4px',
-              marginBottom: '24px',
+              marginBottom: '20px',
               display: 'inline-block'
             }}>
               SPECIALIZATION: {member.specialization}
@@ -301,16 +310,18 @@ export const TheBrainsPage: React.FC = () => {
             {/* Bottom Footer Monospace Links */}
             <div style={{
               borderTop: '1.5px solid #111111',
-              paddingTop: '16px',
+              paddingTop: '14px',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
               fontFamily: 'JetBrains Mono, monospace',
               fontSize: '11px',
               fontWeight: '800',
-              color: '#111111'
+              color: '#111111',
+              flexWrap: 'wrap',
+              gap: '8px'
             }}>
-              <div style={{ display: 'flex', gap: '12px' }}>
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                 <a href={member.linkedin} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()} style={{ color: '#111111', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <LinkedinIcon /> LNKD
                 </a>
@@ -350,7 +361,7 @@ export const TheBrainsPage: React.FC = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: '24px'
+            padding: '16px'
           }}>
             <motion.div
               initial={{ opacity: 0, scale: 0.96 }}
@@ -363,8 +374,8 @@ export const TheBrainsPage: React.FC = () => {
                 backgroundColor: selectedMember.cardBg,
                 border: '3px solid #111111',
                 borderRadius: '16px',
-                padding: '48px',
-                boxShadow: '16px 16px 0px #111111',
+                padding: '36px 24px',
+                boxShadow: '12px 12px 0px #111111',
                 position: 'relative',
                 maxHeight: '90vh',
                 overflowY: 'auto'
@@ -375,14 +386,14 @@ export const TheBrainsPage: React.FC = () => {
                 onClick={() => setSelectedMember(null)}
                 style={{
                   position: 'absolute',
-                  top: '24px',
-                  right: '24px',
+                  top: '16px',
+                  right: '16px',
                   backgroundColor: '#111111',
                   color: '#FFFFFF',
                   border: 'none',
                   borderRadius: '50%',
-                  width: '40px',
-                  height: '40px',
+                  width: '36px',
+                  height: '36px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -390,72 +401,69 @@ export const TheBrainsPage: React.FC = () => {
                 }}
                 aria-label="Close Profile Panel"
               >
-                <X size={20} />
+                <X size={18} />
               </button>
 
-              <div style={{ fontSize: '13px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#111111', marginBottom: '8px' }}>
+              <div style={{ fontSize: '12px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#111111', marginBottom: '8px' }}>
                 FOUNDING PROFILE / {selectedMember.index}
               </div>
 
-              <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '56px', color: '#111111', textTransform: 'uppercase', lineHeight: '0.95', margin: '0 0 10px 0' }}>
+              <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(36px, 6vw, 56px)', color: '#111111', textTransform: 'uppercase', lineHeight: '0.95', margin: '0 0 10px 0' }}>
                 {selectedMember.fullName}
               </h2>
 
-              <div style={{ fontSize: '18px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#111111', marginBottom: '24px' }}>
+              <div style={{ fontSize: '15px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#111111', marginBottom: '24px' }}>
                 {selectedMember.role}
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', marginBottom: '32px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px', marginBottom: '28px' }}>
                 <div>
-                  <h4 style={{ fontFamily: 'Anton, sans-serif', fontSize: '20px', color: '#111111', textTransform: 'uppercase', marginBottom: '8px' }}>
+                  <h4 style={{ fontFamily: 'Anton, sans-serif', fontSize: '18px', color: '#111111', textTransform: 'uppercase', marginBottom: '8px' }}>
                     ABOUT
                   </h4>
-                  <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '15px', color: '#222222', lineHeight: '1.6', margin: 0 }}>
+                  <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '14px', color: '#222222', lineHeight: '1.6', margin: 0 }}>
                     {selectedMember.shortIntro}
                   </p>
                 </div>
 
                 <div>
-                  <h4 style={{ fontFamily: 'Anton, sans-serif', fontSize: '20px', color: '#111111', textTransform: 'uppercase', marginBottom: '8px' }}>
+                  <h4 style={{ fontFamily: 'Anton, sans-serif', fontSize: '18px', color: '#111111', textTransform: 'uppercase', marginBottom: '8px' }}>
                     SPECIALIZATION
                   </h4>
-                  <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '14px', fontWeight: '700', color: '#111111', margin: 0 }}>
+                  <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '13px', fontWeight: '700', color: '#111111', margin: 0 }}>
                     {selectedMember.specialization}
                   </p>
                 </div>
               </div>
 
               {/* CONARK CONTRIBUTION SECTION */}
-              <div style={{ backgroundColor: 'rgba(255,255,255,0.75)', border: '1.5px solid #111111', borderRadius: '12px', padding: '24px', marginBottom: '32px' }}>
-                <h4 style={{ fontFamily: 'Anton, sans-serif', fontSize: '20px', color: '#111111', textTransform: 'uppercase', margin: '0 0 8px 0' }}>
+              <div style={{ backgroundColor: 'rgba(255,255,255,0.75)', border: '1.5px solid #111111', borderRadius: '12px', padding: '20px', marginBottom: '28px' }}>
+                <h4 style={{ fontFamily: 'Anton, sans-serif', fontSize: '18px', color: '#111111', textTransform: 'uppercase', margin: '0 0 8px 0' }}>
                   CONARK SYSTEM CONTRIBUTION
                 </h4>
-                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '15px', color: '#111111', lineHeight: '1.55', margin: 0, fontWeight: '500' }}>
+                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '14px', color: '#111111', lineHeight: '1.55', margin: 0, fontWeight: '500' }}>
                   "{selectedMember.contribution}"
                 </p>
               </div>
 
               {/* CONTACT & SOCIAL LINKS */}
-              <div style={{ borderTop: '2px dashed #111111', paddingTop: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+              <div style={{ borderTop: '2px dashed #111111', paddingTop: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
                 <div>
                   <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#555555' }}>DIRECT CONTACT</div>
-                  <a href={`mailto:${selectedMember.email}`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '14px', fontWeight: '800', color: '#111111', textDecoration: 'underline' }}>
+                  <a href={`mailto:${selectedMember.email}`} style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '13px', fontWeight: '800', color: '#111111', textDecoration: 'underline', wordBreak: 'break-all' }}>
                     {selectedMember.email}
                   </a>
                 </div>
 
-                <div style={{ display: 'flex', gap: '16px', fontSize: '12px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800' }}>
-                  <a href={selectedMember.linkedin} target="_blank" rel="noreferrer" style={{ color: '#111111', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px', backgroundColor: '#FFFFFF', border: '1.5px solid #111111', padding: '8px 14px', borderRadius: '6px' }}>
+                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800' }}>
+                  <a href={selectedMember.linkedin} target="_blank" rel="noreferrer" style={{ color: '#111111', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px', backgroundColor: '#FFFFFF', border: '1.5px solid #111111', padding: '6px 12px', borderRadius: '6px' }}>
                     <LinkedinIcon /> LINKEDIN →
                   </a>
-                  <a href={selectedMember.github} target="_blank" rel="noreferrer" style={{ color: '#111111', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px', backgroundColor: '#FFFFFF', border: '1.5px solid #111111', padding: '8px 14px', borderRadius: '6px' }}>
+                  <a href={selectedMember.github} target="_blank" rel="noreferrer" style={{ color: '#111111', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px', backgroundColor: '#FFFFFF', border: '1.5px solid #111111', padding: '6px 12px', borderRadius: '6px' }}>
                     <GithubIcon /> GITHUB →
                   </a>
-                  <a href={selectedMember.instagram} target="_blank" rel="noreferrer" style={{ color: '#111111', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px', backgroundColor: '#FFFFFF', border: '1.5px solid #111111', padding: '8px 14px', borderRadius: '6px' }}>
+                  <a href={selectedMember.instagram} target="_blank" rel="noreferrer" style={{ color: '#111111', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px', backgroundColor: '#FFFFFF', border: '1.5px solid #111111', padding: '6px 12px', borderRadius: '6px' }}>
                     <InstagramIcon /> INSTAGRAM →
-                  </a>
-                  <a href={`mailto:${selectedMember.email}`} style={{ color: '#111111', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px', backgroundColor: '#FFFFFF', border: '1.5px solid #111111', padding: '8px 14px', borderRadius: '6px' }}>
-                    <Mail size={14} /> MAIL →
                   </a>
                 </div>
               </div>
@@ -469,17 +477,17 @@ export const TheBrainsPage: React.FC = () => {
       <div style={{
         maxWidth: '1200px',
         margin: '0 auto 64px auto',
-        padding: '48px 40px',
+        padding: '36px 24px',
         backgroundColor: '#FFFFFF',
         border: '2.5px dashed #111111',
         borderRadius: '20px',
         boxShadow: '0 8px 20px rgba(0,0,0,0.05)'
       }}>
-        <div style={{ textAlign: 'center', marginBottom: '36px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#FF2AA1', marginBottom: '6px' }}>
             SYSTEM INTEGRATION
           </div>
-          <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '48px', color: '#111111', textTransform: 'uppercase', margin: 0 }}>
+          <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(28px, 4vw, 48px)', color: '#111111', textTransform: 'uppercase', margin: 0 }}>
             FOUR DISCIPLINES. ONE SYSTEM.
           </h2>
         </div>
@@ -489,75 +497,76 @@ export const TheBrainsPage: React.FC = () => {
           backgroundColor: '#EDECE7',
           border: '2.5px solid #111111',
           borderRadius: '16px',
-          padding: '36px',
+          padding: '24px 16px',
           fontFamily: 'JetBrains Mono, monospace',
           textAlign: 'center',
-          marginBottom: '36px'
+          marginBottom: '32px',
+          overflowX: 'auto'
         }}>
-          <div style={{ display: 'inline-block', backgroundColor: '#111111', color: '#FFFFFF', padding: '10px 24px', borderRadius: '8px', fontSize: '18px', fontWeight: '800' }}>
+          <div style={{ display: 'inline-block', backgroundColor: '#111111', color: '#FFFFFF', padding: '8px 20px', borderRadius: '8px', fontSize: '16px', fontWeight: '800' }}>
             CONARK SYSTEMS
           </div>
           
-          <div style={{ fontSize: '20px', color: '#111111', fontWeight: '800', margin: '12px 0' }}>│</div>
+          <div style={{ fontSize: '18px', color: '#111111', fontWeight: '800', margin: '10px 0' }}>│</div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', maxWidth: '800px', margin: '0 auto' }}>
-            <div style={{ backgroundColor: '#FFFFFF', border: '1.5px solid #111111', padding: '12px', borderRadius: '8px', fontWeight: '800' }}>
-              <Microscope size={18} style={{ marginBottom: '4px' }} />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', maxWidth: '800px', margin: '0 auto', minWidth: '320px' }}>
+            <div style={{ backgroundColor: '#FFFFFF', border: '1.5px solid #111111', padding: '10px', borderRadius: '8px', fontWeight: '800', fontSize: '12px' }}>
+              <Microscope size={16} style={{ marginBottom: '2px' }} />
               <div>RESEARCH</div>
             </div>
-            <div style={{ backgroundColor: '#E4FF5B', border: '1.5px solid #111111', padding: '12px', borderRadius: '8px', fontWeight: '800' }}>
-              <Cpu size={18} style={{ marginBottom: '4px' }} />
+            <div style={{ backgroundColor: '#E4FF5B', border: '1.5px solid #111111', padding: '10px', borderRadius: '8px', fontWeight: '800', fontSize: '12px' }}>
+              <Cpu size={16} style={{ marginBottom: '2px' }} />
               <div>AI / ML</div>
             </div>
-            <div style={{ backgroundColor: '#7CFFA6', border: '1.5px solid #111111', padding: '12px', borderRadius: '8px', fontWeight: '800' }}>
-              <Database size={18} style={{ marginBottom: '4px' }} />
+            <div style={{ backgroundColor: '#7CFFA6', border: '1.5px solid #111111', padding: '10px', borderRadius: '8px', fontWeight: '800', fontSize: '12px' }}>
+              <Database size={16} style={{ marginBottom: '2px' }} />
               <div>DATA</div>
             </div>
           </div>
 
-          <div style={{ fontSize: '20px', color: '#111111', fontWeight: '800', margin: '12px 0' }}>↓</div>
+          <div style={{ fontSize: '18px', color: '#111111', fontWeight: '800', margin: '10px 0' }}>↓</div>
 
-          <div style={{ display: 'inline-block', backgroundColor: '#4FC3F7', color: '#111111', border: '1.5px solid #111111', padding: '10px 24px', borderRadius: '8px', fontSize: '15px', fontWeight: '800' }}>
+          <div style={{ display: 'inline-block', backgroundColor: '#4FC3F7', color: '#111111', border: '1.5px solid #111111', padding: '8px 20px', borderRadius: '8px', fontSize: '14px', fontWeight: '800' }}>
             TECHNICAL SYSTEMS LAYER
           </div>
 
-          <div style={{ fontSize: '20px', color: '#111111', fontWeight: '800', margin: '12px 0' }}>↓</div>
+          <div style={{ fontSize: '18px', color: '#111111', fontWeight: '800', margin: '10px 0' }}>↓</div>
 
-          <div style={{ display: 'inline-block', backgroundColor: '#111111', color: '#E4FF5B', padding: '10px 24px', borderRadius: '8px', fontSize: '16px', fontWeight: '800' }}>
+          <div style={{ display: 'inline-block', backgroundColor: '#111111', color: '#E4FF5B', padding: '8px 20px', borderRadius: '8px', fontSize: '15px', fontWeight: '800' }}>
             CONARK INTELLIGENCE
           </div>
         </div>
 
         {/* Member Discipline Mapping */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
-          <div style={{ backgroundColor: '#FFFFFF', border: '1.5px solid #111111', borderRadius: '12px', padding: '20px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
+          <div style={{ backgroundColor: '#FFFFFF', border: '1.5px solid #111111', borderRadius: '12px', padding: '16px' }}>
             <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#666' }}>01</div>
-            <div style={{ fontFamily: 'Anton, sans-serif', fontSize: '22px', color: '#111111' }}>SIDDHESH</div>
-            <div style={{ fontSize: '12px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '700', color: '#555', marginTop: '4px' }}>
+            <div style={{ fontFamily: 'Anton, sans-serif', fontSize: '20px', color: '#111111' }}>SIDDHESH</div>
+            <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '700', color: '#555', marginTop: '4px' }}>
               Research + Technical Support
             </div>
           </div>
 
-          <div style={{ backgroundColor: '#4FC3F7', border: '1.5px solid #111111', borderRadius: '12px', padding: '20px' }}>
+          <div style={{ backgroundColor: '#4FC3F7', border: '1.5px solid #111111', borderRadius: '12px', padding: '16px' }}>
             <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#111' }}>02</div>
-            <div style={{ fontFamily: 'Anton, sans-serif', fontSize: '22px', color: '#111111' }}>VERNIT</div>
-            <div style={{ fontSize: '12px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '700', color: '#111', marginTop: '4px' }}>
+            <div style={{ fontFamily: 'Anton, sans-serif', fontSize: '20px', color: '#111111' }}>VERNIT</div>
+            <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '700', color: '#111', marginTop: '4px' }}>
               Research + Machine Learning
             </div>
           </div>
 
-          <div style={{ backgroundColor: '#E4FF5B', border: '1.5px solid #111111', borderRadius: '12px', padding: '20px' }}>
+          <div style={{ backgroundColor: '#E4FF5B', border: '1.5px solid #111111', borderRadius: '12px', padding: '16px' }}>
             <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#111' }}>03</div>
-            <div style={{ fontFamily: 'Anton, sans-serif', fontSize: '22px', color: '#111111' }}>SHUBHAM</div>
-            <div style={{ fontSize: '12px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '700', color: '#111', marginTop: '4px' }}>
+            <div style={{ fontFamily: 'Anton, sans-serif', fontSize: '20px', color: '#111111' }}>SHUBHAM</div>
+            <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '700', color: '#111', marginTop: '4px' }}>
               Artificial Intelligence + Technical Support
             </div>
           </div>
 
-          <div style={{ backgroundColor: '#7CFFA6', border: '1.5px solid #111111', borderRadius: '12px', padding: '20px' }}>
+          <div style={{ backgroundColor: '#7CFFA6', border: '1.5px solid #111111', borderRadius: '12px', padding: '16px' }}>
             <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#111' }}>04</div>
-            <div style={{ fontFamily: 'Anton, sans-serif', fontSize: '22px', color: '#111111' }}>RAM</div>
-            <div style={{ fontSize: '12px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '700', color: '#111', marginTop: '4px' }}>
+            <div style={{ fontFamily: 'Anton, sans-serif', fontSize: '20px', color: '#111111' }}>RAM</div>
+            <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '700', color: '#111', marginTop: '4px' }}>
               Data Analysis + Data Architecture
             </div>
           </div>
@@ -568,17 +577,17 @@ export const TheBrainsPage: React.FC = () => {
       <div style={{
         maxWidth: '1200px',
         margin: '0 auto 64px auto',
-        padding: '48px 40px',
+        padding: '36px 24px',
         backgroundColor: '#FFFFFF',
         border: '2.5px dashed #111111',
         borderRadius: '20px',
         boxShadow: '0 8px 20px rgba(0,0,0,0.05)'
       }}>
-        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '28px' }}>
           <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#FF2AA1', marginBottom: '6px' }}>
             END-TO-END PIPELINE
           </div>
-          <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '48px', color: '#111111', textTransform: 'uppercase', margin: 0 }}>
+          <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(28px, 4vw, 48px)', color: '#111111', textTransform: 'uppercase', margin: 0 }}>
             FROM DATA TO DECISION.
           </h2>
         </div>
@@ -589,27 +598,27 @@ export const TheBrainsPage: React.FC = () => {
           flexWrap: 'wrap',
           justifyContent: 'center',
           alignItems: 'center',
-          gap: '12px',
+          gap: '10px',
           fontFamily: 'JetBrains Mono, monospace',
-          fontSize: '12px',
+          fontSize: '11px',
           fontWeight: '800',
-          marginBottom: '36px'
+          marginBottom: '28px'
         }}>
-          <span style={{ backgroundColor: '#EDECE7', border: '1.5px solid #111111', padding: '8px 14px', borderRadius: '6px' }}>SITE DATA</span>
+          <span style={{ backgroundColor: '#EDECE7', border: '1.5px solid #111111', padding: '6px 12px', borderRadius: '6px' }}>SITE DATA</span>
           <span>→</span>
-          <span style={{ backgroundColor: '#7CFFA6', border: '1.5px solid #111111', padding: '8px 14px', borderRadius: '6px' }}>DATA ARCHITECTURE</span>
+          <span style={{ backgroundColor: '#7CFFA6', border: '1.5px solid #111111', padding: '6px 12px', borderRadius: '6px' }}>DATA ARCHITECTURE</span>
           <span>→</span>
-          <span style={{ backgroundColor: '#4FC3F7', border: '1.5px solid #111111', padding: '8px 14px', borderRadius: '6px' }}>MACHINE LEARNING</span>
+          <span style={{ backgroundColor: '#4FC3F7', border: '1.5px solid #111111', padding: '6px 12px', borderRadius: '6px' }}>MACHINE LEARNING</span>
           <span>→</span>
-          <span style={{ backgroundColor: '#E4FF5B', border: '1.5px solid #111111', padding: '8px 14px', borderRadius: '6px' }}>PREDICTIONS</span>
+          <span style={{ backgroundColor: '#E4FF5B', border: '1.5px solid #111111', padding: '6px 12px', borderRadius: '6px' }}>PREDICTIONS</span>
           <span>→</span>
-          <span style={{ backgroundColor: '#F5F3E3', border: '1.5px solid #111111', padding: '8px 14px', borderRadius: '6px' }}>OPTIMIZATION</span>
+          <span style={{ backgroundColor: '#F5F3E3', border: '1.5px solid #111111', padding: '6px 12px', borderRadius: '6px' }}>OPTIMIZATION</span>
           <span>→</span>
-          <span style={{ backgroundColor: '#FF2AA1', color: '#FFFFFF', padding: '8px 14px', borderRadius: '6px' }}>ALERTS</span>
+          <span style={{ backgroundColor: '#FF2AA1', color: '#FFFFFF', padding: '6px 12px', borderRadius: '6px' }}>ALERTS</span>
           <span>→</span>
-          <span style={{ backgroundColor: '#111111', color: '#FFFFFF', padding: '8px 14px', borderRadius: '6px' }}>GEMINI EXPLANATION</span>
+          <span style={{ backgroundColor: '#111111', color: '#FFFFFF', padding: '6px 12px', borderRadius: '6px' }}>GEMINI EXPLANATION</span>
           <span>→</span>
-          <span style={{ backgroundColor: '#111111', color: '#E4FF5B', padding: '8px 14px', borderRadius: '6px' }}>HUMAN DECISION</span>
+          <span style={{ backgroundColor: '#111111', color: '#E4FF5B', padding: '6px 12px', borderRadius: '6px' }}>HUMAN DECISION</span>
         </div>
 
         {/* Philosophy Principle */}
@@ -617,10 +626,10 @@ export const TheBrainsPage: React.FC = () => {
           backgroundColor: '#EDECE7',
           border: '2px solid #111111',
           borderRadius: '12px',
-          padding: '28px 36px',
+          padding: '24px 28px',
           textAlign: 'center'
         }}>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '18px', fontWeight: '700', color: '#111111', lineHeight: '1.6', margin: 0 }}>
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', fontWeight: '700', color: '#111111', lineHeight: '1.6', margin: 0 }}>
             "ConArk is designed around a simple principle: ML predicts. Optimization decides. Gemini explains. Humans remain responsible for the final decision."
           </p>
         </div>
@@ -631,39 +640,39 @@ export const TheBrainsPage: React.FC = () => {
         <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#111111', marginBottom: '16px', textAlign: 'center' }}>
           ENGINEERING PHILOSOPHY
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
-          <div style={{ backgroundColor: '#FFFFFF', border: '2.5px dashed #111111', borderRadius: '16px', padding: '36px', textAlign: 'center' }}>
-            <h3 style={{ fontFamily: 'Anton, sans-serif', fontSize: '44px', color: '#111111', textTransform: 'uppercase', margin: 0 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
+          <div style={{ backgroundColor: '#FFFFFF', border: '2.5px dashed #111111', borderRadius: '16px', padding: '28px 20px', textAlign: 'center' }}>
+            <h3 style={{ fontFamily: 'Anton, sans-serif', fontSize: '36px', color: '#111111', textTransform: 'uppercase', margin: 0 }}>
               RESEARCH
             </h3>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '14px', color: '#666', marginTop: '8px' }}>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '13px', color: '#666', marginTop: '6px' }}>
               Rigorous technical investigation grounding every predictive model.
             </p>
           </div>
 
-          <div style={{ backgroundColor: '#4FC3F7', border: '2.5px dashed #111111', borderRadius: '16px', padding: '36px', textAlign: 'center' }}>
-            <h3 style={{ fontFamily: 'Anton, sans-serif', fontSize: '44px', color: '#111111', textTransform: 'uppercase', margin: 0 }}>
+          <div style={{ backgroundColor: '#4FC3F7', border: '2.5px dashed #111111', borderRadius: '16px', padding: '28px 20px', textAlign: 'center' }}>
+            <h3 style={{ fontFamily: 'Anton, sans-serif', fontSize: '36px', color: '#111111', textTransform: 'uppercase', margin: 0 }}>
               PRECISION
             </h3>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '14px', color: '#111', marginTop: '8px' }}>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '13px', color: '#111', marginTop: '6px' }}>
               Exact mathematical SLSQP space solver & ML confidence metrics.
             </p>
           </div>
 
-          <div style={{ backgroundColor: '#E4FF5B', border: '2.5px dashed #111111', borderRadius: '16px', padding: '36px', textAlign: 'center' }}>
-            <h3 style={{ fontFamily: 'Anton, sans-serif', fontSize: '44px', color: '#111111', textTransform: 'uppercase', margin: 0 }}>
+          <div style={{ backgroundColor: '#E4FF5B', border: '2.5px dashed #111111', borderRadius: '16px', padding: '28px 20px', textAlign: 'center' }}>
+            <h3 style={{ fontFamily: 'Anton, sans-serif', fontSize: '36px', color: '#111111', textTransform: 'uppercase', margin: 0 }}>
               COLLABORATION
             </h3>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '14px', color: '#111', marginTop: '8px' }}>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '13px', color: '#111', marginTop: '6px' }}>
               Multidisciplinary alignment bridging AI, data, research, and support.
             </p>
           </div>
 
-          <div style={{ backgroundColor: '#7CFFA6', border: '2.5px dashed #111111', borderRadius: '16px', padding: '36px', textAlign: 'center' }}>
-            <h3 style={{ fontFamily: 'Anton, sans-serif', fontSize: '44px', color: '#111111', textTransform: 'uppercase', margin: 0 }}>
+          <div style={{ backgroundColor: '#7CFFA6', border: '2.5px dashed #111111', borderRadius: '16px', padding: '28px 20px', textAlign: 'center' }}>
+            <h3 style={{ fontFamily: 'Anton, sans-serif', fontSize: '36px', color: '#111111', textTransform: 'uppercase', margin: 0 }}>
               BUILD
             </h3>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '14px', color: '#111', marginTop: '8px' }}>
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '13px', color: '#111', marginTop: '6px' }}>
               Continuous shipping of functional construction intelligence software.
             </p>
           </div>
@@ -677,61 +686,61 @@ export const TheBrainsPage: React.FC = () => {
         backgroundColor: '#111111',
         color: '#FFFFFF',
         borderRadius: '24px',
-        padding: '56px 48px',
+        padding: '44px 28px',
         textAlign: 'center',
         boxShadow: '0 12px 30px rgba(0,0,0,0.2)'
       }}>
-        <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(36px, 6vw, 64px)', color: '#FFFFFF', textTransform: 'uppercase', margin: 0 }}>
+        <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(28px, 5vw, 64px)', color: '#FFFFFF', textTransform: 'uppercase', margin: 0 }}>
           WANT TO BUILD WITH CONARK?
         </h2>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '18px', color: '#CCCCCC', marginTop: '12px', marginBottom: '32px' }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', color: '#CCCCCC', marginTop: '12px', marginBottom: '28px' }}>
           "Research, engineering, data, and AI come together here."
         </p>
 
-        <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '20px' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '16px' }}>
           <Link to="/" style={{
             fontFamily: 'Anton, sans-serif',
-            fontSize: '20px',
+            fontSize: '18px',
             backgroundColor: '#E4FF5B',
             color: '#111111',
-            padding: '14px 28px',
+            padding: '12px 24px',
             borderRadius: '8px',
             textDecoration: 'none',
             display: 'inline-flex',
             alignItems: 'center',
             gap: '8px'
           }}>
-            EXPLORE CONARK <ArrowRight size={20} />
+            EXPLORE CONARK <ArrowRight size={18} />
           </Link>
 
           <Link to="/predictions" style={{
             fontFamily: 'Anton, sans-serif',
-            fontSize: '20px',
+            fontSize: '18px',
             backgroundColor: '#4FC3F7',
             color: '#111111',
-            padding: '14px 28px',
+            padding: '12px 24px',
             borderRadius: '8px',
             textDecoration: 'none',
             display: 'inline-flex',
             alignItems: 'center',
             gap: '8px'
           }}>
-            VIEW THE SYSTEM <ArrowRight size={20} />
+            VIEW THE SYSTEM <ArrowRight size={18} />
           </Link>
 
           <a href="mailto:siddhesh.birewar25@pccoepune.org" style={{
             fontFamily: 'Anton, sans-serif',
-            fontSize: '20px',
+            fontSize: '18px',
             backgroundColor: '#FFFFFF',
             color: '#111111',
-            padding: '14px 28px',
+            padding: '12px 24px',
             borderRadius: '8px',
             textDecoration: 'none',
             display: 'inline-flex',
             alignItems: 'center',
             gap: '8px'
           }}>
-            CONTACT THE TEAM <Mail size={20} />
+            CONTACT THE TEAM <Mail size={18} />
           </a>
         </div>
       </div>
@@ -743,13 +752,13 @@ export const TheBrainsPage: React.FC = () => {
         borderTop: '2.5px dashed #111111',
         marginBottom: '20px'
       }}>
-        <div style={{ fontFamily: 'Anton, sans-serif', fontSize: '32px', color: '#111111', letterSpacing: '0.05em', marginBottom: '8px' }}>
+        <div style={{ fontFamily: 'Anton, sans-serif', fontSize: '28px', color: '#111111', letterSpacing: '0.05em', marginBottom: '8px' }}>
           CONARK SYSTEMS
         </div>
-        <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '13px', fontWeight: '800', color: '#555555', letterSpacing: '0.08em', marginBottom: '8px' }}>
+        <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', fontWeight: '800', color: '#555555', letterSpacing: '0.08em', marginBottom: '8px' }}>
           FOUR MINDS. ONE SYSTEM.
         </div>
-        <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '14px', fontWeight: '800', color: '#111111', letterSpacing: '0.12em' }}>
+        <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '13px', fontWeight: '800', color: '#111111', letterSpacing: '0.12em' }}>
           PREDICT. DECIDE. EXPLAIN. ACT.
         </div>
       </div>

@@ -21,6 +21,11 @@
   padding: 0;
 }
 
+html, body, #root {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
 body {
   background-color: var(--bg-base);
   color: var(--ink-black);
@@ -28,7 +33,6 @@ body {
   min-height: 100vh;
   line-height: 1.4;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
 }
 
 a {
@@ -92,6 +96,38 @@ input, select, textarea {
 /* Dashed active border indicator */
 .active-dashed-border {
   border: 2px dashed #111111 !important;
+}
+
+/* Responsive Media Query Classes */
+@media (max-width: 1024px) {
+  .command-center-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .side-svg-column {
+    display: none !important;
+  }
+  .card-responsive-padding {
+    padding: 28px 24px !important;
+  }
+  .founder-grid-responsive {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-header-padding {
+    padding: 12px 16px !important;
+  }
+  .nav-tagline-hide {
+    display: none !important;
+  }
+  .responsive-title-nowrap {
+    white-space: normal !important;
+    word-break: break-word !important;
+  }
+  .card-rotate-neg1, .card-rotate-pos1, .card-rotate-neg07, .card-rotate-pos08 {
+    transform: rotate(0deg) !important;
+  }
 }
 
 /* Scrollbar styling */

@@ -80,7 +80,6 @@ export const CommandCenter: React.FC = () => {
 
   const optRec = data?.ml_results.optimization.recommendation ?? 'REALLOCATE WORKERS & STAGING';
   const spaceUtil = spaceData?.metrics?.space_utilization_percentage ?? 91.7;
-  const spaceEff = spaceData?.metrics?.space_efficiency_score ?? spaceData?.metrics?.layout_efficiency_score ?? 88.4;
 
   const geminiText = data?.gemini_report.report?.executive_summary || "Review worker allocation and material staging area before the next construction cycle.";
 
@@ -96,34 +95,37 @@ export const CommandCenter: React.FC = () => {
   };
 
   return (
-    <div style={{ width: '100%', maxWidth: '100%', margin: '0 auto', padding: '24px 20px 64px 20px', boxSizing: 'border-box' }}>
+    <div style={{ width: '100%', maxWidth: '100%', margin: '0 auto', padding: '24px 16px 64px 16px', boxSizing: 'border-box' }}>
       
       {/* Editorial Landing Hero Header */}
       <div style={{
         position: 'relative',
         textAlign: 'center',
-        padding: '36px 20px 40px 20px',
+        padding: '36px 16px 40px 16px',
         marginBottom: '36px',
         borderBottom: '2.5px dashed #111111'
       }}>
         {/* FULL WORDMARK TITLE IN ANTON FONT: CONARK SYSTEMS */}
-        <h1 style={{
-          fontFamily: 'Anton, sans-serif',
-          fontSize: 'clamp(52px, 11vw, 175px)',
-          lineHeight: '0.85',
-          color: '#111111',
-          letterSpacing: '-0.02em',
-          textTransform: 'uppercase',
-          margin: '0 auto',
-          whiteSpace: 'nowrap'
-        }}>
+        <h1
+          className="responsive-title-nowrap"
+          style={{
+            fontFamily: 'Anton, sans-serif',
+            fontSize: 'clamp(44px, 11vw, 175px)',
+            lineHeight: '0.85',
+            color: '#111111',
+            letterSpacing: '-0.02em',
+            textTransform: 'uppercase',
+            margin: '0 auto',
+            whiteSpace: 'nowrap'
+          }}
+        >
           CONARK SYSTEMS
         </h1>
 
         {/* Tagline */}
         <p style={{
           fontFamily: 'Inter, sans-serif',
-          fontSize: '22px',
+          fontSize: 'clamp(16px, 3vw, 22px)',
           fontWeight: '700',
           color: '#111111',
           marginTop: '16px',
@@ -137,7 +139,7 @@ export const CommandCenter: React.FC = () => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          gap: '24px',
+          gap: '16px',
           marginTop: '20px',
           fontSize: '12px',
           fontFamily: 'JetBrains Mono, monospace',
@@ -167,26 +169,26 @@ export const CommandCenter: React.FC = () => {
         fontSize: '11px',
         color: '#666666',
         marginBottom: '28px',
-        padding: '0 8px'
+        padding: '0 8px',
+        overflowX: 'auto'
       }}>
         <span>0m</span>
-        <span style={{ flex: 1, borderTop: '1px dashed #999', margin: '0 12px' }} />
+        <span style={{ flex: 1, borderTop: '1px dashed #999', margin: '0 12px', minWidth: '20px' }} />
         <span>10m</span>
-        <span style={{ flex: 1, borderTop: '1px dashed #999', margin: '0 12px' }} />
+        <span style={{ flex: 1, borderTop: '1px dashed #999', margin: '0 12px', minWidth: '20px' }} />
         <span>20m</span>
-        <span style={{ flex: 1, borderTop: '1px dashed #999', margin: '0 12px' }} />
+        <span style={{ flex: 1, borderTop: '1px dashed #999', margin: '0 12px', minWidth: '20px' }} />
         <span>30m</span>
-        <span style={{ flex: 1, borderTop: '1px dashed #999', margin: '0 12px' }} />
+        <span style={{ flex: 1, borderTop: '1px dashed #999', margin: '0 12px', minWidth: '20px' }} />
         <span>40m SITE BOUNDARY</span>
       </div>
 
-      {/* 3-COLUMN MAIN LAYOUT: EXTREME LEFT SVGS (160px) | EXPANDED CARDS (1fr) | EXTREME RIGHT SVGS (160px) */}
-      <div style={{ display: 'grid', gridTemplateColumns: '160px 1fr 160px', gap: '16px', alignItems: 'stretch', marginBottom: '44px' }}>
+      {/* 3-COLUMN MAIN LAYOUT (RESPONSIVE: 1fr on mobile/tablets) */}
+      <div className="command-center-grid" style={{ display: 'grid', gridTemplateColumns: '160px 1fr 160px', gap: '16px', alignItems: 'stretch', marginBottom: '44px' }}>
         
-        {/* EXTREME LEFT MARGIN COLUMN: 5 LARGE SVGS MAPPED 1-TO-1 BESIDE EACH CARD */}
-        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', opacity: 0.9, height: '100%' }}>
+        {/* EXTREME LEFT MARGIN COLUMN: 5 LARGE SVGS */}
+        <div className="side-svg-column" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', opacity: 0.9, height: '100%' }}>
           
-          {/* SVG 1: Large Tower Crane (Beside Card 01 Performance Model) */}
           <div style={{ height: '175px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="140" height="135" viewBox="0 0 100 130" fill="none" stroke="#111111" strokeWidth="2">
               <line x1="25" y1="130" x2="25" y2="10" />
@@ -203,7 +205,6 @@ export const CommandCenter: React.FC = () => {
             <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '2px' }}>TOWER CRANE 01</span>
           </div>
 
-          {/* SVG 2: Large Heavy Excavator (Beside Card 02 Risk Model) */}
           <div style={{ height: '175px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="140" height="120" viewBox="0 0 120 100" fill="none" stroke="#111111" strokeWidth="2">
               <rect x="10" y="70" width="70" height="20" rx="10" fill="#EDECE7" />
@@ -218,7 +219,6 @@ export const CommandCenter: React.FC = () => {
             <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '2px' }}>EXCAVATOR UNIT</span>
           </div>
 
-          {/* SVG 3: Large Site Safety Rig (Beside Card 03 Cost Forecast Model) */}
           <div style={{ height: '175px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="130" height="110" viewBox="0 0 100 90" fill="none" stroke="#111111" strokeWidth="2">
               <path d="M20 50 C20 25, 80 25, 80 50 Z" fill="#E4FF5B" stroke="#111111" />
@@ -228,7 +228,6 @@ export const CommandCenter: React.FC = () => {
             <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '2px' }}>SITE SAFETY RIG</span>
           </div>
 
-          {/* SVG 4: Large Scaffolding Matrix (Beside Card 04 Time Forecast Model) */}
           <div style={{ height: '175px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="130" height="135" viewBox="0 0 100 130" fill="none" stroke="#111111" strokeWidth="1.8">
               <rect x="15" y="10" width="70" height="110" strokeDasharray="3 3" />
@@ -242,7 +241,6 @@ export const CommandCenter: React.FC = () => {
             <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '2px' }}>SCAFFOLD MATRIX</span>
           </div>
 
-          {/* SVG 5: Large Concrete Mixer Truck (Beside Card 05 Space Optimization Model) */}
           <div style={{ height: '175px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="140" height="120" viewBox="0 0 120 100" fill="none" stroke="#111111" strokeWidth="2">
               <ellipse cx="45" cy="45" rx="30" ry="20" transform="rotate(-20 45 45)" fill="#E4FF5B" stroke="#111111" />
@@ -257,76 +255,74 @@ export const CommandCenter: React.FC = () => {
 
         </div>
 
-        {/* CENTER COLUMN: EXPANDED UNIFORM 5-MODEL STACKED CARD DECK */}
+        {/* CENTER COLUMN: EXPANDED 5-MODEL CARD DECK */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0px', width: '100%' }}>
           
-          {/* MODEL 01: PERFORMANCE MODEL (WHITE #FFFFFF) */}
+          {/* MODEL 01: PERFORMANCE MODEL */}
           <div
             onClick={() => navigate('/model/performance')}
-            className="card-rotate-neg1 card-hover-lift"
+            className="card-rotate-neg1 card-hover-lift card-responsive-padding"
             style={{
               backgroundColor: '#FFFFFF',
               border: '2.5px dashed #111111',
               borderRadius: '20px',
-              padding: '44px 64px',
+              padding: '44px 48px',
               boxShadow: '0 12px 24px rgba(0, 0, 0, 0.08)',
               position: 'relative',
               zIndex: 5,
               cursor: 'pointer'
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px' }}>
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
                   <span style={{ fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', color: '#666666', fontWeight: 'bold' }}>01</span>
                   <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', backgroundColor: '#111111', color: '#FFFFFF', padding: '3px 10px', borderRadius: '4px' }}>
                     CLASSIFICATION MODEL
                   </span>
                   <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', color: '#888' }}>[CLICK FOR DEDICATED PAGE →]</span>
                 </div>
-                <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '48px', color: '#111111', textTransform: 'uppercase', lineHeight: '1.05', marginTop: '6px' }}>
+                <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(32px, 4vw, 48px)', color: '#111111', textTransform: 'uppercase', lineHeight: '1.05', marginTop: '6px' }}>
                   PERFORMANCE MODEL
                 </h2>
-                <p style={{ fontSize: '15px', color: '#555555', fontFamily: 'Inter, sans-serif', marginTop: '2px' }}>
+                <p style={{ fontSize: '14px', color: '#555555', fontFamily: 'Inter, sans-serif', marginTop: '2px' }}>
                   HistGradientBoosting Classifier · v1.0
                 </p>
 
-                {/* Explicit Model Telemetry Inputs */}
-                <div style={{ marginTop: '24px', display: 'flex', flexWrap: 'wrap', gap: '12px', fontSize: '13px', fontFamily: 'JetBrains Mono, monospace' }}>
-                  <span style={{ backgroundColor: '#EDECE7', border: '1.5px solid #111111', padding: '8px 14px', borderRadius: '6px' }}>
+                <div style={{ marginTop: '20px', display: 'flex', flexWrap: 'wrap', gap: '10px', fontSize: '12px', fontFamily: 'JetBrains Mono, monospace' }}>
+                  <span style={{ backgroundColor: '#EDECE7', border: '1.5px solid #111111', padding: '6px 12px', borderRadius: '6px' }}>
                     INPUT: Task Progress (42%)
                   </span>
-                  <span style={{ backgroundColor: '#EDECE7', border: '1.5px solid #111111', padding: '8px 14px', borderRadius: '6px' }}>
+                  <span style={{ backgroundColor: '#EDECE7', border: '1.5px solid #111111', padding: '6px 12px', borderRadius: '6px' }}>
                     INPUT: Workers ({defaultInput.worker_count})
                   </span>
-                  <span style={{ backgroundColor: '#EDECE7', border: '1.5px solid #111111', padding: '8px 14px', borderRadius: '6px' }}>
+                  <span style={{ backgroundColor: '#EDECE7', border: '1.5px solid #111111', padding: '6px 12px', borderRadius: '6px' }}>
                     INPUT: Equipment ({defaultInput.equipment_utilization_rate}%)
                   </span>
                 </div>
               </div>
 
-              {/* Model Output Prediction */}
               <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: '12px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#666666' }}>MODEL OUTPUT</div>
-                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '72px', fontWeight: '800', color: '#111111', lineHeight: '0.9', marginTop: '6px' }}>
+                <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#666666' }}>MODEL OUTPUT</div>
+                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 'clamp(48px, 6vw, 72px)', fontWeight: '800', color: '#111111', lineHeight: '0.9', marginTop: '6px' }}>
                   {perfPred}
                 </div>
-                <div style={{ fontSize: '16px', fontWeight: '800', color: '#15803d', fontFamily: 'JetBrains Mono, monospace', marginTop: '8px' }}>
+                <div style={{ fontSize: '14px', fontWeight: '800', color: '#15803d', fontFamily: 'JetBrains Mono, monospace', marginTop: '8px' }}>
                   CONFIDENCE: {perfConf.toFixed(1)}% · HEALTH: {healthScore}/100
                 </div>
               </div>
             </div>
           </div>
 
-          {/* MODEL 02: RISK MODEL (BLUE #4FC3F7) */}
+          {/* MODEL 02: RISK MODEL */}
           <div
             onClick={() => navigate('/model/risk')}
-            className="card-rotate-pos1 card-hover-lift"
+            className="card-rotate-pos1 card-hover-lift card-responsive-padding"
             style={{
               backgroundColor: '#4FC3F7',
               border: '2.5px dashed #111111',
               borderRadius: '20px',
-              padding: '44px 64px',
+              padding: '44px 48px',
               boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)',
               position: 'relative',
               marginTop: '-20px',
@@ -334,63 +330,53 @@ export const CommandCenter: React.FC = () => {
               cursor: 'pointer'
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px' }}>
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
                   <span style={{ fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', color: '#111111', fontWeight: 'bold' }}>02</span>
                   <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', backgroundColor: '#111111', color: '#FFFFFF', padding: '3px 10px', borderRadius: '4px' }}>
                     REGRESSION MODEL
                   </span>
                   <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', color: '#111' }}>[CLICK FOR DEDICATED PAGE →]</span>
                 </div>
-                <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '48px', color: '#111111', textTransform: 'uppercase', lineHeight: '1.05', marginTop: '6px' }}>
+                <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(32px, 4vw, 48px)', color: '#111111', textTransform: 'uppercase', lineHeight: '1.05', marginTop: '6px' }}>
                   OPERATIONAL RISK MODEL
                 </h2>
-                <p style={{ fontSize: '15px', color: '#111111', fontFamily: 'Inter, sans-serif', marginTop: '2px' }}>
+                <p style={{ fontSize: '14px', color: '#111111', fontFamily: 'Inter, sans-serif', marginTop: '2px' }}>
                   LinearRegression Model · v1.0
                 </p>
 
-                {/* Explicit Model Telemetry Inputs */}
-                <div style={{ marginTop: '24px', display: 'flex', flexWrap: 'wrap', gap: '12px', fontSize: '13px', fontFamily: 'JetBrains Mono, monospace' }}>
-                  <span style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1.5px solid #111111', padding: '8px 14px', borderRadius: '6px' }}>
+                <div style={{ marginTop: '20px', display: 'flex', flexWrap: 'wrap', gap: '10px', fontSize: '12px', fontFamily: 'JetBrains Mono, monospace' }}>
+                  <span style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1.5px solid #111111', padding: '6px 12px', borderRadius: '6px' }}>
                     INPUT: Safety Incidents ({defaultInput.safety_incidents})
                   </span>
-                  <span style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1.5px solid #111111', padding: '8px 14px', borderRadius: '6px' }}>
+                  <span style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1.5px solid #111111', padding: '6px 12px', borderRadius: '6px' }}>
                     INPUT: Vibration ({defaultInput.vibration_level} mm/s)
-                  </span>
-                  <span style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1.5px solid #111111', padding: '8px 14px', borderRadius: '6px' }}>
-                    INPUT: Temp ({defaultInput.temperature}°C)
                   </span>
                 </div>
               </div>
 
-              {/* Model Output Prediction */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#111111" strokeWidth="1.6">
-                  <path d="M4 21h16M7 21V7l10-4M17 3v18M7 11h10M7 16h10" />
-                </svg>
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: '12px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#111111' }}>MODEL OUTPUT</div>
-                  <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '72px', fontWeight: '800', color: '#111111', lineHeight: '0.9', marginTop: '6px' }}>
-                    {riskScore.toFixed(0)}%
-                  </div>
-                  <div style={{ fontSize: '16px', fontWeight: '800', color: '#111111', fontFamily: 'JetBrains Mono, monospace', marginTop: '8px' }}>
-                    RISK LEVEL: {riskLevel}
-                  </div>
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#111111' }}>MODEL OUTPUT</div>
+                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 'clamp(48px, 6vw, 72px)', fontWeight: '800', color: '#111111', lineHeight: '0.9', marginTop: '6px' }}>
+                  {riskScore.toFixed(0)}%
+                </div>
+                <div style={{ fontSize: '14px', fontWeight: '800', color: '#111111', fontFamily: 'JetBrains Mono, monospace', marginTop: '8px' }}>
+                  RISK LEVEL: {riskLevel}
                 </div>
               </div>
             </div>
           </div>
 
-          {/* MODEL 03: COST FORECAST MODEL (CHARTREUSE #E4FF5B) */}
+          {/* MODEL 03: COST FORECAST MODEL */}
           <div
             onClick={() => navigate('/model/cost')}
-            className="card-rotate-neg07 card-hover-lift"
+            className="card-rotate-neg07 card-hover-lift card-responsive-padding"
             style={{
               backgroundColor: '#E4FF5B',
               border: '2.5px dashed #111111',
               borderRadius: '20px',
-              padding: '44px 64px',
+              padding: '44px 48px',
               boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)',
               position: 'relative',
               marginTop: '-20px',
@@ -398,55 +384,53 @@ export const CommandCenter: React.FC = () => {
               cursor: 'pointer'
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px' }}>
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
                   <span style={{ fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', color: '#111111', fontWeight: 'bold' }}>03</span>
                   <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', backgroundColor: '#111111', color: '#FFFFFF', padding: '3px 10px', borderRadius: '4px' }}>
                     XGBOOST REGRESSOR
                   </span>
                   <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', color: '#111' }}>[CLICK FOR DEDICATED PAGE →]</span>
                 </div>
-                <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '48px', color: '#111111', textTransform: 'uppercase', lineHeight: '1.05', marginTop: '6px' }}>
+                <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(32px, 4vw, 48px)', color: '#111111', textTransform: 'uppercase', lineHeight: '1.05', marginTop: '6px' }}>
                   COST FORECAST MODEL
                 </h2>
-                <p style={{ fontSize: '15px', color: '#111111', fontFamily: 'Inter, sans-serif', marginTop: '2px' }}>
+                <p style={{ fontSize: '14px', color: '#111111', fontFamily: 'Inter, sans-serif', marginTop: '2px' }}>
                   XGBRegressor Model · v1.0
                 </p>
 
-                {/* Explicit Model Telemetry Inputs */}
-                <div style={{ marginTop: '24px', display: 'flex', flexWrap: 'wrap', gap: '12px', fontSize: '13px', fontFamily: 'JetBrains Mono, monospace' }}>
-                  <span style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1.5px solid #111111', padding: '8px 14px', borderRadius: '6px' }}>
+                <div style={{ marginTop: '20px', display: 'flex', flexWrap: 'wrap', gap: '10px', fontSize: '12px', fontFamily: 'JetBrains Mono, monospace' }}>
+                  <span style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1.5px solid #111111', padding: '6px 12px', borderRadius: '6px' }}>
                     INPUT: Material Usage ({defaultInput.material_usage} kg)
                   </span>
-                  <span style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1.5px solid #111111', padding: '8px 14px', borderRadius: '6px' }}>
+                  <span style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1.5px solid #111111', padding: '6px 12px', borderRadius: '6px' }}>
                     INPUT: Energy ({defaultInput.energy_consumption} kWh)
                   </span>
                 </div>
               </div>
 
-              {/* Model Output Prediction */}
               <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: '12px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#111111' }}>MODEL OUTPUT</div>
-                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '64px', fontWeight: '800', color: '#111111', lineHeight: '0.9', marginTop: '6px' }}>
+                <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#111111' }}>MODEL OUTPUT</div>
+                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 'clamp(42px, 5.5vw, 64px)', fontWeight: '800', color: '#111111', lineHeight: '0.9', marginTop: '6px' }}>
                   {formatCostDisplay(costDev)}
                 </div>
-                <div style={{ fontSize: '16px', fontWeight: '800', color: '#111111', fontFamily: 'JetBrains Mono, monospace', marginTop: '8px' }}>
+                <div style={{ fontSize: '14px', fontWeight: '800', color: '#111111', fontFamily: 'JetBrains Mono, monospace', marginTop: '8px' }}>
                   STATUS: {costStatus}
                 </div>
               </div>
             </div>
           </div>
 
-          {/* MODEL 04: TIME FORECAST MODEL (MINT #7CFFA6) */}
+          {/* MODEL 04: TIME FORECAST MODEL */}
           <div
             onClick={() => navigate('/model/time')}
-            className="card-rotate-pos08 card-hover-lift"
+            className="card-rotate-pos08 card-hover-lift card-responsive-padding"
             style={{
               backgroundColor: '#7CFFA6',
               border: '2.5px dashed #111111',
               borderRadius: '20px',
-              padding: '44px 64px',
+              padding: '44px 48px',
               boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)',
               position: 'relative',
               marginTop: '-20px',
@@ -454,55 +438,53 @@ export const CommandCenter: React.FC = () => {
               cursor: 'pointer'
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px' }}>
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
                   <span style={{ fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', color: '#111111', fontWeight: 'bold' }}>04</span>
                   <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', backgroundColor: '#111111', color: '#FFFFFF', padding: '3px 10px', borderRadius: '4px' }}>
                     TIME SERIES REGRESSOR
                   </span>
                   <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', color: '#111' }}>[CLICK FOR DEDICATED PAGE →]</span>
                 </div>
-                <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '48px', color: '#111111', textTransform: 'uppercase', lineHeight: '1.05', marginTop: '6px' }}>
+                <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(32px, 4vw, 48px)', color: '#111111', textTransform: 'uppercase', lineHeight: '1.05', marginTop: '6px' }}>
                   TIME FORECAST MODEL
                 </h2>
-                <p style={{ fontSize: '15px', color: '#111111', fontFamily: 'Inter, sans-serif', marginTop: '2px' }}>
+                <p style={{ fontSize: '14px', color: '#111111', fontFamily: 'Inter, sans-serif', marginTop: '2px' }}>
                   HistGradientBoosting Regressor · v1.0
                 </p>
 
-                {/* Explicit Model Telemetry Inputs */}
-                <div style={{ marginTop: '24px', display: 'flex', flexWrap: 'wrap', gap: '12px', fontSize: '13px', fontFamily: 'JetBrains Mono, monospace' }}>
-                  <span style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1.5px solid #111111', padding: '8px 14px', borderRadius: '6px' }}>
+                <div style={{ marginTop: '20px', display: 'flex', flexWrap: 'wrap', gap: '10px', fontSize: '12px', fontFamily: 'JetBrains Mono, monospace' }}>
+                  <span style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1.5px solid #111111', padding: '6px 12px', borderRadius: '6px' }}>
                     INPUT: Task Velocity ({defaultInput.task_progress})
                   </span>
-                  <span style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1.5px solid #111111', padding: '8px 14px', borderRadius: '6px' }}>
+                  <span style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1.5px solid #111111', padding: '6px 12px', borderRadius: '6px' }}>
                     INPUT: Machinery ({defaultInput.machinery_status === 1 ? 'ACTIVE' : 'IDLE'})
                   </span>
                 </div>
               </div>
 
-              {/* Model Output Prediction */}
               <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: '12px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#111111' }}>MODEL OUTPUT</div>
-                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '64px', fontWeight: '800', color: '#111111', lineHeight: '0.9', marginTop: '6px' }}>
+                <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#111111' }}>MODEL OUTPUT</div>
+                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 'clamp(42px, 5.5vw, 64px)', fontWeight: '800', color: '#111111', lineHeight: '0.9', marginTop: '6px' }}>
                   {formatTimeDisplay(timeDev)}
                 </div>
-                <div style={{ fontSize: '16px', fontWeight: '800', color: '#111111', fontFamily: 'JetBrains Mono, monospace', marginTop: '8px' }}>
+                <div style={{ fontSize: '14px', fontWeight: '800', color: '#111111', fontFamily: 'JetBrains Mono, monospace', marginTop: '8px' }}>
                   SCHEDULE: {timeStatus}
                 </div>
               </div>
             </div>
           </div>
 
-          {/* MODEL 05: COMBINED SPACE OPTIMIZATION & RECOMMENDATION MODEL (CREAM #F5F3E3) — UNIFORM SLEEK CARD */}
+          {/* MODEL 05: SPACE OPTIMIZATION MODEL */}
           <div
             onClick={() => navigate('/model/optimization')}
-            className="card-rotate-neg07 card-hover-lift"
+            className="card-rotate-neg07 card-hover-lift card-responsive-padding"
             style={{
               backgroundColor: '#F5F3E3',
               border: '2.5px dashed #111111',
               borderRadius: '20px',
-              padding: '44px 64px',
+              padding: '44px 48px',
               boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)',
               position: 'relative',
               marginTop: '-20px',
@@ -510,57 +492,48 @@ export const CommandCenter: React.FC = () => {
               cursor: 'pointer'
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px' }}>
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
                   <span style={{ fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', color: '#111111', fontWeight: 'bold' }}>05</span>
                   <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', backgroundColor: '#111111', color: '#FFFFFF', padding: '3px 10px', borderRadius: '4px' }}>
                     SCIPY SLSQP + CLASSIFIER
                   </span>
-                  <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', color: '#111' }}>[CLICK FOR FULL 2D CANVAS & DEDICATED PAGE →]</span>
+                  <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', color: '#111' }}>[CLICK FOR FULL 2D CANVAS & PAGE →]</span>
                 </div>
-                <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '44px', color: '#111111', textTransform: 'uppercase', lineHeight: '1.05', marginTop: '6px' }}>
+                <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(28px, 3.5vw, 44px)', color: '#111111', textTransform: 'uppercase', lineHeight: '1.05', marginTop: '6px' }}>
                   SPACE OPTIMIZATION & RECOMMENDATION MODEL
                 </h2>
-                <p style={{ fontSize: '15px', color: '#111111', fontFamily: 'Inter, sans-serif', marginTop: '2px' }}>
+                <p style={{ fontSize: '14px', color: '#111111', fontFamily: 'Inter, sans-serif', marginTop: '2px' }}>
                   SciPy SLSQP Constrained Solver + HistGradientBoosting Classifier · v1.0
                 </p>
 
-                {/* Explicit Model Telemetry Inputs */}
-                <div style={{ marginTop: '24px', display: 'flex', flexWrap: 'wrap', gap: '12px', fontSize: '13px', fontFamily: 'JetBrains Mono, monospace' }}>
-                  <span style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1.5px solid #111111', padding: '8px 14px', borderRadius: '6px' }}>
+                <div style={{ marginTop: '20px', display: 'flex', flexWrap: 'wrap', gap: '10px', fontSize: '12px', fontFamily: 'JetBrains Mono, monospace' }}>
+                  <span style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1.5px solid #111111', padding: '6px 12px', borderRadius: '6px' }}>
                     INPUT: Site Area (1200 m²)
                   </span>
-                  <span style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1.5px solid #111111', padding: '8px 14px', borderRadius: '6px' }}>
+                  <span style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1.5px solid #111111', padding: '6px 12px', borderRadius: '6px' }}>
                     INPUT: Stage (STRUCTURE)
-                  </span>
-                  <span style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1.5px solid #111111', padding: '8px 14px', borderRadius: '6px' }}>
-                    INPUT: Workers (65)
                   </span>
                 </div>
               </div>
 
-              {/* Model Output Prediction */}
               <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: '12px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#111111' }}>MODEL OUTPUT</div>
-                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '42px', fontWeight: '800', color: '#111111', lineHeight: '1.0', marginTop: '6px' }}>
-                  {spaceUtil.toFixed(1)}% SPACE UTILIZATION
+                <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#111111' }}>MODEL OUTPUT</div>
+                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: '800', color: '#111111', lineHeight: '1.0', marginTop: '6px' }}>
+                  {spaceUtil.toFixed(1)}% UTILIZATION
                 </div>
-                <div style={{ fontSize: '16px', fontWeight: '800', color: '#111111', fontFamily: 'JetBrains Mono, monospace', marginTop: '6px' }}>
+                <div style={{ fontSize: '14px', fontWeight: '800', color: '#111111', fontFamily: 'JetBrains Mono, monospace', marginTop: '6px' }}>
                   REC: {optRec}
-                </div>
-                <div style={{ fontSize: '14px', fontWeight: '700', color: '#15803d', fontFamily: 'JetBrains Mono, monospace', marginTop: '4px' }}>
-                  EFFICIENCY: {spaceEff.toFixed(1)}/100 · SAFETY: 100%
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* EXTREME RIGHT MARGIN COLUMN: 5 LARGE SVGS MAPPED 1-TO-1 BESIDE EACH CARD */}
-        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', opacity: 0.9, height: '100%' }}>
+        {/* EXTREME RIGHT MARGIN COLUMN: 5 LARGE SVGS */}
+        <div className="side-svg-column" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', opacity: 0.9, height: '100%' }}>
           
-          {/* SVG 1: Large Building Skeleton (Beside Card 01 Performance Model) */}
           <div style={{ height: '175px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="130" height="135" viewBox="0 0 120 150" fill="none" stroke="#111111" strokeWidth="1.8">
               <rect x="15" y="20" width="90" height="120" strokeDasharray="4 4" fill="#EDECE7" />
@@ -574,7 +547,6 @@ export const CommandCenter: React.FC = () => {
             <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '2px' }}>BUILDING SKELETON</span>
           </div>
 
-          {/* SVG 2: Large Drafting Compass (Beside Card 02 Risk Model) */}
           <div style={{ height: '175px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="130" height="120" viewBox="0 0 110 100" fill="none" stroke="#111111" strokeWidth="1.8">
               <line x1="55" y1="15" x2="25" y2="85" strokeWidth="2.5" />
@@ -586,7 +558,6 @@ export const CommandCenter: React.FC = () => {
             <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '2px' }}>DRAFTING TOOL</span>
           </div>
 
-          {/* SVG 3: Large Survey Tripod (Beside Card 03 Cost Forecast Model) */}
           <div style={{ height: '175px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="125" height="120" viewBox="0 0 100 110" fill="none" stroke="#111111" strokeWidth="1.8">
               <line x1="50" y1="35" x2="15" y2="105" strokeWidth="2" />
@@ -598,7 +569,6 @@ export const CommandCenter: React.FC = () => {
             <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '2px' }}>SURVEY TRIPOD</span>
           </div>
 
-          {/* SVG 4: Large Logistics Dump Truck (Beside Card 04 Time Forecast Model) */}
           <div style={{ height: '175px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="140" height="110" viewBox="0 0 120 90" fill="none" stroke="#111111" strokeWidth="1.8">
               <rect x="75" y="35" width="35" height="35" fill="#E4FF5B" stroke="#111111" />
@@ -611,7 +581,6 @@ export const CommandCenter: React.FC = () => {
             <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '2px' }}>LOGISTICS TRUCK</span>
           </div>
 
-          {/* SVG 5: Large Steel I-Beam Rig (Beside Card 05 Space Optimization Model) */}
           <div style={{ height: '175px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="130" height="120" viewBox="0 0 100 100" fill="none" stroke="#111111" strokeWidth="2">
               <rect x="15" y="15" width="70" height="14" fill="#111111" />
@@ -630,11 +599,11 @@ export const CommandCenter: React.FC = () => {
         backgroundColor: '#FFFFFF',
         border: '2.5px dashed #111111',
         borderRadius: '16px',
-        padding: '36px 48px',
+        padding: '32px 36px',
         marginBottom: '44px',
         boxShadow: '0 6px 16px rgba(0,0,0,0.04)'
       }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <Sparkles size={20} color="#FF2AA1" />
             <span style={{ fontSize: '13px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#111111', textTransform: 'uppercase' }}>
@@ -646,7 +615,7 @@ export const CommandCenter: React.FC = () => {
           </span>
         </div>
 
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '17px', color: '#111111', lineHeight: '1.6', fontWeight: '500', marginBottom: '20px' }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', color: '#111111', lineHeight: '1.6', fontWeight: '500', marginBottom: '20px' }}>
           "{geminiText}"
         </p>
 
@@ -661,53 +630,53 @@ export const CommandCenter: React.FC = () => {
       </div>
 
       {/* Quick Action Navigation Buttons */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '40px', borderTop: '2.5px dashed #111111', paddingTop: '32px' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '24px', borderTop: '2.5px dashed #111111', paddingTop: '32px' }}>
         <Link
           to="/predictions"
           style={{
             fontFamily: 'Anton, sans-serif',
-            fontSize: '24px',
+            fontSize: '20px',
             color: '#111111',
             textDecoration: 'none',
             display: 'flex',
             alignItems: 'center',
-            gap: '10px',
+            gap: '8px',
             letterSpacing: '0.04em'
           }}
         >
-          VIEW PREDICTIONS <ArrowRight size={24} color="#FF2AA1" />
+          VIEW PREDICTIONS <ArrowRight size={20} color="#FF2AA1" />
         </Link>
 
         <Link
           to="/model/optimization"
           style={{
             fontFamily: 'Anton, sans-serif',
-            fontSize: '24px',
+            fontSize: '20px',
             color: '#111111',
             textDecoration: 'none',
             display: 'flex',
             alignItems: 'center',
-            gap: '10px',
+            gap: '8px',
             letterSpacing: '0.04em'
           }}
         >
-          OPTIMIZE SPACE & RESOURCES <ArrowRight size={24} color="#FF2AA1" />
+          OPTIMIZE SPACE & RESOURCES <ArrowRight size={20} color="#FF2AA1" />
         </Link>
 
         <Link
           to="/alerts"
           style={{
             fontFamily: 'Anton, sans-serif',
-            fontSize: '24px',
+            fontSize: '20px',
             color: '#111111',
             textDecoration: 'none',
             display: 'flex',
             alignItems: 'center',
-            gap: '10px',
+            gap: '8px',
             letterSpacing: '0.04em'
           }}
         >
-          OPEN ALERTS <ArrowRight size={24} color="#FF2AA1" />
+          OPEN ALERTS <ArrowRight size={20} color="#FF2AA1" />
         </Link>
       </div>
     </div>
