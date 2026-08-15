@@ -52,24 +52,24 @@ export const AIInsightsPage: React.FC = () => {
   };
 
   return (
-    <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '16px 24px 48px 24px' }}>
+    <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '16px 16px 48px 16px', boxSizing: 'border-box' }}>
       {/* Header */}
       <div style={{ marginBottom: '24px', borderBottom: '2px solid #111111', paddingBottom: '16px' }}>
-        <h1 style={{ fontFamily: 'Anton, sans-serif', fontSize: '48px', color: '#111111', textTransform: 'uppercase' }}>
+        <h1 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(32px, 6vw, 48px)', color: '#111111', textTransform: 'uppercase', lineHeight: '1.05' }}>
           AI INSIGHTS
         </h1>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '14px', color: '#555555' }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '14px', color: '#555555', marginTop: '4px' }}>
           Numbers from ConArk. Explanations from Gemini.
         </p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 400px', gap: '24px' }}>
+      <div className="ai-insights-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 400px', gap: '24px' }}>
         {/* Left Column: Gemini Summary & Recommended Actions */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           
           {/* Gemini Summary Card (Flat uncolored card) */}
           <div style={{ backgroundColor: '#FFFFFF', border: '1.5px solid #111111', borderRadius: '12px', padding: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Sparkles size={18} color="#FF2AA1" />
                 <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', fontWeight: 'bold' }}>GEMINI 2.5 FLASH SUMMARY</span>
@@ -95,7 +95,7 @@ export const AIInsightsPage: React.FC = () => {
             </h2>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <div style={{ padding: '12px', backgroundColor: '#EDECE7', borderRadius: '8px', border: '1px solid #111111', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ padding: '12px', backgroundColor: '#EDECE7', borderRadius: '8px', border: '1px solid #111111', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
                 <div>
                   <div style={{ fontSize: '14px', fontWeight: '700', fontFamily: 'Inter, sans-serif' }}>1. Review worker allocation</div>
                   <div style={{ fontSize: '12px', color: '#555555' }}>Rebalance worker headcount across active tasks</div>
@@ -103,7 +103,7 @@ export const AIInsightsPage: React.FC = () => {
                 <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', backgroundColor: '#FF2AA1', color: '#fff', padding: '4px 8px', borderRadius: '4px' }}>HIGH</span>
               </div>
 
-              <div style={{ padding: '12px', backgroundColor: '#EDECE7', borderRadius: '8px', border: '1px solid #111111', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ padding: '12px', backgroundColor: '#EDECE7', borderRadius: '8px', border: '1px solid #111111', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
                 <div>
                   <div style={{ fontSize: '14px', fontWeight: '700', fontFamily: 'Inter, sans-serif' }}>2. Inspect equipment utilization</div>
                   <div style={{ fontSize: '12px', color: '#555555' }}>Prevent machinery overheat and vibration spikes</div>
@@ -111,7 +111,7 @@ export const AIInsightsPage: React.FC = () => {
                 <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', backgroundColor: '#FF2AA1', color: '#fff', padding: '4px 8px', borderRadius: '4px' }}>HIGH</span>
               </div>
 
-              <div style={{ padding: '12px', backgroundColor: '#EDECE7', borderRadius: '8px', border: '1px solid #111111', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ padding: '12px', backgroundColor: '#EDECE7', borderRadius: '8px', border: '1px solid #111111', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
                 <div>
                   <div style={{ fontSize: '14px', fontWeight: '700', fontFamily: 'Inter, sans-serif' }}>3. Review material scheduling</div>
                   <div style={{ fontSize: '12px', color: '#555555' }}>Avoid shortages and delivery bottlenecks</div>
@@ -152,14 +152,14 @@ export const AIInsightsPage: React.FC = () => {
           </div>
 
           {/* Question Input */}
-          <div style={{ display: 'flex', gap: '8px', marginBottom: '24px' }}>
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', flexWrap: 'wrap' }}>
             <input
               type="text"
               placeholder="Why is project risk high?"
               value={question}
               onChange={e => setQuestion(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleAsk()}
-              style={{ flex: 1, padding: '10px 14px', border: '1.5px solid #111111', borderRadius: '6px', fontSize: '13px', outline: 'none' }}
+              style={{ flex: 1, minWidth: '200px', padding: '10px 14px', border: '1.5px solid #111111', borderRadius: '6px', fontSize: '13px', outline: 'none' }}
             />
             <button
               onClick={() => handleAsk()}
@@ -171,7 +171,7 @@ export const AIInsightsPage: React.FC = () => {
           </div>
 
           {/* Q&A Response Feed */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', overflowY: 'auto', flex: 1 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', overflowY: 'auto', flex: 1, maxHeight: '400px' }}>
             {qaHistory.map((item, i) => (
               <div key={i} style={{ backgroundColor: '#EDECE7', border: '1px solid #111111', borderRadius: '8px', padding: '14px' }}>
                 <div style={{ fontSize: '12px', fontWeight: 'bold', fontFamily: 'Inter, sans-serif', color: '#111111', marginBottom: '6px' }}>

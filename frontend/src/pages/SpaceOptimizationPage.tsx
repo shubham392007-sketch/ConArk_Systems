@@ -126,37 +126,37 @@ export const SpaceOptimizationPage: React.FC = () => {
   ];
 
   return (
-    <div style={{ maxWidth: '1650px', margin: '0 auto', padding: '24px 32px 64px 32px' }}>
+    <div style={{ maxWidth: '1650px', margin: '0 auto', padding: '20px 16px 48px 16px', boxSizing: 'border-box' }}>
       {/* Header */}
-      <div style={{ marginBottom: '28px', borderBottom: '2.5px dashed #111111', paddingBottom: '20px' }}>
-        <h1 style={{ fontFamily: 'Anton, sans-serif', fontSize: '54px', color: '#111111', textTransform: 'uppercase' }}>
+      <div style={{ marginBottom: '24px', borderBottom: '2.5px dashed #111111', paddingBottom: '18px' }}>
+        <h1 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(28px, 5.5vw, 54px)', color: '#111111', textTransform: 'uppercase', lineHeight: '1.05' }}>
           CONSTRAINED SPACE OPTIMIZATION ENGINE
         </h1>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', color: '#555555' }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '15px', color: '#555555', marginTop: '4px' }}>
           SciPy SLSQP Constrained Optimization — Solves dynamic 8-zone area allocation & 2D spatial layouts.
         </p>
       </div>
 
-      {/* Grid: Left Inputs Form & Right 2D Spatial Layout Canvas */}
-      <div style={{ display: 'grid', gridTemplateColumns: '420px 1fr', gap: '32px', marginBottom: '36px' }}>
+      {/* Grid: Left Inputs Form & Right 2D Spatial Layout Canvas (RESPONSIVE) */}
+      <div className="space-opt-grid" style={{ display: 'grid', gridTemplateColumns: '420px 1fr', gap: '28px', marginBottom: '32px' }}>
         
         {/* Left Column: Interactive Site Parameters Form */}
-        <div style={{ backgroundColor: '#FFFFFF', border: '2.5px dashed #111111', borderRadius: '20px', padding: '28px', boxShadow: '0 8px 20px rgba(0,0,0,0.06)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+        <div className="card-responsive-padding" style={{ backgroundColor: '#FFFFFF', border: '2.5px dashed #111111', borderRadius: '20px', padding: '24px', boxShadow: '0 8px 20px rgba(0,0,0,0.06)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
             <Sliders size={20} color="#111111" />
-            <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '24px', color: '#111111', textTransform: 'uppercase' }}>
+            <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '22px', color: '#111111', textTransform: 'uppercase' }}>
               SITE CONSTRAINTS & INPUTS
             </h2>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             <div>
               <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>TOTAL SITE AREA (m²)</label>
               <input
                 type="number"
                 value={inputs.site_area_sqm}
                 onChange={e => handleAreaChange(parseFloat(e.target.value) || 0)}
-                style={{ width: '100%', fontSize: '18px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '4px' }}
+                style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '4px' }}
               />
             </div>
 
@@ -167,7 +167,7 @@ export const SpaceOptimizationPage: React.FC = () => {
                   type="number"
                   value={inputs.site_length_m}
                   onChange={e => handleLengthChange(parseFloat(e.target.value) || 0)}
-                  style={{ width: '100%', fontSize: '18px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '4px' }}
+                  style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '4px' }}
                 />
               </div>
               <div>
@@ -176,7 +176,7 @@ export const SpaceOptimizationPage: React.FC = () => {
                   type="number"
                   value={inputs.site_width_m}
                   onChange={e => handleWidthChange(parseFloat(e.target.value) || 0)}
-                  style={{ width: '100%', fontSize: '18px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '4px' }}
+                  style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '4px' }}
                 />
               </div>
             </div>
@@ -186,7 +186,7 @@ export const SpaceOptimizationPage: React.FC = () => {
               <select
                 value={inputs.construction_stage}
                 onChange={e => setInputs({ ...inputs, construction_stage: e.target.value })}
-                style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '4px', backgroundColor: '#FFFFFF' }}
+                style={{ width: '100%', fontSize: '15px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '4px', backgroundColor: '#FFFFFF' }}
               >
                 <option value="EXCAVATION">EXCAVATION</option>
                 <option value="FOUNDATION">FOUNDATION</option>
@@ -201,7 +201,7 @@ export const SpaceOptimizationPage: React.FC = () => {
                 type="number"
                 value={inputs.worker_count}
                 onChange={e => setInputs({ ...inputs, worker_count: parseInt(e.target.value) || 0 })}
-                style={{ width: '100%', fontSize: '18px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '4px' }}
+                style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '4px' }}
               />
             </div>
 
@@ -211,7 +211,7 @@ export const SpaceOptimizationPage: React.FC = () => {
                 type="number"
                 value={inputs.machinery_count}
                 onChange={e => setInputs({ ...inputs, machinery_count: parseInt(e.target.value) || 0 })}
-                style={{ width: '100%', fontSize: '18px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '4px' }}
+                style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '4px' }}
               />
             </div>
 
@@ -219,12 +219,12 @@ export const SpaceOptimizationPage: React.FC = () => {
               onClick={runOptimization}
               disabled={loading}
               style={{
-                marginTop: '12px',
+                marginTop: '10px',
                 backgroundColor: '#111111',
                 color: '#FFFFFF',
                 fontFamily: 'Anton, sans-serif',
-                fontSize: '20px',
-                padding: '14px',
+                fontSize: '18px',
+                padding: '12px',
                 border: 'none',
                 borderRadius: '8px',
                 cursor: 'pointer',
@@ -237,9 +237,9 @@ export const SpaceOptimizationPage: React.FC = () => {
         </div>
 
         {/* Right Column: Dynamic 2D Site Layout Map Canvas */}
-        <div style={{ backgroundColor: '#FFFFFF', border: '2.5px dashed #111111', borderRadius: '20px', padding: '28px', display: 'flex', flexDirection: 'column', boxShadow: '0 8px 20px rgba(0,0,0,0.06)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '26px', color: '#111111', textTransform: 'uppercase' }}>
+        <div className="card-responsive-padding" style={{ backgroundColor: '#FFFFFF', border: '2.5px dashed #111111', borderRadius: '20px', padding: '24px', display: 'flex', flexDirection: 'column', boxShadow: '0 8px 20px rgba(0,0,0,0.06)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+            <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(20px, 3vw, 26px)', color: '#111111', textTransform: 'uppercase' }}>
               DYNAMIC 2D SITE LAYOUT MAP ({inputs.site_length_m}m × {inputs.site_width_m}m)
             </h2>
             <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', backgroundColor: '#111111', color: '#FFFFFF', padding: '3px 10px', borderRadius: '4px' }}>
@@ -248,22 +248,22 @@ export const SpaceOptimizationPage: React.FC = () => {
           </div>
 
           {/* Metrics Banner */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '20px' }}>
-            <div style={{ backgroundColor: '#EDECE7', border: '1.5px solid #111111', borderRadius: '8px', padding: '12px 16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '12px', marginBottom: '18px' }}>
+            <div style={{ backgroundColor: '#EDECE7', border: '1.5px solid #111111', borderRadius: '8px', padding: '10px 14px' }}>
               <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>SPACE UTILIZATION</span>
-              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '28px', fontWeight: '800', color: '#111111' }}>
+              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '24px', fontWeight: '800', color: '#111111' }}>
                 {utilization.toFixed(1)}%
               </div>
             </div>
-            <div style={{ backgroundColor: '#EDECE7', border: '1.5px solid #111111', borderRadius: '8px', padding: '12px 16px' }}>
+            <div style={{ backgroundColor: '#EDECE7', border: '1.5px solid #111111', borderRadius: '8px', padding: '10px 14px' }}>
               <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>SAFETY COMPLIANCE</span>
-              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '28px', fontWeight: '800', color: '#15803d' }}>
+              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '24px', fontWeight: '800', color: '#15803d' }}>
                 {safetyScore.toFixed(0)}%
               </div>
             </div>
-            <div style={{ backgroundColor: '#EDECE7', border: '1.5px solid #111111', borderRadius: '8px', padding: '12px 16px' }}>
+            <div style={{ backgroundColor: '#EDECE7', border: '1.5px solid #111111', borderRadius: '8px', padding: '10px 14px' }}>
               <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>EFFICIENCY SCORE</span>
-              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '28px', fontWeight: '800', color: '#111111' }}>
+              <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '24px', fontWeight: '800', color: '#111111' }}>
                 {efficiencyScore.toFixed(1)}
               </div>
             </div>
@@ -273,7 +273,8 @@ export const SpaceOptimizationPage: React.FC = () => {
           <div style={{
             position: 'relative',
             width: '100%',
-            height: '460px',
+            minHeight: '340px',
+            height: 'clamp(300px, 45vh, 460px)',
             backgroundColor: '#111111',
             borderRadius: '12px',
             border: '2px solid #111111',
@@ -300,7 +301,7 @@ export const SpaceOptimizationPage: React.FC = () => {
                     height: `${heightPct}%`,
                     backgroundColor: color,
                     border: '1.5px solid #111111',
-                    padding: isNarrow ? '0px 12px' : '8px',
+                    padding: isNarrow ? '0px 8px' : '6px',
                     display: 'flex',
                     flexDirection: isNarrow ? 'row' : 'column',
                     alignItems: 'center',
@@ -313,7 +314,7 @@ export const SpaceOptimizationPage: React.FC = () => {
                 >
                   <span style={{
                     fontFamily: 'Anton, sans-serif',
-                    fontSize: isNarrow ? '12px' : 'clamp(11px, 1.4vw, 16px)',
+                    fontSize: isNarrow ? '11px' : 'clamp(10px, 1.2vw, 15px)',
                     color: isMagenta ? '#FFFFFF' : '#111111',
                     textTransform: 'uppercase',
                     lineHeight: '1.1',
@@ -325,7 +326,7 @@ export const SpaceOptimizationPage: React.FC = () => {
                   </span>
                   <span style={{
                     fontFamily: 'JetBrains Mono, monospace',
-                    fontSize: '10px',
+                    fontSize: '9px',
                     color: isMagenta ? '#FFFFFF' : '#333333',
                     marginTop: isNarrow ? '0' : '2px',
                     fontWeight: 'bold',
@@ -339,55 +340,57 @@ export const SpaceOptimizationPage: React.FC = () => {
           </div>
 
           {/* 8-Zone Color Key Legend */}
-          <div style={{ marginTop: '16px', display: 'flex', flexWrap: 'wrap', gap: '12px', padding: '12px 16px', backgroundColor: '#EDECE7', borderRadius: '8px', border: '1px solid #111111', fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>
+          <div style={{ marginTop: '16px', display: 'flex', flexWrap: 'wrap', gap: '10px', padding: '12px 14px', backgroundColor: '#EDECE7', borderRadius: '8px', border: '1px solid #111111', fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ width: '12px', height: '12px', backgroundColor: '#E4FF5B', border: '1px solid #111' }} /> Material Storage & Loading</span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ width: '12px', height: '12px', backgroundColor: '#7CFFA6', border: '1px solid #111' }} /> Equipment & Staging</span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ width: '12px', height: '12px', backgroundColor: '#4FC3F7', border: '1px solid #111' }} /> Worker Movement</span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ width: '12px', height: '12px', backgroundColor: '#F5F3E3', border: '1px solid #111' }} /> Safety Buffer</span>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ width: '12px', height: '12px', backgroundColor: '#FF2AA1', border: '1px solid #111' }} /> Emergency Access Corridor</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ width: '12px', height: '12px', backgroundColor: '#FF2AA1', border: '1px solid #111' }} /> Emergency Corridor</span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ width: '12px', height: '12px', backgroundColor: '#E0E0E0', border: '1px solid #111' }} /> Waste Dump</span>
           </div>
         </div>
       </div>
 
       {/* Zone Allocation Matrix Table */}
-      <div style={{ backgroundColor: '#FFFFFF', border: '2.5px dashed #111111', borderRadius: '20px', padding: '28px', marginBottom: '32px', boxShadow: '0 8px 20px rgba(0,0,0,0.06)' }}>
-        <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '26px', color: '#111111', marginBottom: '16px', textTransform: 'uppercase' }}>
+      <div className="card-responsive-padding" style={{ backgroundColor: '#FFFFFF', border: '2.5px dashed #111111', borderRadius: '20px', padding: '24px', marginBottom: '28px', boxShadow: '0 8px 20px rgba(0,0,0,0.06)' }}>
+        <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '22px', color: '#111111', marginBottom: '14px', textTransform: 'uppercase' }}>
           8-ZONE OPTIMIZED ALLOCATION MATRIX
         </h2>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', fontFamily: 'Inter, sans-serif' }}>
-          <thead>
-            <tr style={{ borderBottom: '2.5px dashed #111111', textAlign: 'left', fontFamily: 'JetBrains Mono, monospace', fontSize: '11px' }}>
-              <th style={{ padding: '10px 6px' }}>ZONE NAME</th>
-              <th style={{ padding: '10px 6px' }}>ALLOCATED AREA (m²)</th>
-              <th style={{ padding: '10px 6px' }}>MIN REQUIRED (m²)</th>
-              <th style={{ padding: '10px 6px' }}>% OF TOTAL SITE</th>
-              <th style={{ padding: '10px 6px' }}>CONSTRAINT STATUS</th>
-            </tr>
-          </thead>
-          <tbody>
-            {zoneAllocations.map(z => (
-              <tr key={z.name} style={{ borderBottom: '1px solid #eeeeee' }}>
-                <td style={{ padding: '12px 6px', fontWeight: '700' }}>{z.name}</td>
-                <td style={{ padding: '12px 6px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>{z.alloc.toFixed(1)} m²</td>
-                <td style={{ padding: '12px 6px', fontFamily: 'JetBrains Mono, monospace', color: '#666666' }}>{z.req} m²</td>
-                <td style={{ padding: '12px 6px', fontFamily: 'JetBrains Mono, monospace' }}>{z.pct}</td>
-                <td style={{ padding: '12px 6px' }}>
-                  <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', backgroundColor: '#111111', color: '#FFFFFF', padding: '3px 8px', borderRadius: '4px' }}>
-                    {z.status}
-                  </span>
-                </td>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', minWidth: '460px', borderCollapse: 'collapse', fontSize: '13px', fontFamily: 'Inter, sans-serif' }}>
+            <thead>
+              <tr style={{ borderBottom: '2.5px dashed #111111', textAlign: 'left', fontFamily: 'JetBrains Mono, monospace', fontSize: '11px' }}>
+                <th style={{ padding: '8px 4px' }}>ZONE NAME</th>
+                <th style={{ padding: '8px 4px' }}>ALLOCATED AREA (m²)</th>
+                <th style={{ padding: '8px 4px' }}>MIN REQUIRED (m²)</th>
+                <th style={{ padding: '8px 4px' }}>% OF TOTAL SITE</th>
+                <th style={{ padding: '8px 4px' }}>CONSTRAINT STATUS</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {zoneAllocations.map(z => (
+                <tr key={z.name} style={{ borderBottom: '1px solid #eeeeee' }}>
+                  <td style={{ padding: '10px 4px', fontWeight: '700' }}>{z.name}</td>
+                  <td style={{ padding: '10px 4px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>{z.alloc.toFixed(1)} m²</td>
+                  <td style={{ padding: '10px 4px', fontFamily: 'JetBrains Mono, monospace', color: '#666666' }}>{z.req} m²</td>
+                  <td style={{ padding: '10px 4px', fontFamily: 'JetBrains Mono, monospace' }}>{z.pct}</td>
+                  <td style={{ padding: '10px 4px' }}>
+                    <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', backgroundColor: '#111111', color: '#FFFFFF', padding: '2px 6px', borderRadius: '4px' }}>
+                      {z.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Gemini 2.5 Flash Space Narrative Report */}
-      <div style={{ backgroundColor: '#FFFFFF', border: '2.5px dashed #111111', borderRadius: '20px', padding: '28px 36px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+      <div className="card-responsive-padding" style={{ backgroundColor: '#FFFFFF', border: '2.5px dashed #111111', borderRadius: '20px', padding: '24px 28px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
           <Sparkles size={20} color="#FF2AA1" />
-          <h3 style={{ fontFamily: 'Anton, sans-serif', fontSize: '22px', color: '#111111', textTransform: 'uppercase' }}>
+          <h3 style={{ fontFamily: 'Anton, sans-serif', fontSize: '20px', color: '#111111', textTransform: 'uppercase' }}>
             GEMINI 2.5 FLASH SPACE AI REPORT
           </h3>
         </div>

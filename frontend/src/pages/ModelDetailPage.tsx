@@ -258,7 +258,7 @@ export const ModelDetailPage: React.FC = () => {
   };
 
   return (
-    <div style={{ maxWidth: '1650px', margin: '0 auto', padding: '24px 32px 64px 32px' }}>
+    <div style={{ maxWidth: '1650px', margin: '0 auto', padding: '20px 16px 48px 16px', boxSizing: 'border-box' }}>
       {/* Back Navigation Link */}
       <Link
         to="/"
@@ -270,41 +270,41 @@ export const ModelDetailPage: React.FC = () => {
           fontSize: '18px',
           color: '#111111',
           textDecoration: 'none',
-          marginBottom: '24px'
+          marginBottom: '20px'
         }}
       >
         <ArrowLeft size={20} /> BACK TO COMMAND CENTER
       </Link>
 
       {/* Main Model Header */}
-      <div style={{ marginBottom: '32px', borderBottom: '2.5px dashed #111111', paddingBottom: '20px' }}>
+      <div style={{ marginBottom: '28px', borderBottom: '2.5px dashed #111111', paddingBottom: '20px' }}>
         <div style={{ fontSize: '12px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#666666' }}>
           CONARK PREDICTIVE ENGINE · {config.version}
         </div>
-        <h1 style={{ fontFamily: 'Anton, sans-serif', fontSize: '52px', color: '#111111', textTransform: 'uppercase', marginTop: '4px' }}>
+        <h1 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(28px, 5vw, 52px)', color: '#111111', textTransform: 'uppercase', marginTop: '4px', lineHeight: '1.05' }}>
           {config.title}
         </h1>
-        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', color: '#555555' }}>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '15px', color: '#555555', marginTop: '4px' }}>
           Algorithm: {config.algorithm}
         </p>
       </div>
 
-      {/* Grid: Left Input Form & Right Output Visualizer */}
-      <div style={{ display: 'grid', gridTemplateColumns: '440px 1fr', gap: '32px' }}>
+      {/* Grid: Left Input Form & Right Output Visualizer (RESPONSIVE) */}
+      <div className="model-detail-grid" style={{ display: 'grid', gridTemplateColumns: '440px 1fr', gap: '28px', width: '100%' }}>
         
         {/* Left Column: Dedicated Input Form */}
-        <div style={{ backgroundColor: '#FFFFFF', border: '2.5px dashed #111111', borderRadius: '20px', padding: '32px', boxShadow: '0 8px 20px rgba(0,0,0,0.06)', height: 'fit-content' }}>
+        <div className="card-responsive-padding" style={{ backgroundColor: '#FFFFFF', border: '2.5px dashed #111111', borderRadius: '20px', padding: '28px', boxShadow: '0 8px 20px rgba(0,0,0,0.06)', height: 'fit-content' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
             <Sliders size={22} color="#111111" />
-            <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '26px', color: '#111111', textTransform: 'uppercase' }}>
+            <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '24px', color: '#111111', textTransform: 'uppercase' }}>
               {isSpaceOpt ? 'SITE CONSTRAINTS & TELEMETRY' : 'MODEL INPUT PARAMETERS'}
             </h2>
           </div>
-          <p style={{ fontSize: '13px', color: '#666666', fontFamily: 'Inter, sans-serif', marginBottom: '24px' }}>
+          <p style={{ fontSize: '13px', color: '#666666', fontFamily: 'Inter, sans-serif', marginBottom: '20px' }}>
             Configure parameters below and click <strong>"PREDICT FOR THIS MODEL →"</strong>.
           </p>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {isSpaceOpt ? (
               <>
                 <div>
@@ -313,7 +313,7 @@ export const ModelDetailPage: React.FC = () => {
                     type="number"
                     value={spaceInputs.site_area_sqm}
                     onChange={e => handleAreaChange(parseFloat(e.target.value) || 0)}
-                    style={{ width: '100%', fontSize: '18px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
+                    style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
                   />
                 </div>
 
@@ -324,7 +324,7 @@ export const ModelDetailPage: React.FC = () => {
                       type="number"
                       value={spaceInputs.site_length_m}
                       onChange={e => handleLengthChange(parseFloat(e.target.value) || 0)}
-                      style={{ width: '100%', fontSize: '18px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
+                      style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
                     />
                   </div>
                   <div>
@@ -333,7 +333,7 @@ export const ModelDetailPage: React.FC = () => {
                       type="number"
                       value={spaceInputs.site_width_m}
                       onChange={e => handleWidthChange(parseFloat(e.target.value) || 0)}
-                      style={{ width: '100%', fontSize: '18px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
+                      style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
                     />
                   </div>
                 </div>
@@ -343,7 +343,7 @@ export const ModelDetailPage: React.FC = () => {
                   <select
                     value={spaceInputs.construction_stage}
                     onChange={e => setSpaceInputs({ ...spaceInputs, construction_stage: e.target.value })}
-                    style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px', backgroundColor: '#FFFFFF' }}
+                    style={{ width: '100%', fontSize: '15px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px', backgroundColor: '#FFFFFF' }}
                   >
                     <option value="EXCAVATION">EXCAVATION</option>
                     <option value="FOUNDATION">FOUNDATION</option>
@@ -358,7 +358,7 @@ export const ModelDetailPage: React.FC = () => {
                     type="number"
                     value={spaceInputs.worker_count}
                     onChange={e => setSpaceInputs({ ...spaceInputs, worker_count: parseInt(e.target.value) || 0 })}
-                    style={{ width: '100%', fontSize: '18px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
+                    style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
                   />
                 </div>
 
@@ -368,7 +368,7 @@ export const ModelDetailPage: React.FC = () => {
                     type="number"
                     value={spaceInputs.machinery_count}
                     onChange={e => setSpaceInputs({ ...spaceInputs, machinery_count: parseInt(e.target.value) || 0 })}
-                    style={{ width: '100%', fontSize: '18px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
+                    style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
                   />
                 </div>
               </>
@@ -383,7 +383,7 @@ export const ModelDetailPage: React.FC = () => {
                     max="1"
                     value={inputs.task_progress}
                     onChange={e => setInputs({ ...inputs, task_progress: parseFloat(e.target.value) || 0 })}
-                    style={{ width: '100%', fontSize: '18px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
+                    style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
                   />
                 </div>
 
@@ -393,7 +393,7 @@ export const ModelDetailPage: React.FC = () => {
                     type="number"
                     value={inputs.worker_count}
                     onChange={e => setInputs({ ...inputs, worker_count: parseInt(e.target.value) || 0 })}
-                    style={{ width: '100%', fontSize: '18px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
+                    style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
                   />
                 </div>
 
@@ -403,7 +403,7 @@ export const ModelDetailPage: React.FC = () => {
                     type="number"
                     value={inputs.equipment_utilization_rate}
                     onChange={e => setInputs({ ...inputs, equipment_utilization_rate: parseFloat(e.target.value) || 0 })}
-                    style={{ width: '100%', fontSize: '18px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
+                    style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
                   />
                 </div>
               </>
@@ -414,12 +414,12 @@ export const ModelDetailPage: React.FC = () => {
               onClick={runPrediction}
               disabled={loading}
               style={{
-                marginTop: '12px',
+                marginTop: '10px',
                 backgroundColor: '#111111',
                 color: '#FFFFFF',
                 fontFamily: 'Anton, sans-serif',
-                fontSize: '22px',
-                padding: '16px',
+                fontSize: '20px',
+                padding: '14px',
                 border: 'none',
                 borderRadius: '8px',
                 cursor: 'pointer',
@@ -432,15 +432,15 @@ export const ModelDetailPage: React.FC = () => {
         </div>
 
         {/* Right Column: Deep Output & 2D Spatial Structure */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%' }}>
           
           {hasPredicted ? (
             <>
               {/* Dynamic 2D Site Layout Map Canvas (For Space & Optimization Model) */}
               {isSpaceOpt && (
-                <div style={{ backgroundColor: '#FFFFFF', border: '2.5px dashed #111111', borderRadius: '20px', padding: '28px', boxShadow: '0 8px 20px rgba(0,0,0,0.06)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                    <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '26px', color: '#111111', textTransform: 'uppercase' }}>
+                <div className="card-responsive-padding" style={{ backgroundColor: '#FFFFFF', border: '2.5px dashed #111111', borderRadius: '20px', padding: '24px', boxShadow: '0 8px 20px rgba(0,0,0,0.06)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+                    <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(20px, 3vw, 26px)', color: '#111111', textTransform: 'uppercase' }}>
                       DYNAMIC 2D SITE LAYOUT MAP ({spaceInputs.site_length_m}m × {spaceInputs.site_width_m}m)
                     </h2>
                     <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', backgroundColor: '#111111', color: '#FFFFFF', padding: '3px 10px', borderRadius: '4px' }}>
@@ -449,22 +449,22 @@ export const ModelDetailPage: React.FC = () => {
                   </div>
 
                   {/* Metrics Banner */}
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '20px' }}>
-                    <div style={{ backgroundColor: '#EDECE7', border: '1.5px solid #111111', borderRadius: '8px', padding: '12px 16px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px', marginBottom: '20px' }}>
+                    <div style={{ backgroundColor: '#EDECE7', border: '1.5px solid #111111', borderRadius: '8px', padding: '10px 14px' }}>
                       <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>SPACE UTILIZATION</span>
-                      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '28px', fontWeight: '800', color: '#111111' }}>
+                      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '24px', fontWeight: '800', color: '#111111' }}>
                         {utilization.toFixed(1)}%
                       </div>
                     </div>
-                    <div style={{ backgroundColor: '#EDECE7', border: '1.5px solid #111111', borderRadius: '8px', padding: '12px 16px' }}>
+                    <div style={{ backgroundColor: '#EDECE7', border: '1.5px solid #111111', borderRadius: '8px', padding: '10px 14px' }}>
                       <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>SAFETY COMPLIANCE</span>
-                      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '28px', fontWeight: '800', color: '#15803d' }}>
+                      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '24px', fontWeight: '800', color: '#15803d' }}>
                         {safetyScore.toFixed(0)}%
                       </div>
                     </div>
-                    <div style={{ backgroundColor: '#EDECE7', border: '1.5px solid #111111', borderRadius: '8px', padding: '12px 16px' }}>
+                    <div style={{ backgroundColor: '#EDECE7', border: '1.5px solid #111111', borderRadius: '8px', padding: '10px 14px' }}>
                       <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>EFFICIENCY SCORE</span>
-                      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '28px', fontWeight: '800', color: '#111111' }}>
+                      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '24px', fontWeight: '800', color: '#111111' }}>
                         {efficiencyScore.toFixed(1)}
                       </div>
                     </div>
@@ -474,7 +474,8 @@ export const ModelDetailPage: React.FC = () => {
                   <div style={{
                     position: 'relative',
                     width: '100%',
-                    height: '460px',
+                    minHeight: '360px',
+                    height: 'clamp(320px, 45vh, 480px)',
                     backgroundColor: '#111111',
                     borderRadius: '12px',
                     border: '2px solid #111111',
@@ -501,7 +502,7 @@ export const ModelDetailPage: React.FC = () => {
                             height: `${heightPct}%`,
                             backgroundColor: color,
                             border: '1.5px solid #111111',
-                            padding: isNarrow ? '0px 12px' : '8px',
+                            padding: isNarrow ? '0px 8px' : '6px',
                             display: 'flex',
                             flexDirection: isNarrow ? 'row' : 'column',
                             alignItems: 'center',
@@ -514,7 +515,7 @@ export const ModelDetailPage: React.FC = () => {
                         >
                           <span style={{
                             fontFamily: 'Anton, sans-serif',
-                            fontSize: isNarrow ? '12px' : 'clamp(11px, 1.4vw, 16px)',
+                            fontSize: isNarrow ? '11px' : 'clamp(10px, 1.2vw, 15px)',
                             color: isMagenta ? '#FFFFFF' : '#111111',
                             textTransform: 'uppercase',
                             lineHeight: '1.1',
@@ -526,7 +527,7 @@ export const ModelDetailPage: React.FC = () => {
                           </span>
                           <span style={{
                             fontFamily: 'JetBrains Mono, monospace',
-                            fontSize: '10px',
+                            fontSize: '9px',
                             color: isMagenta ? '#FFFFFF' : '#333333',
                             marginTop: isNarrow ? '0' : '2px',
                             fontWeight: 'bold',
@@ -540,12 +541,12 @@ export const ModelDetailPage: React.FC = () => {
                   </div>
 
                   {/* 8-Zone Color Key Legend */}
-                  <div style={{ marginTop: '16px', display: 'flex', flexWrap: 'wrap', gap: '12px', padding: '12px 16px', backgroundColor: '#EDECE7', borderRadius: '8px', border: '1px solid #111111', fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>
+                  <div style={{ marginTop: '16px', display: 'flex', flexWrap: 'wrap', gap: '10px', padding: '12px 14px', backgroundColor: '#EDECE7', borderRadius: '8px', border: '1px solid #111111', fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ width: '12px', height: '12px', backgroundColor: '#E4FF5B', border: '1px solid #111' }} /> Material Storage & Loading</span>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ width: '12px', height: '12px', backgroundColor: '#7CFFA6', border: '1px solid #111' }} /> Equipment & Staging</span>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ width: '12px', height: '12px', backgroundColor: '#4FC3F7', border: '1px solid #111' }} /> Worker Movement</span>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ width: '12px', height: '12px', backgroundColor: '#F5F3E3', border: '1px solid #111' }} /> Safety Buffer</span>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ width: '12px', height: '12px', backgroundColor: '#FF2AA1', border: '1px solid #111' }} /> Emergency Access Corridor</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ width: '12px', height: '12px', backgroundColor: '#FF2AA1', border: '1px solid #111' }} /> Emergency Corridor</span>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ width: '12px', height: '12px', backgroundColor: '#E0E0E0', border: '1px solid #111' }} /> Waste Dump</span>
                   </div>
                 </div>
@@ -553,15 +554,16 @@ export const ModelDetailPage: React.FC = () => {
 
               {/* Primary Output Display Card */}
               <div
+                className="card-responsive-padding"
                 style={{
                   backgroundColor: config.color,
                   border: '2.5px dashed #111111',
                   borderRadius: '20px',
-                  padding: '36px 44px',
+                  padding: '28px 32px',
                   boxShadow: '0 8px 24px rgba(0,0,0,0.08)'
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
                   <span style={{ fontSize: '12px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#111111' }}>
                     {config.outputLabel}
                   </span>
@@ -571,7 +573,7 @@ export const ModelDetailPage: React.FC = () => {
                 </div>
 
                 {/* Clean Formatted Model Output Prediction */}
-                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: isSpaceOpt ? '44px' : '64px', fontWeight: '800', color: '#111111', lineHeight: '1.0', margin: '16px 0 8px 0' }}>
+                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: isSpaceOpt ? 'clamp(32px, 5vw, 44px)' : 'clamp(44px, 7vw, 64px)', fontWeight: '800', color: '#111111', lineHeight: '1.0', margin: '14px 0 8px 0', wordBreak: 'break-word' }}>
                   {modelId === 'performance' && (result?.ml_results?.performance?.prediction || 'GOOD')}
                   {modelId === 'risk' && `${(result?.ml_results?.risk?.risk_score || 72).toFixed(0)}%`}
                   {modelId === 'cost' && formatCostOutput()}
@@ -579,7 +581,7 @@ export const ModelDetailPage: React.FC = () => {
                   {isSpaceOpt && (result?.ml_results?.optimization?.recommendation || 'REALLOCATE WORKERS & STAGING')}
                 </div>
 
-                <div style={{ fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#111111' }}>
+                <div style={{ fontSize: '15px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#111111' }}>
                   {modelId === 'performance' && `CONFIDENCE: ${((result?.ml_results?.performance?.confidence || 0.936) * 100).toFixed(1)}%`}
                   {modelId === 'risk' && `RISK LEVEL: ${result?.ml_results?.risk?.risk_level || 'HIGH'}`}
                   {modelId === 'cost' && `STATUS: ${result?.ml_results?.cost_forecast?.budget_status || 'OVER BUDGET'}`}
@@ -590,56 +592,58 @@ export const ModelDetailPage: React.FC = () => {
 
               {/* 8-Zone Allocation Matrix (For Space & Optimization Model) */}
               {isSpaceOpt && (
-                <div style={{ backgroundColor: '#FFFFFF', border: '2.5px dashed #111111', borderRadius: '20px', padding: '28px', boxShadow: '0 8px 20px rgba(0,0,0,0.06)' }}>
-                  <h3 style={{ fontFamily: 'Anton, sans-serif', fontSize: '24px', color: '#111111', marginBottom: '16px', textTransform: 'uppercase' }}>
+                <div className="card-responsive-padding" style={{ backgroundColor: '#FFFFFF', border: '2.5px dashed #111111', borderRadius: '20px', padding: '24px', boxShadow: '0 8px 20px rgba(0,0,0,0.06)' }}>
+                  <h3 style={{ fontFamily: 'Anton, sans-serif', fontSize: '22px', color: '#111111', marginBottom: '14px', textTransform: 'uppercase' }}>
                     8-ZONE ALLOCATION MATRIX
                   </h3>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', fontFamily: 'Inter, sans-serif' }}>
-                    <thead>
-                      <tr style={{ borderBottom: '2.5px dashed #111111', textAlign: 'left', fontFamily: 'JetBrains Mono, monospace', fontSize: '11px' }}>
-                        <th style={{ padding: '8px 4px' }}>ZONE NAME</th>
-                        <th style={{ padding: '8px 4px' }}>ALLOCATED AREA</th>
-                        <th style={{ padding: '8px 4px' }}>MIN REQ</th>
-                        <th style={{ padding: '8px 4px' }}>% SITE</th>
-                        <th style={{ padding: '8px 4px' }}>STATUS</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {zoneAllocations.map(z => (
-                        <tr key={z.name} style={{ borderBottom: '1px solid #eeeeee' }}>
-                          <td style={{ padding: '10px 4px', fontWeight: '700' }}>{z.name}</td>
-                          <td style={{ padding: '10px 4px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>{z.alloc.toFixed(1)} m²</td>
-                          <td style={{ padding: '10px 4px', fontFamily: 'JetBrains Mono, monospace', color: '#666' }}>{z.req} m²</td>
-                          <td style={{ padding: '10px 4px', fontFamily: 'JetBrains Mono, monospace' }}>{z.pct}</td>
-                          <td style={{ padding: '10px 4px' }}>
-                            <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', backgroundColor: '#111111', color: '#FFFFFF', padding: '2px 6px', borderRadius: '4px' }}>
-                              {z.status}
-                            </span>
-                          </td>
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', minWidth: '460px', borderCollapse: 'collapse', fontSize: '13px', fontFamily: 'Inter, sans-serif' }}>
+                      <thead>
+                        <tr style={{ borderBottom: '2.5px dashed #111111', textAlign: 'left', fontFamily: 'JetBrains Mono, monospace', fontSize: '11px' }}>
+                          <th style={{ padding: '8px 4px' }}>ZONE NAME</th>
+                          <th style={{ padding: '8px 4px' }}>ALLOCATED AREA</th>
+                          <th style={{ padding: '8px 4px' }}>MIN REQ</th>
+                          <th style={{ padding: '8px 4px' }}>% SITE</th>
+                          <th style={{ padding: '8px 4px' }}>STATUS</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {zoneAllocations.map(z => (
+                          <tr key={z.name} style={{ borderBottom: '1px solid #eeeeee' }}>
+                            <td style={{ padding: '10px 4px', fontWeight: '700' }}>{z.name}</td>
+                            <td style={{ padding: '10px 4px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>{z.alloc.toFixed(1)} m²</td>
+                            <td style={{ padding: '10px 4px', fontFamily: 'JetBrains Mono, monospace', color: '#666' }}>{z.req} m²</td>
+                            <td style={{ padding: '10px 4px', fontFamily: 'JetBrains Mono, monospace' }}>{z.pct}</td>
+                            <td style={{ padding: '10px 4px' }}>
+                              <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', backgroundColor: '#111111', color: '#FFFFFF', padding: '2px 6px', borderRadius: '4px' }}>
+                                {z.status}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               )}
 
               {/* Feature Importance & Drivers Breakdown */}
-              <div style={{ backgroundColor: '#FFFFFF', border: '2.5px dashed #111111', borderRadius: '20px', padding: '28px 36px', boxShadow: '0 8px 20px rgba(0,0,0,0.06)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+              <div className="card-responsive-padding" style={{ backgroundColor: '#FFFFFF', border: '2.5px dashed #111111', borderRadius: '20px', padding: '24px 28px', boxShadow: '0 8px 20px rgba(0,0,0,0.06)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
                   <Activity size={20} color="#111111" />
-                  <h3 style={{ fontFamily: 'Anton, sans-serif', fontSize: '24px', color: '#111111', textTransform: 'uppercase' }}>
+                  <h3 style={{ fontFamily: 'Anton, sans-serif', fontSize: '22px', color: '#111111', textTransform: 'uppercase' }}>
                     KEY INPUT FEATURE DRIVERS & WEIGHTS
                   </h3>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   {config.topFactors.map(factor => (
-                    <div key={factor.name} style={{ backgroundColor: '#EDECE7', padding: '12px 18px', borderRadius: '10px', border: '1.5px solid #111111' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>
+                    <div key={factor.name} style={{ backgroundColor: '#EDECE7', padding: '10px 14px', borderRadius: '10px', border: '1.5px solid #111111' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', flexWrap: 'wrap', gap: '4px' }}>
                         <span>{factor.name} ({factor.val})</span>
                         <span>{factor.pct}% WEIGHT</span>
                       </div>
-                      <div style={{ height: '10px', backgroundColor: '#FFFFFF', borderRadius: '5px', marginTop: '8px', overflow: 'hidden', border: '1px solid #111111' }}>
+                      <div style={{ height: '8px', backgroundColor: '#FFFFFF', borderRadius: '4px', marginTop: '6px', overflow: 'hidden', border: '1px solid #111111' }}>
                         <div style={{ height: '100%', width: `${factor.pct}%`, backgroundColor: '#111111' }} />
                       </div>
                     </div>
@@ -648,15 +652,15 @@ export const ModelDetailPage: React.FC = () => {
               </div>
 
               {/* Deep Gemini 2.5 Flash Analytical Narrative & Action Items */}
-              <div style={{ backgroundColor: '#FFFFFF', border: '2.5px dashed #111111', borderRadius: '20px', padding: '32px 40px', boxShadow: '0 8px 20px rgba(0,0,0,0.06)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <div className="card-responsive-padding" style={{ backgroundColor: '#FFFFFF', border: '2.5px dashed #111111', borderRadius: '20px', padding: '24px 28px', boxShadow: '0 8px 20px rgba(0,0,0,0.06)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '10px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <Sparkles size={22} color="#FF2AA1" />
-                    <h3 style={{ fontFamily: 'Anton, sans-serif', fontSize: '26px', color: '#111111', textTransform: 'uppercase' }}>
+                    <Sparkles size={20} color="#FF2AA1" />
+                    <h3 style={{ fontFamily: 'Anton, sans-serif', fontSize: '22px', color: '#111111', textTransform: 'uppercase' }}>
                       DETAILED GEMINI 2.5 FLASH ANALYSIS
                     </h3>
                   </div>
-                  <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', backgroundColor: '#FF2AA1', color: '#FFFFFF', padding: '4px 10px', borderRadius: '4px' }}>
+                  <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', backgroundColor: '#FF2AA1', color: '#FFFFFF', padding: '3px 8px', borderRadius: '4px' }}>
                     GROUNDED AI
                   </span>
                 </div>
@@ -664,32 +668,32 @@ export const ModelDetailPage: React.FC = () => {
                 {/* Main Explanation Paragraph */}
                 <div style={{
                   fontFamily: 'Inter, sans-serif',
-                  fontSize: '16px',
+                  fontSize: '15px',
                   color: '#111111',
-                  lineHeight: '1.7',
+                  lineHeight: '1.6',
                   fontWeight: '500',
                   backgroundColor: '#EDECE7',
                   borderLeft: '4px solid #111111',
-                  padding: '20px 24px',
+                  padding: '16px 20px',
                   borderRadius: '8px',
-                  marginBottom: '24px'
+                  marginBottom: '20px'
                 }}>
                   "{getGeminiExplanation()}"
                 </div>
 
                 {/* Key Findings List */}
-                <div style={{ marginBottom: '24px' }}>
-                  <h4 style={{ fontFamily: 'Anton, sans-serif', fontSize: '20px', color: '#111111', marginBottom: '12px', textTransform: 'uppercase' }}>
+                <div style={{ marginBottom: '20px' }}>
+                  <h4 style={{ fontFamily: 'Anton, sans-serif', fontSize: '18px', color: '#111111', marginBottom: '10px', textTransform: 'uppercase' }}>
                     KEY FINDINGS & INSIGHTS
                   </h4>
-                  <ul style={{ listStyleType: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <ul style={{ listStyleType: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     {(result?.gemini_report?.report?.key_findings || spaceRes?.gemini_report?.space_report?.key_findings || [
                       `Model evaluated state as ${config.outputLabel}`,
                       `Input parameters indicate active operational workload`,
                       `Telemetry factors are grounded in ConArk rules engine`
                     ]).map((finding: string, i: number) => (
-                      <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', fontFamily: 'Inter, sans-serif', fontSize: '14px', color: '#222222', lineHeight: '1.5' }}>
-                        <ShieldCheck size={18} color="#15803d" style={{ minWidth: '18px', marginTop: '2px' }} />
+                      <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', fontFamily: 'Inter, sans-serif', fontSize: '13px', color: '#222222', lineHeight: '1.45' }}>
+                        <ShieldCheck size={16} color="#15803d" style={{ minWidth: '16px', marginTop: '2px' }} />
                         <span>{finding}</span>
                       </li>
                     ))}
@@ -698,18 +702,18 @@ export const ModelDetailPage: React.FC = () => {
 
                 {/* Actionable Mitigation Checklist */}
                 <div>
-                  <h4 style={{ fontFamily: 'Anton, sans-serif', fontSize: '20px', color: '#111111', marginBottom: '12px', textTransform: 'uppercase' }}>
+                  <h4 style={{ fontFamily: 'Anton, sans-serif', fontSize: '18px', color: '#111111', marginBottom: '10px', textTransform: 'uppercase' }}>
                     ACTIONABLE MITIGATION CHECKLIST
                   </h4>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     {(result?.gemini_report?.report?.recommended_actions || spaceRes?.gemini_report?.space_report?.recommended_actions?.map(a => a.action) || [
                       "Conduct preventative maintenance check on active equipment",
                       "Rebalance worker allocation before the next construction cycle",
                       "Monitor vibration telemetry logs for safety compliance"
                     ]).map((action: string, i: number) => (
-                      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px', backgroundColor: '#FFFFFF', border: '1.5px solid #111111', padding: '12px 16px', borderRadius: '8px' }}>
-                        <CheckCircle2 size={20} color="#FF2AA1" />
-                        <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '14px', fontWeight: '600', color: '#111111' }}>
+                      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: '#FFFFFF', border: '1.5px solid #111111', padding: '10px 14px', borderRadius: '8px' }}>
+                        <CheckCircle2 size={18} color="#FF2AA1" />
+                        <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '13px', fontWeight: '600', color: '#111111' }}>
                           {action}
                         </span>
                       </div>
@@ -720,26 +724,26 @@ export const ModelDetailPage: React.FC = () => {
             </>
           ) : (
             /* Standby State Before User Clicks Predict */
-            <div style={{
+            <div className="card-responsive-padding" style={{
               backgroundColor: '#FFFFFF',
               border: '2.5px dashed #111111',
               borderRadius: '20px',
-              padding: '64px 44px',
+              padding: '48px 24px',
               textAlign: 'center',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              minHeight: '480px',
+              minHeight: '380px',
               boxShadow: '0 8px 20px rgba(0,0,0,0.06)'
             }}>
-              <div style={{ width: '56px', height: '56px', backgroundColor: config.color === '#FFFFFF' ? '#EDECE7' : config.color, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #111111', marginBottom: '20px' }}>
-                <Sparkles size={28} color="#111111" />
+              <div style={{ width: '52px', height: '52px', backgroundColor: config.color === '#FFFFFF' ? '#EDECE7' : config.color, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #111111', marginBottom: '16px' }}>
+                <Sparkles size={24} color="#111111" />
               </div>
-              <h3 style={{ fontFamily: 'Anton, sans-serif', fontSize: '32px', color: '#111111', textTransform: 'uppercase', marginBottom: '10px' }}>
+              <h3 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(24px, 4vw, 32px)', color: '#111111', textTransform: 'uppercase', marginBottom: '8px' }}>
                 READY FOR INFERENCE & OPTIMIZATION
               </h3>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '15px', color: '#555555', maxWidth: '440px', lineHeight: '1.6' }}>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '14px', color: '#555555', maxWidth: '440px', lineHeight: '1.5' }}>
                 Configure parameters on the left and click <strong>"PREDICT FOR THIS MODEL →"</strong> to generate dynamic 2D spatial layouts, SciPy optimization metrics, and Gemini AI breakdowns.
               </p>
             </div>

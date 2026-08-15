@@ -103,11 +103,20 @@ input, select, textarea {
   .command-center-grid {
     grid-template-columns: 1fr !important;
   }
+  .model-detail-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .space-opt-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .ai-insights-grid {
+    grid-template-columns: 1fr !important;
+  }
   .side-svg-column {
     display: none !important;
   }
   .card-responsive-padding {
-    padding: 28px 24px !important;
+    padding: 24px 20px !important;
   }
   .founder-grid-responsive {
     grid-template-columns: 1fr !important;
