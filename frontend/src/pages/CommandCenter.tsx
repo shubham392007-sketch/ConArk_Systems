@@ -179,15 +179,15 @@ export const CommandCenter: React.FC = () => {
         <span>40m SITE BOUNDARY</span>
       </div>
 
-      {/* 3-COLUMN MAIN LAYOUT: EXTREME LEFT SVGS (120px) | EXPANDED WIDE CARDS (1fr) | EXTREME RIGHT SVGS (120px) */}
-      <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr 120px', gap: '16px', alignItems: 'start', marginBottom: '44px' }}>
+      {/* 3-COLUMN MAIN LAYOUT: EXTREME LEFT SVGS (130px) | EXPANDED WIDE CARDS (1fr) | EXTREME RIGHT SVGS (130px) */}
+      <div style={{ display: 'grid', gridTemplateColumns: '130px 1fr 130px', gap: '16px', alignItems: 'start', marginBottom: '44px' }}>
         
-        {/* EXTREME LEFT MARGIN COLUMN: 5 SVGS MAPPED 1-TO-1 BESIDE ALL 5 CARDS */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '42px', paddingTop: '20px', alignItems: 'center', opacity: 0.85 }}>
+        {/* EXTREME LEFT MARGIN COLUMN: 7 CONSTRUCTION SVGS EVENLY FRAMING ALL CARDS DOWN TO CARD 05 */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', paddingTop: '10px', alignItems: 'center', opacity: 0.85 }}>
           
-          {/* SVG 1: Tower Crane (Beside Card 01 Performance) */}
-          <div style={{ textAlign: 'center', height: '140px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <svg width="100" height="110" viewBox="0 0 100 130" fill="none" stroke="#111111" strokeWidth="1.8">
+          {/* SVG 1: Tower Crane */}
+          <div style={{ textAlign: 'center' }}>
+            <svg width="90" height="75" viewBox="0 0 100 130" fill="none" stroke="#111111" strokeWidth="2">
               <line x1="25" y1="130" x2="25" y2="10" />
               <line x1="25" y1="10" x2="95" y2="10" />
               <line x1="10" y1="20" x2="25" y2="10" />
@@ -195,17 +195,16 @@ export const CommandCenter: React.FC = () => {
               <line x1="25" y1="10" x2="40" y2="22" />
               <line x1="40" y1="10" x2="55" y2="22" />
               <line x1="55" y1="10" x2="70" y2="22" />
-              <line x1="70" y1="10" x2="85" y2="22" />
               <line x1="75" y1="22" x2="75" y2="70" />
               <rect x="70" y="70" width="10" height="8" fill="#FF2AA1" stroke="#111111" />
               <rect x="5" y="15" width="12" height="12" fill="#111111" />
             </svg>
-            <span style={{ fontSize: '9px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#555', display: 'block', marginTop: '2px' }}>TOWER CRANE 01</span>
+            <span style={{ fontSize: '8.5px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#555', display: 'block' }}>TOWER CRANE</span>
           </div>
 
-          {/* SVG 2: Heavy Excavator (Beside Card 02 Risk) */}
-          <div style={{ textAlign: 'center', height: '140px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <svg width="100" height="90" viewBox="0 0 120 100" fill="none" stroke="#111111" strokeWidth="1.8">
+          {/* SVG 2: Heavy Excavator */}
+          <div style={{ textAlign: 'center' }}>
+            <svg width="90" height="65" viewBox="0 0 120 100" fill="none" stroke="#111111" strokeWidth="2">
               <rect x="10" y="70" width="70" height="20" rx="10" fill="#EDECE7" />
               <circle cx="25" cy="80" r="5" />
               <circle cx="45" cy="80" r="5" />
@@ -215,36 +214,34 @@ export const CommandCenter: React.FC = () => {
               <path d="M50 50 L80 25 L105 55 L95 70" strokeWidth="2.5" />
               <path d="M95 70 L115 75 L110 85 Z" fill="#111111" />
             </svg>
-            <span style={{ fontSize: '9px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#555', display: 'block', marginTop: '2px' }}>EXCAVATOR UNIT</span>
+            <span style={{ fontSize: '8.5px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#555', display: 'block' }}>EXCAVATOR UNIT</span>
           </div>
 
-          {/* SVG 3: Safety Helmet (Beside Card 03 Cost) */}
-          <div style={{ textAlign: 'center', height: '140px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <svg width="95" height="85" viewBox="0 0 100 90" fill="none" stroke="#111111" strokeWidth="1.8">
+          {/* SVG 3: Safety Helmet */}
+          <div style={{ textAlign: 'center' }}>
+            <svg width="85" height="60" viewBox="0 0 100 90" fill="none" stroke="#111111" strokeWidth="2">
               <path d="M20 50 C20 25, 80 25, 80 50 Z" fill="#E4FF5B" stroke="#111111" />
               <path d="M10 50 Q50 42 90 50 L95 56 L5 56 Z" fill="#111111" />
               <rect x="42" y="32" width="16" height="10" fill="#FF2AA1" rx="2" />
             </svg>
-            <span style={{ fontSize: '9px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#555', display: 'block', marginTop: '2px' }}>SITE SAFETY RIG</span>
+            <span style={{ fontSize: '8.5px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#555', display: 'block' }}>SITE SAFETY RIG</span>
           </div>
 
-          {/* SVG 4: Scaffolding Matrix (Beside Card 04 Time) */}
-          <div style={{ textAlign: 'center', height: '140px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <svg width="95" height="110" viewBox="0 0 100 130" fill="none" stroke="#111111" strokeWidth="1.5">
+          {/* SVG 4: Scaffolding Grid */}
+          <div style={{ textAlign: 'center' }}>
+            <svg width="85" height="70" viewBox="0 0 100 130" fill="none" stroke="#111111" strokeWidth="1.8">
               <rect x="15" y="10" width="70" height="110" strokeDasharray="2 2" />
               <line x1="15" y1="40" x2="85" y2="40" strokeWidth="2" />
               <line x1="15" y1="75" x2="85" y2="75" strokeWidth="2" />
               <line x1="15" y1="10" x2="85" y2="75" />
               <line x1="85" y1="10" x2="15" y2="75" />
-              <line x1="15" y1="75" x2="85" y2="120" />
-              <line x1="85" y1="75" x2="15" y2="120" />
             </svg>
-            <span style={{ fontSize: '9px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#555', display: 'block', marginTop: '2px' }}>SCAFFOLDING MATRIX</span>
+            <span style={{ fontSize: '8.5px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#555', display: 'block' }}>SCAFFOLD MATRIX</span>
           </div>
 
-          {/* SVG 5: Concrete Mixer Truck (Beside Card 05 Space Optimization) */}
-          <div style={{ textAlign: 'center', height: '140px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <svg width="100" height="90" viewBox="0 0 120 100" fill="none" stroke="#111111" strokeWidth="1.8">
+          {/* SVG 5: Concrete Mixer Truck (Directly Beside Card 04/05) */}
+          <div style={{ textAlign: 'center' }}>
+            <svg width="90" height="65" viewBox="0 0 120 100" fill="none" stroke="#111111" strokeWidth="2">
               <ellipse cx="45" cy="45" rx="30" ry="20" transform="rotate(-20 45 45)" fill="#E4FF5B" stroke="#111111" />
               <rect x="75" y="45" width="30" height="30" fill="#4FC3F7" stroke="#111111" />
               <rect x="85" y="50" width="15" height="12" fill="#FFFFFF" stroke="#111111" />
@@ -252,7 +249,32 @@ export const CommandCenter: React.FC = () => {
               <circle cx="50" cy="80" r="8" fill="#111111" />
               <circle cx="90" cy="80" r="8" fill="#111111" />
             </svg>
-            <span style={{ fontSize: '9px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#555', display: 'block', marginTop: '2px' }}>CONCRETE MIXER</span>
+            <span style={{ fontSize: '8.5px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#555', display: 'block' }}>CONCRETE MIXER</span>
+          </div>
+
+          {/* SVG 6: 2D Spatial Grid (Directly Beside Card 05 Space Optimization) */}
+          <div style={{ textAlign: 'center' }}>
+            <svg width="85" height="65" viewBox="0 0 100 100" fill="none" stroke="#111111" strokeWidth="1.8">
+              <rect x="10" y="10" width="80" height="80" fill="#EDECE7" stroke="#111111" />
+              <line x1="10" y1="36" x2="90" y2="36" strokeDasharray="3 3" />
+              <line x1="10" y1="63" x2="90" y2="63" strokeDasharray="3 3" />
+              <line x1="36" y1="10" x2="36" y2="90" strokeDasharray="3 3" />
+              <line x1="63" y1="10" x2="63" y2="90" strokeDasharray="3 3" />
+              <rect x="36" y="36" width="27" height="27" fill="#FF2AA1" stroke="#111111" />
+            </svg>
+            <span style={{ fontSize: '8.5px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#555', display: 'block' }}>SPATIAL GRID</span>
+          </div>
+
+          {/* SVG 7: Heavy Bulldozer (Beside Card 05 Bottom) */}
+          <div style={{ textAlign: 'center' }}>
+            <svg width="90" height="65" viewBox="0 0 120 90" fill="none" stroke="#111111" strokeWidth="2">
+              <rect x="30" y="50" width="60" height="25" rx="5" fill="#7CFFA6" stroke="#111111" />
+              <rect x="45" y="25" width="30" height="25" fill="#FFFFFF" stroke="#111111" />
+              <path d="M10 40 L30 40 L30 75 L10 75 Z" fill="#111111" />
+              <circle cx="45" cy="62" r="6" />
+              <circle cx="75" cy="62" r="6" />
+            </svg>
+            <span style={{ fontSize: '8.5px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#555', display: 'block' }}>BULLDOZER RIG</span>
           </div>
 
         </div>
@@ -557,12 +579,12 @@ export const CommandCenter: React.FC = () => {
           </div>
         </div>
 
-        {/* EXTREME RIGHT MARGIN COLUMN: 5 SVGS MAPPED 1-TO-1 BESIDE ALL 5 CARDS */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '42px', paddingTop: '20px', alignItems: 'center', opacity: 0.85 }}>
+        {/* EXTREME RIGHT MARGIN COLUMN: 7 CONSTRUCTION SVGS EVENLY FRAMING ALL CARDS DOWN TO CARD 05 */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', paddingTop: '10px', alignItems: 'center', opacity: 0.85 }}>
           
-          {/* SVG 1: Structural Building Skeleton (Beside Card 01 Performance) */}
-          <div style={{ textAlign: 'center', height: '140px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <svg width="100" height="120" viewBox="0 0 120 150" fill="none" stroke="#111111" strokeWidth="1.8">
+          {/* SVG 1: Building Skeleton */}
+          <div style={{ textAlign: 'center' }}>
+            <svg width="90" height="75" viewBox="0 0 120 150" fill="none" stroke="#111111" strokeWidth="1.8">
               <rect x="15" y="20" width="90" height="120" strokeDasharray="4 4" fill="#EDECE7" />
               <line x1="15" y1="60" x2="105" y2="60" strokeWidth="2" />
               <line x1="15" y1="100" x2="105" y2="100" strokeWidth="2" />
@@ -571,36 +593,36 @@ export const CommandCenter: React.FC = () => {
               <circle cx="45" cy="60" r="5" fill="#FF2AA1" />
               <circle cx="75" cy="100" r="5" fill="#7CFFA6" stroke="#111" />
             </svg>
-            <span style={{ fontSize: '9px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#555', display: 'block', marginTop: '2px' }}>BUILDING SKELETON</span>
+            <span style={{ fontSize: '8.5px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#555', display: 'block' }}>BUILDING SKELETON</span>
           </div>
 
-          {/* SVG 2: Architect Drafting Compass (Beside Card 02 Risk) */}
-          <div style={{ textAlign: 'center', height: '140px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <svg width="100" height="90" viewBox="0 0 110 100" fill="none" stroke="#111111" strokeWidth="1.8">
+          {/* SVG 2: Drafting Compass */}
+          <div style={{ textAlign: 'center' }}>
+            <svg width="85" height="65" viewBox="0 0 110 100" fill="none" stroke="#111111" strokeWidth="1.8">
               <line x1="55" y1="15" x2="25" y2="85" strokeWidth="2.5" />
               <line x1="55" y1="15" x2="85" y2="85" strokeWidth="2.5" />
               <circle cx="55" cy="15" r="7" fill="#111111" />
               <line x1="35" y1="55" x2="75" y2="55" strokeWidth="1.5" />
               <path d="M 30 75 A 35 35 0 0 1 80 75" strokeDasharray="3 3" stroke="#FF2AA1" strokeWidth="2" />
             </svg>
-            <span style={{ fontSize: '9px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#555', display: 'block', marginTop: '2px' }}>DRAFTING TOOL</span>
+            <span style={{ fontSize: '8.5px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#555', display: 'block' }}>DRAFTING TOOL</span>
           </div>
 
-          {/* SVG 3: Surveying Tripod (Beside Card 03 Cost) */}
-          <div style={{ textAlign: 'center', height: '140px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <svg width="95" height="100" viewBox="0 0 100 110" fill="none" stroke="#111111" strokeWidth="1.8">
+          {/* SVG 3: Survey Tripod */}
+          <div style={{ textAlign: 'center' }}>
+            <svg width="85" height="60" viewBox="0 0 100 110" fill="none" stroke="#111111" strokeWidth="1.8">
               <line x1="50" y1="35" x2="15" y2="105" strokeWidth="2" />
               <line x1="50" y1="35" x2="50" y2="105" strokeWidth="2" />
               <line x1="50" y1="35" x2="85" y2="105" strokeWidth="2" />
               <rect x="30" y="20" width="40" height="15" fill="#7CFFA6" stroke="#111111" />
               <circle cx="50" cy="27" r="4" fill="#FF2AA1" />
             </svg>
-            <span style={{ fontSize: '9px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#555', display: 'block', marginTop: '2px' }}>SURVEY TRIPOD</span>
+            <span style={{ fontSize: '8.5px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#555', display: 'block' }}>SURVEY TRIPOD</span>
           </div>
 
-          {/* SVG 4: Concrete Dump Truck (Beside Card 04 Time) */}
-          <div style={{ textAlign: 'center', height: '140px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <svg width="100" height="90" viewBox="0 0 120 90" fill="none" stroke="#111111" strokeWidth="1.8">
+          {/* SVG 4: Concrete Dump Truck */}
+          <div style={{ textAlign: 'center' }}>
+            <svg width="90" height="65" viewBox="0 0 120 90" fill="none" stroke="#111111" strokeWidth="1.8">
               <rect x="75" y="35" width="35" height="35" fill="#E4FF5B" stroke="#111111" />
               <rect x="85" y="40" width="18" height="15" fill="#FFFFFF" stroke="#111111" />
               <path d="M15 30 L65 30 L60 65 L15 65 Z" fill="#4FC3F7" stroke="#111111" />
@@ -608,17 +630,38 @@ export const CommandCenter: React.FC = () => {
               <circle cx="50" cy="70" r="9" fill="#111111" />
               <circle cx="95" cy="70" r="9" fill="#111111" />
             </svg>
-            <span style={{ fontSize: '9px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#555', display: 'block', marginTop: '2px' }}>LOGISTICS TRUCK</span>
+            <span style={{ fontSize: '8.5px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#555', display: 'block' }}>LOGISTICS TRUCK</span>
           </div>
 
-          {/* SVG 5: Structural Steel I-Beam Rig (Beside Card 05 Space Optimization) */}
-          <div style={{ textAlign: 'center', height: '140px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <svg width="95" height="90" viewBox="0 0 100 100" fill="none" stroke="#111111" strokeWidth="2">
+          {/* SVG 5: Steel I-Beam Framework (Directly Beside Card 04/05) */}
+          <div style={{ textAlign: 'center' }}>
+            <svg width="85" height="65" viewBox="0 0 100 100" fill="none" stroke="#111111" strokeWidth="2">
               <rect x="15" y="15" width="70" height="14" fill="#111111" />
               <rect x="15" y="71" width="70" height="14" fill="#111111" />
               <rect x="43" y="29" width="14" height="42" fill="#E4FF5B" stroke="#111111" />
             </svg>
-            <span style={{ fontSize: '9px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#555', display: 'block', marginTop: '2px' }}>STEEL I-BEAM RIG</span>
+            <span style={{ fontSize: '8.5px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#555', display: 'block' }}>STEEL I-BEAM RIG</span>
+          </div>
+
+          {/* SVG 6: Total Station Survey Station (Directly Beside Card 05 Space Optimization) */}
+          <div style={{ textAlign: 'center' }}>
+            <svg width="85" height="65" viewBox="0 0 100 110" fill="none" stroke="#111111" strokeWidth="1.8">
+              <line x1="50" y1="40" x2="20" y2="100" />
+              <line x1="50" y1="40" x2="80" y2="100" />
+              <rect x="35" y="15" width="30" height="25" fill="#7CFFA6" stroke="#111111" />
+              <circle cx="50" cy="27" r="6" fill="#FF2AA1" />
+            </svg>
+            <span style={{ fontSize: '8.5px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#555', display: 'block' }}>TOTAL STATION</span>
+          </div>
+
+          {/* SVG 7: Architectural Floor Plan Blueprint (Beside Card 05 Bottom) */}
+          <div style={{ textAlign: 'center' }}>
+            <svg width="85" height="65" viewBox="0 0 100 100" fill="none" stroke="#111111" strokeWidth="1.8">
+              <rect x="10" y="10" width="80" height="80" fill="#4FC3F7" fillOpacity="0.2" stroke="#111111" />
+              <path d="M10 40 L50 40 L50 90 M50 60 L90 60" strokeWidth="2" stroke="#111111" />
+              <circle cx="50" cy="40" r="3" fill="#111111" />
+            </svg>
+            <span style={{ fontSize: '8.5px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#555', display: 'block' }}>FLOOR PLAN</span>
           </div>
 
         </div>
