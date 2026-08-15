@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles, HardHat, Pickaxe, Ruler, Compass } from 'lucide-react';
 import { analyzeProjectIntelligence, optimizeSpaceLayout } from '../services/api';
 import type { MasterIntelligenceResponse, OperationalInputs, SpaceOptimizationResponse, ZoneCoordinates } from '../types';
 
@@ -126,28 +126,151 @@ export const CommandCenter: React.FC = () => {
 
   return (
     <div style={{ maxWidth: '1650px', margin: '0 auto', padding: '24px 40px 64px 40px' }}>
-      {/* Giant Editorial Wordmark */}
-      <div style={{ textAlign: 'center', margin: '16px 0 44px 0' }}>
+      
+      {/* Editorial Landing Hero Header with Construction Graphics */}
+      <div style={{
+        position: 'relative',
+        textAlign: 'center',
+        padding: '32px 20px 48px 20px',
+        marginBottom: '36px',
+        borderBottom: '2.5px dashed #111111',
+        overflow: 'hidden'
+      }}>
+        {/* Left Side Construction Tower Crane Vector Line Graphic */}
+        <div style={{
+          position: 'absolute',
+          left: '20px',
+          top: '10px',
+          opacity: 0.18,
+          pointerEvents: 'none'
+        }}>
+          <svg width="180" height="220" viewBox="0 0 100 120" fill="none" stroke="#111111" strokeWidth="2">
+            {/* Tower Crane Structure */}
+            <line x1="20" y1="120" x2="20" y2="10" />
+            <line x1="20" y1="10" x2="95" y2="10" />
+            <line x1="5" y1="20" x2="20" y2="10" />
+            <line x1="20" y1="25" x2="95" y2="25" />
+            {/* Truss Crosses */}
+            <line x1="20" y1="10" x2="35" y2="25" />
+            <line x1="35" y1="10" x2="50" y2="25" />
+            <line x1="50" y1="10" x2="65" y2="25" />
+            <line x1="65" y1="10" x2="80" y2="25" />
+            <line x1="80" y1="10" x2="95" y2="25" />
+            {/* Hook Wire */}
+            <line x1="75" y1="25" x2="75" y2="65" />
+            <rect x="70" y="65" width="10" height="8" fill="#111111" />
+          </svg>
+        </div>
+
+        {/* Right Side Structural Blueprint Grid Vector Graphic */}
+        <div style={{
+          position: 'absolute',
+          right: '20px',
+          top: '10px',
+          opacity: 0.18,
+          pointerEvents: 'none'
+        }}>
+          <svg width="180" height="220" viewBox="0 0 120 120" fill="none" stroke="#111111" strokeWidth="1.5">
+            {/* Building Structural Skeleton Grid */}
+            <rect x="10" y="20" width="100" height="90" strokeDasharray="4 4" />
+            <line x1="10" y1="50" x2="110" y2="50" />
+            <line x1="10" y1="80" x2="110" y2="80" />
+            <line x1="45" y1="20" x2="45" y2="110" />
+            <line x1="75" y1="20" x2="75" y2="110" />
+            <circle cx="45" cy="50" r="4" fill="#FF2AA1" />
+            <circle cx="75" cy="80" r="4" fill="#FF2AA1" />
+          </svg>
+        </div>
+
+        {/* Platform Sub-Tagline Badge */}
+        <div style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '8px',
+          backgroundColor: '#111111',
+          color: '#FFFFFF',
+          padding: '6px 16px',
+          borderRadius: '20px',
+          fontSize: '11px',
+          fontFamily: 'JetBrains Mono, monospace',
+          fontWeight: '800',
+          letterSpacing: '0.08em',
+          marginBottom: '16px'
+        }}>
+          <HardHat size={14} color="#E4FF5B" /> AI-POWERED CONSTRUCTION INTELLIGENCE PLATFORM
+        </div>
+
+        {/* FULL WORDMARK TITLE: CONARK SYSTEMS */}
         <h1 style={{
           fontFamily: 'Anton, sans-serif',
-          fontSize: 'clamp(84px, 18vw, 240px)',
+          fontSize: 'clamp(64px, 14vw, 190px)',
           lineHeight: '0.85',
           color: '#111111',
           letterSpacing: '-0.03em',
-          textTransform: 'uppercase'
+          textTransform: 'uppercase',
+          margin: '0 auto'
         }}>
-          CONARK
+          CONARK SYSTEMS
         </h1>
+
+        {/* Tagline */}
         <p style={{
           fontFamily: 'Inter, sans-serif',
-          fontSize: '18px',
-          fontWeight: '600',
+          fontSize: '20px',
+          fontWeight: '700',
           color: '#111111',
-          marginTop: '16px',
-          letterSpacing: '0.03em'
+          marginTop: '20px',
+          letterSpacing: '0.04em'
         }}>
           Predict. Decide. Explain. Act.
         </p>
+
+        {/* Construction Telemetry Meta Pill Strip */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: '24px',
+          marginTop: '20px',
+          fontSize: '12px',
+          fontFamily: 'JetBrains Mono, monospace',
+          color: '#555555',
+          flexWrap: 'wrap'
+        }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Ruler size={15} color="#111111" /> 5 PREDICTIVE ML MODELS
+          </span>
+          <span>·</span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Compass size={15} color="#FF2AA1" /> SciPy SLSQP SPACE SOLVER
+          </span>
+          <span>·</span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Pickaxe size={15} color="#111111" /> GEMINI 2.5 FLASH EXPLANATIONS
+          </span>
+        </div>
+      </div>
+
+      {/* Blueprint Measurement Ruler Divider */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        fontFamily: 'JetBrains Mono, monospace',
+        fontSize: '11px',
+        color: '#666666',
+        marginBottom: '28px',
+        padding: '0 8px'
+      }}>
+        <span>0m</span>
+        <span style={{ flex: 1, borderTop: '1px dashed #999', margin: '0 12px' }} />
+        <span>10m</span>
+        <span style={{ flex: 1, borderTop: '1px dashed #999', margin: '0 12px' }} />
+        <span>20m</span>
+        <span style={{ flex: 1, borderTop: '1px dashed #999', margin: '0 12px' }} />
+        <span>30m</span>
+        <span style={{ flex: 1, borderTop: '1px dashed #999', margin: '0 12px' }} />
+        <span>40m SITE BOUNDARY</span>
       </div>
 
       {/* 5-MODEL STACKED CARD DECK — ENLARGED BREADTH + CLICKABLE TO DEDICATED MODEL PAGE */}
