@@ -60,7 +60,7 @@ export const ModelDetailPage: React.FC = () => {
           algorithm: 'HistGradientBoosting Regressor',
           version: 'v1.0.0',
           color: '#7CFFA6',
-          outputLabel: 'PREDICTED TIME DEVIATION (DAYS)',
+          outputLabel: 'PREDICTED TIME DEVIATION',
           explanationKey: 'schedule_explanation'
         };
       case 'optimization':
@@ -97,6 +97,20 @@ export const ModelDetailPage: React.FC = () => {
     if (!result?.gemini_report?.report) return null;
     const report = result.gemini_report.report;
     return report[config.explanationKey] || report.executive_summary || "Gemini analysis generated based on updated model inputs.";
+  };
+
+  // Helper formatting for numbers
+  const formatCostOutput = () => {
+    const val = result?.ml_results?.cost_forecast?.predicted_cost_deviation ?? 8420;
+    if (val > 0) return `+$${val.toLocaleString()}`;
+    if (val < 0) return `-$${Math.abs(val).toLocaleString()}`;
+    return `$0`;
+  };
+
+  const formatTimeOutput = () => {
+    const val = result?.ml_results?.time_forecast?.predicted_time_deviation_days ?? 4.8;
+    if (val > 0) return `+${val.toFixed(1)} DAYS`;
+    return `${val.toFixed(1)} DAYS`;
   };
 
   return (
@@ -267,12 +281,12 @@ export const ModelDetailPage: React.FC = () => {
                   {config.outputLabel}
                 </span>
 
-                {/* Model Output Prediction */}
+                {/* Clean Formatted Model Output Prediction */}
                 <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '64px', fontWeight: '800', color: '#111111', lineHeight: '1.0', margin: '16px 0 8px 0' }}>
                   {modelId === 'performance' && (result?.ml_results?.performance?.prediction || 'GOOD')}
                   {modelId === 'risk' && `${(result?.ml_results?.risk?.risk_score || 72).toFixed(0)}%`}
-                  {modelId === 'cost' && `$${(result?.ml_results?.cost_forecast?.predicted_cost_deviation || 8420).toLocaleString()}`}
-                  {modelId === 'time' && `+${(result?.ml_results?.time_forecast?.predicted_time_deviation_days || 4.8).toFixed(1)} DAYS`}
+                  {modelId === 'cost' && formatCostOutput()}
+                  {modelId === 'time' && formatTimeOutput()}
                   {modelId === 'optimization' && (result?.ml_results?.optimization?.recommendation || 'REALLOCATE WORKERS')}
                 </div>
 

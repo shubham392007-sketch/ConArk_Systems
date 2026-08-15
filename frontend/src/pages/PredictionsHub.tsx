@@ -8,13 +8,13 @@ export const PredictionsHub: React.FC = () => {
     {
       id: 'performance',
       index: '01',
-      title: 'PERFORMANCE',
+      title: 'PERFORMANCE MODEL',
       color: '#FFFFFF',
       algorithm: 'HistGradientBoosting Classifier',
       version: 'v1.0',
       lastComputed: '12:04:31',
       output: 'GOOD',
-      confidence: '91.4%',
+      confidence: '93.6%',
       featuresCount: 12,
       classes: ['POOR', 'AVERAGE', 'GOOD', 'EXCELLENT'],
       activeClass: 'GOOD',
@@ -27,12 +27,12 @@ export const PredictionsHub: React.FC = () => {
     {
       id: 'risk',
       index: '02',
-      title: 'RISK',
+      title: 'OPERATIONAL RISK MODEL',
       color: '#4FC3F7',
       algorithm: 'LinearRegression Model',
       version: 'v1.0',
       lastComputed: '12:04:31',
-      output: '72.4%',
+      output: '72%',
       badge: 'HIGH',
       featuresCount: 7,
       riskFactors: [
@@ -52,7 +52,7 @@ export const PredictionsHub: React.FC = () => {
     {
       id: 'cost',
       index: '03',
-      title: 'COST FORECAST',
+      title: 'COST FORECAST MODEL',
       color: '#E4FF5B',
       algorithm: 'XGBRegressor Model',
       version: 'v1.0',
@@ -70,7 +70,7 @@ export const PredictionsHub: React.FC = () => {
     {
       id: 'time',
       index: '04',
-      title: 'TIME FORECAST',
+      title: 'TIME FORECAST MODEL',
       color: '#7CFFA6',
       algorithm: 'HistGradientBoosting Regressor',
       version: 'v1.0',
@@ -93,7 +93,7 @@ export const PredictionsHub: React.FC = () => {
     {
       id: 'optimization',
       index: '05',
-      title: 'OPTIMIZATION',
+      title: 'OPTIMIZATION RECOMMENDATION MODEL',
       color: '#F5F3E3',
       algorithm: 'HistGradientBoosting Classifier',
       version: 'v1.0',
@@ -115,10 +115,10 @@ export const PredictionsHub: React.FC = () => {
       <div style={{ marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', borderBottom: '2.5px dashed #111111', paddingBottom: '20px' }}>
         <div>
           <h1 style={{ fontFamily: 'Anton, sans-serif', fontSize: '54px', color: '#111111', textTransform: 'uppercase' }}>
-            PREDICTIONS
+            PREDICTIONS HUB
           </h1>
           <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', color: '#555555' }}>
-            Five models. One project state.
+            Five trained models. One project state.
           </p>
         </div>
         <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '13px', color: '#666666' }}>

@@ -55,6 +55,17 @@ export const CommandCenter: React.FC = () => {
 
   const geminiText = data?.gemini_report.report?.executive_summary || "Review worker allocation before the next construction cycle.";
 
+  const formatCostDisplay = (val: number) => {
+    if (val > 0) return `+$${val.toLocaleString()}`;
+    if (val < 0) return `-$${Math.abs(val).toLocaleString()}`;
+    return `$0`;
+  };
+
+  const formatTimeDisplay = (val: number) => {
+    if (val > 0) return `+${val.toFixed(1)} DAYS`;
+    return `${val.toFixed(1)} DAYS`;
+  };
+
   return (
     <div style={{ maxWidth: '1650px', margin: '0 auto', padding: '24px 40px 64px 40px' }}>
       {/* Giant Editorial Wordmark */}
@@ -253,7 +264,7 @@ export const CommandCenter: React.FC = () => {
             <div style={{ textAlign: 'right' }}>
               <div style={{ fontSize: '12px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#111111' }}>MODEL OUTPUT</div>
               <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '56px', fontWeight: '800', color: '#111111', lineHeight: '0.9', marginTop: '6px' }}>
-                {costDev > 0 ? `+$${costDev.toLocaleString()}` : `-$${Math.abs(costDev).toLocaleString()}`}
+                {formatCostDisplay(costDev)}
               </div>
               <div style={{ fontSize: '15px', fontWeight: '800', color: '#111111', fontFamily: 'JetBrains Mono, monospace', marginTop: '8px' }}>
                 STATUS: {costStatus}
@@ -309,7 +320,7 @@ export const CommandCenter: React.FC = () => {
             <div style={{ textAlign: 'right' }}>
               <div style={{ fontSize: '12px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#111111' }}>MODEL OUTPUT</div>
               <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '56px', fontWeight: '800', color: '#111111', lineHeight: '0.9', marginTop: '6px' }}>
-                {timeDev > 0 ? `+${timeDev.toFixed(1)} DAYS` : `${timeDev.toFixed(1)} DAYS`}
+                {formatTimeDisplay(timeDev)}
               </div>
               <div style={{ fontSize: '15px', fontWeight: '800', color: '#111111', fontFamily: 'JetBrains Mono, monospace', marginTop: '8px' }}>
                 SCHEDULE: {timeStatus}
