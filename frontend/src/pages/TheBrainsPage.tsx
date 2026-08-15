@@ -6,111 +6,162 @@ import { Mail, X, ArrowRight, Cpu, Database, Microscope } from 'lucide-react';
 interface TeamMember {
   id: string;
   index: string;
-  name: string;
+  nameLine1: string;
+  nameLine2: string;
+  fullName: string;
   role: string;
   shortIntro: string;
   specialization: string;
   email: string;
-  color: string; // white, blue, chartreuse, mint
   cardBg: string;
-  cardTextColor: string;
-  rotationClass: string;
+  rotation: string;
   linkedin: string;
   github: string;
   instagram: string;
   contribution: string;
-  motif: string[];
+  cornerIcon: string;
+  diagramType: 'wave' | 'bars' | 'nodes' | 'schema';
 }
 
 const teamMembers: TeamMember[] = [
   {
     id: 'siddhesh',
     index: '01',
-    name: 'SIDDHESH BIREWAR',
+    nameLine1: 'SIDDHESH',
+    nameLine2: 'BIREWAR',
+    fullName: 'SIDDHESH BIREWAR',
     role: 'RESEARCH ENGINEER & TECHNICAL SUPPORT SPECIALIST',
-    shortIntro: 'Siddhesh contributes to ConArk through research engineering and technical support, helping bridge technical investigation with practical system implementation.',
+    shortIntro: 'Bridging the gap between theoretical models and practical implementation. Focuses on system architecture robustness and emergent AI behaviors.',
     specialization: 'RESEARCH / ENGINEERING / TECHNICAL SUPPORT',
     email: 'siddhesh.birewar25@pccoepune.org',
-    color: 'white',
     cardBg: '#FFFFFF',
-    cardTextColor: '#111111',
-    rotationClass: 'card-rotate-neg1',
+    rotation: '-1.5deg',
     linkedin: 'https://linkedin.com',
     github: 'https://github.com',
     instagram: 'https://instagram.com',
     contribution: 'Research and engineering contribution to bridging technical investigation with practical system implementation.',
-    motif: ['RESEARCH', 'ANALYZE', 'BUILD', 'SUPPORT']
+    cornerIcon: '✳',
+    diagramType: 'wave'
   },
   {
     id: 'vernit',
     index: '02',
-    name: 'VERNIT GARG',
-    role: 'RESEARCH SPECIALIST & MACHINE LEARNING ENGINEER',
-    shortIntro: "Vernit focuses on research and machine learning, contributing to the predictive intelligence that powers ConArk's construction analytics.",
+    nameLine1: 'VERNIT',
+    nameLine2: 'GARG',
+    fullName: 'VERNIT GARG',
+    role: 'RESEARCH SPECIALIST & ML ENGINEER',
+    shortIntro: 'Designing predictive models for complex structural anomalies. Specializes in transforming raw site telemetries into actionable intelligence matrices.',
     specialization: 'RESEARCH / MACHINE LEARNING / PREDICTIVE SYSTEMS',
     email: 'vernit.gerg25@pccoepune.org',
-    color: 'blue',
     cardBg: '#4FC3F7',
-    cardTextColor: '#111111',
-    rotationClass: 'card-rotate-pos1',
+    rotation: '1.2deg',
     linkedin: 'https://linkedin.com',
     github: 'https://github.com',
     instagram: 'https://instagram.com',
     contribution: "Research and machine learning contribution to ConArk's predictive intelligence layer.",
-    motif: ['DATA', 'FEATURES', 'MODEL', 'PREDICTION']
+    cornerIcon: '■',
+    diagramType: 'bars'
   },
   {
     id: 'shubham',
     index: '03',
-    name: 'SHUBHAM POKALE',
-    role: 'ARTIFICIAL INTELLIGENCE ENGINEER & TECHNICAL SUPPORT SPECIALIST',
-    shortIntro: "Shubham works across artificial intelligence and technical systems, contributing to the engineering layer that connects ConArk's intelligence models with the wider product.",
+    nameLine1: 'SHUBHAM',
+    nameLine2: 'POKALE',
+    fullName: 'SHUBHAM POKALE',
+    role: 'AI ENGINEER & TECHNICAL SUPPORT',
+    shortIntro: 'Integrating large language models with core analytical engines. Ensuring Gemini interfaces seamlessly with internal ConArk protocols.',
     specialization: 'ARTIFICIAL INTELLIGENCE / SYSTEMS / TECHNICAL SUPPORT',
     email: 'shubham.pokale25@pccopepune.org',
-    color: 'chartreuse',
     cardBg: '#E4FF5B',
-    cardTextColor: '#111111',
-    rotationClass: 'card-rotate-neg07',
+    rotation: '-1.2deg',
     linkedin: 'https://linkedin.com',
     github: 'https://github.com',
     instagram: 'https://instagram.com',
     contribution: 'Artificial intelligence engineering contribution connecting intelligence models with system execution and technical support.',
-    motif: ['AI', 'MODELS', 'SYSTEM', 'DECISION']
+    cornerIcon: '◇',
+    diagramType: 'nodes'
   },
   {
     id: 'ram',
     index: '04',
-    name: 'RAM KHABALE',
+    nameLine1: 'RAM',
+    nameLine2: 'KHABALE',
+    fullName: 'RAM KHABALE',
     role: 'DATA ANALYST & DATA ARCHITECT',
-    shortIntro: 'Ram contributes to ConArk through data analysis and data architecture, helping organize the information layer required for meaningful construction intelligence.',
+    shortIntro: 'Structuring chaotic site data into highly optimized retrieval pipelines. Building the foundational architecture that feeds the entire intelligence system.',
     specialization: 'DATA ANALYSIS / DATA ARCHITECTURE / INFORMATION SYSTEMS',
     email: 'ram.khabale25@pccoepune.org',
-    color: 'mint',
     cardBg: '#7CFFA6',
-    cardTextColor: '#111111',
-    rotationClass: 'card-rotate-pos08',
+    rotation: '1.8deg',
     linkedin: 'https://linkedin.com',
     github: 'https://github.com',
     instagram: 'https://instagram.com',
     contribution: "Data analysis and architecture contribution to ConArk's information and intelligence pipeline.",
-    motif: ['DATA', 'STRUCTURE', 'INSIGHT', 'DECISION']
+    cornerIcon: '≡',
+    diagramType: 'schema'
   }
 ];
 
+const TechnicalDiagram: React.FC<{ type: 'wave' | 'bars' | 'nodes' | 'schema' }> = ({ type }) => {
+  if (type === 'wave') {
+    return (
+      <svg width="100%" height="100%" viewBox="0 0 240 100" fill="none" stroke="#111111" strokeWidth="2">
+        <line x1="120" y1="10" x2="120" y2="90" strokeDasharray="3 3" stroke="#666" />
+        <path d="M 30 50 Q 75 10 120 50 T 210 50" strokeWidth="2.5" />
+        <circle cx="120" cy="50" r="5" fill="#111111" />
+      </svg>
+    );
+  }
+
+  if (type === 'bars') {
+    return (
+      <svg width="100%" height="100%" viewBox="0 0 240 100" fill="none" stroke="#111111" strokeWidth="2">
+        <line x1="20" y1="85" x2="220" y2="85" strokeWidth="2.5" />
+        <rect x="50" y="35" width="30" height="50" fill="none" />
+        <rect x="105" y="48" width="30" height="37" fill="none" />
+        <rect x="160" y="25" width="30" height="60" fill="none" />
+      </svg>
+    );
+  }
+
+  if (type === 'nodes') {
+    return (
+      <svg width="100%" height="100%" viewBox="0 0 240 100" fill="none" stroke="#111111" strokeWidth="2">
+        <circle cx="65" cy="50" r="22" strokeWidth="2.5" />
+        <circle cx="175" cy="50" r="22" strokeWidth="2.5" />
+        <line x1="87" y1="50" x2="153" y2="50" strokeDasharray="4 3" strokeWidth="2" />
+        <polygon points="120,38 128,54 112,54" fill="#111111" />
+      </svg>
+    );
+  }
+
+  // Schema diagram
+  return (
+    <svg width="100%" height="100%" viewBox="0 0 240 100" fill="none" stroke="#111111" strokeWidth="2">
+      <rect x="35" y="25" width="60" height="50" strokeWidth="2.5" />
+      <line x1="45" y1="38" x2="80" y2="38" strokeWidth="1.8" />
+      <line x1="45" y1="50" x2="80" y2="50" strokeWidth="1.8" />
+      <line x1="45" y1="62" x2="70" y2="62" strokeWidth="1.8" />
+      <line x1="95" y1="50" x2="145" y2="50" strokeWidth="2.5" />
+      <rect x="145" y="25" width="60" height="50" strokeWidth="2.5" />
+    </svg>
+  );
+};
+
 const LinkedinIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
     <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
   </svg>
 );
 
 const GithubIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
     <path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.1-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"/>
   </svg>
 );
 
 const InstagramIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
     <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
     <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
@@ -121,7 +172,7 @@ export const TheBrainsPage: React.FC = () => {
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
 
   return (
-    <div style={{ width: '100%', maxWidth: '100%', margin: '0 auto', padding: '24px 24px 64px 24px', boxSizing: 'border-box' }}>
+    <div style={{ width: '100%', maxWidth: '1400px', margin: '0 auto', padding: '24px 24px 64px 24px', boxSizing: 'border-box' }}>
       
       {/* 1. PAGE HERO */}
       <motion.div 
@@ -155,7 +206,7 @@ export const TheBrainsPage: React.FC = () => {
 
         <h1 style={{
           fontFamily: 'Anton, sans-serif',
-          fontSize: 'clamp(56px, 12vw, 170px)',
+          fontSize: 'clamp(56px, 12vw, 160px)',
           lineHeight: '0.85',
           color: '#111111',
           letterSpacing: '-0.02em',
@@ -214,101 +265,158 @@ export const TheBrainsPage: React.FC = () => {
         </p>
       </div>
 
-      {/* 3. TEAM CARD SYSTEM (4 STACKED / ROTATED EDITORIAL CARDS) */}
-      <div style={{ maxWidth: '1400px', margin: '0 auto 64px auto', display: 'flex', flexDirection: 'column', gap: '0px' }}>
+      {/* 3. 2x2 EDITORIAL CARD GRID (MATCHING THE USER'S EXACT REFERENCE DESIGN) */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(480px, 1fr))',
+        gap: '40px 32px',
+        marginBottom: '64px',
+        padding: '12px 8px'
+      }}>
         {teamMembers.map((member, idx) => (
           <motion.div
             key={member.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: idx * 0.1 }}
-            whileHover={{ y: -8, rotate: 0, transition: { duration: 0.2 } }}
+            whileHover={{ y: -6, rotate: 0, transition: { duration: 0.2 } }}
             onClick={() => setSelectedMember(member)}
-            className={`${member.rotationClass} card-hover-lift`}
             style={{
               backgroundColor: member.cardBg,
-              border: '2.5px dashed #111111',
-              borderRadius: '20px',
-              padding: '44px 56px',
-              boxShadow: '0 12px 24px rgba(0, 0, 0, 0.09)',
-              position: 'relative',
-              marginTop: idx === 0 ? '0px' : '-20px',
-              zIndex: 4 - idx,
-              cursor: 'pointer'
+              border: '2.5px solid #111111',
+              borderRadius: '8px',
+              padding: '36px 36px 28px 36px',
+              boxShadow: '10px 10px 0px #111111',
+              transform: `rotate(${member.rotation})`,
+              cursor: 'pointer',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              minHeight: '520px',
+              position: 'relative'
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '24px' }}>
-              
-              {/* Left Details */}
-              <div style={{ flex: '1 1 550px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                  <span style={{ fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', color: '#111111', fontWeight: '800' }}>
-                    {member.index}
-                  </span>
-                  <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', backgroundColor: '#111111', color: '#FFFFFF', padding: '3px 10px', borderRadius: '4px' }}>
-                    {member.specialization.split(' / ')[0]}
-                  </span>
-                  <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', color: '#555555' }}>
-                    [CLICK TO INSPECT PROFILE →]
-                  </span>
-                </div>
-
-                <h3 style={{ fontFamily: 'Anton, sans-serif', fontSize: '52px', color: '#111111', textTransform: 'uppercase', lineHeight: '0.95', margin: '4px 0 8px 0' }}>
-                  {member.name}
-                </h3>
-
-                <div style={{ fontSize: '15px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#111111', textTransform: 'uppercase', marginBottom: '14px' }}>
-                  {member.role}
-                </div>
-
-                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', color: '#222222', lineHeight: '1.55', maxWidth: '750px', margin: '0 0 20px 0', fontWeight: '500' }}>
-                  "{member.shortIntro}"
-                </p>
-
-                {/* Monospace Specialization Badge */}
-                <div style={{ fontSize: '12px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '700', backgroundColor: 'rgba(255,255,255,0.6)', border: '1.5px solid #111111', padding: '6px 14px', borderRadius: '6px', display: 'inline-block' }}>
-                  SPECIALIZATION: {member.specialization}
-                </div>
+            {/* Card Top Bar: IDX Badge & Corner Symbol */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+              <div style={{
+                fontFamily: 'JetBrains Mono, monospace',
+                fontSize: '11px',
+                fontWeight: '800',
+                border: '1.5px solid #111111',
+                padding: '3px 10px',
+                borderRadius: '3px',
+                backgroundColor: '#111111',
+                color: '#FFFFFF',
+                letterSpacing: '0.05em'
+              }}>
+                IDX: {member.index}
               </div>
 
-              {/* Right Technical Motif Diagram */}
-              <div style={{ textAlign: 'right', minWidth: '220px' }}>
-                <div style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#111111', marginBottom: '8px' }}>
-                  DOMAIN PIPELINE MOTIF
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
-                  {member.motif.map((step, i) => (
-                    <React.Fragment key={step}>
-                      <span style={{
-                        fontSize: '12px',
-                        fontFamily: 'JetBrains Mono, monospace',
-                        fontWeight: '800',
-                        backgroundColor: '#111111',
-                        color: member.id === 'shubham' && step === 'AI' ? '#E4FF5B' : '#FFFFFF',
-                        padding: '4px 12px',
-                        borderRadius: '4px'
-                      }}>
-                        {step}
-                      </span>
-                      {i < member.motif.length - 1 && (
-                        <span style={{ fontSize: '12px', color: '#111111', fontWeight: '800', margin: '0 16px' }}>↓</span>
-                      )}
-                    </React.Fragment>
-                  ))}
-                </div>
-
-                {/* Social Links Row */}
-                <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end', gap: '12px', fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '700' }}>
-                  <a href={member.linkedin} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()} style={{ color: '#111111', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <LinkedinIcon /> LINKEDIN →
-                  </a>
-                  <a href={member.github} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()} style={{ color: '#111111', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <GithubIcon /> GITHUB →
-                  </a>
-                </div>
+              <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#111111', fontFamily: 'JetBrains Mono, monospace' }}>
+                {member.cornerIcon}
               </div>
-
             </div>
+
+            {/* Stacked Large Name */}
+            <div style={{ marginBottom: '16px' }}>
+              <h2 style={{
+                fontFamily: 'Anton, sans-serif',
+                fontSize: '52px',
+                lineHeight: '0.9',
+                color: '#111111',
+                textTransform: 'uppercase',
+                margin: 0,
+                letterSpacing: '-0.01em'
+              }}>
+                {member.nameLine1}
+              </h2>
+              <h2 style={{
+                fontFamily: 'Anton, sans-serif',
+                fontSize: '52px',
+                lineHeight: '0.9',
+                color: '#111111',
+                textTransform: 'uppercase',
+                margin: 0,
+                letterSpacing: '-0.01em'
+              }}>
+                {member.nameLine2}
+              </h2>
+            </div>
+
+            {/* Role Title */}
+            <div style={{
+              fontFamily: 'JetBrains Mono, monospace',
+              fontSize: '13px',
+              fontWeight: '800',
+              color: '#111111',
+              textTransform: 'uppercase',
+              letterSpacing: '0.04em',
+              marginBottom: '16px',
+              lineHeight: '1.3'
+            }}>
+              {member.role}
+            </div>
+
+            {/* Short Introduction Paragraph */}
+            <p style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '14px',
+              color: '#333333',
+              lineHeight: '1.55',
+              marginBottom: '24px',
+              fontWeight: '400'
+            }}>
+              {member.shortIntro}
+            </p>
+
+            {/* Central Vector Diagram Box */}
+            <div style={{
+              border: '1.8px solid #111111',
+              borderRadius: '4px',
+              height: '130px',
+              backgroundColor: '#FAF9F5',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '12px',
+              marginBottom: '24px'
+            }}>
+              <TechnicalDiagram type={member.diagramType} />
+            </div>
+
+            {/* Bottom Footer Monospace Links */}
+            <div style={{
+              borderTop: '1.5px solid #111111',
+              paddingTop: '16px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              fontFamily: 'JetBrains Mono, monospace',
+              fontSize: '11px',
+              fontWeight: '800',
+              color: '#111111'
+            }}>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <a href={member.linkedin} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()} style={{ color: '#111111', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <LinkedinIcon /> LNKD
+                </a>
+                <span>/</span>
+                <a href={member.github} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()} style={{ color: '#111111', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <GithubIcon /> GTHB
+                </a>
+                <span>/</span>
+                <a href={member.instagram} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()} style={{ color: '#111111', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <InstagramIcon /> INSTA
+                </a>
+                <span>/</span>
+                <a href={`mailto:${member.email}`} onClick={e => e.stopPropagation()} style={{ color: '#111111', textDecoration: 'none' }}>
+                  MAIL
+                </a>
+              </div>
+
+              <span style={{ fontSize: '10px', color: '#666' }}>[INSPECT →]</span>
+            </div>
+
           </motion.div>
         ))}
       </div>
@@ -340,9 +448,9 @@ export const TheBrainsPage: React.FC = () => {
                 maxWidth: '900px',
                 backgroundColor: selectedMember.cardBg,
                 border: '3px solid #111111',
-                borderRadius: '24px',
+                borderRadius: '16px',
                 padding: '48px',
-                boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
+                boxShadow: '16px 16px 0px #111111',
                 position: 'relative',
                 maxHeight: '90vh',
                 overflowY: 'auto'
@@ -376,7 +484,7 @@ export const TheBrainsPage: React.FC = () => {
               </div>
 
               <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '56px', color: '#111111', textTransform: 'uppercase', lineHeight: '0.95', margin: '0 0 10px 0' }}>
-                {selectedMember.name}
+                {selectedMember.fullName}
               </h2>
 
               <div style={{ fontSize: '18px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#111111', marginBottom: '24px' }}>
