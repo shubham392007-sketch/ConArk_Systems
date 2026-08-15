@@ -6,8 +6,6 @@ import { Mail, X, ArrowRight, Cpu, Database, Microscope } from 'lucide-react';
 interface TeamMember {
   id: string;
   index: string;
-  nameLine1: string;
-  nameLine2: string;
   fullName: string;
   role: string;
   shortIntro: string;
@@ -20,15 +18,12 @@ interface TeamMember {
   instagram: string;
   contribution: string;
   cornerIcon: string;
-  diagramType: 'wave' | 'bars' | 'nodes' | 'schema';
 }
 
 const teamMembers: TeamMember[] = [
   {
     id: 'siddhesh',
     index: '01',
-    nameLine1: 'SIDDHESH',
-    nameLine2: 'BIREWAR',
     fullName: 'SIDDHESH BIREWAR',
     role: 'RESEARCH ENGINEER & TECHNICAL SUPPORT SPECIALIST',
     shortIntro: 'Bridging the gap between theoretical models and practical implementation. Focuses on system architecture robustness and emergent AI behaviors.',
@@ -40,14 +35,11 @@ const teamMembers: TeamMember[] = [
     github: 'https://github.com',
     instagram: 'https://instagram.com',
     contribution: 'Research and engineering contribution to bridging technical investigation with practical system implementation.',
-    cornerIcon: '✳',
-    diagramType: 'wave'
+    cornerIcon: '✳'
   },
   {
     id: 'vernit',
     index: '02',
-    nameLine1: 'VERNIT',
-    nameLine2: 'GARG',
     fullName: 'VERNIT GARG',
     role: 'RESEARCH SPECIALIST & ML ENGINEER',
     shortIntro: 'Designing predictive models for complex structural anomalies. Specializes in transforming raw site telemetries into actionable intelligence matrices.',
@@ -59,14 +51,11 @@ const teamMembers: TeamMember[] = [
     github: 'https://github.com',
     instagram: 'https://instagram.com',
     contribution: "Research and machine learning contribution to ConArk's predictive intelligence layer.",
-    cornerIcon: '■',
-    diagramType: 'bars'
+    cornerIcon: '■'
   },
   {
     id: 'shubham',
     index: '03',
-    nameLine1: 'SHUBHAM',
-    nameLine2: 'POKALE',
     fullName: 'SHUBHAM POKALE',
     role: 'AI ENGINEER & TECHNICAL SUPPORT',
     shortIntro: 'Integrating large language models with core analytical engines. Ensuring Gemini interfaces seamlessly with internal ConArk protocols.',
@@ -78,14 +67,11 @@ const teamMembers: TeamMember[] = [
     github: 'https://github.com',
     instagram: 'https://instagram.com',
     contribution: 'Artificial intelligence engineering contribution connecting intelligence models with system execution and technical support.',
-    cornerIcon: '◇',
-    diagramType: 'nodes'
+    cornerIcon: '◇'
   },
   {
     id: 'ram',
     index: '04',
-    nameLine1: 'RAM',
-    nameLine2: 'KHABALE',
     fullName: 'RAM KHABALE',
     role: 'DATA ANALYST & DATA ARCHITECT',
     shortIntro: 'Structuring chaotic site data into highly optimized retrieval pipelines. Building the foundational architecture that feeds the entire intelligence system.',
@@ -97,56 +83,9 @@ const teamMembers: TeamMember[] = [
     github: 'https://github.com',
     instagram: 'https://instagram.com',
     contribution: "Data analysis and architecture contribution to ConArk's information and intelligence pipeline.",
-    cornerIcon: '≡',
-    diagramType: 'schema'
+    cornerIcon: '≡'
   }
 ];
-
-const TechnicalDiagram: React.FC<{ type: 'wave' | 'bars' | 'nodes' | 'schema' }> = ({ type }) => {
-  if (type === 'wave') {
-    return (
-      <svg width="100%" height="100%" viewBox="0 0 240 100" fill="none" stroke="#111111" strokeWidth="2">
-        <line x1="120" y1="10" x2="120" y2="90" strokeDasharray="3 3" stroke="#666" />
-        <path d="M 30 50 Q 75 10 120 50 T 210 50" strokeWidth="2.5" />
-        <circle cx="120" cy="50" r="5" fill="#111111" />
-      </svg>
-    );
-  }
-
-  if (type === 'bars') {
-    return (
-      <svg width="100%" height="100%" viewBox="0 0 240 100" fill="none" stroke="#111111" strokeWidth="2">
-        <line x1="20" y1="85" x2="220" y2="85" strokeWidth="2.5" />
-        <rect x="50" y="35" width="30" height="50" fill="none" />
-        <rect x="105" y="48" width="30" height="37" fill="none" />
-        <rect x="160" y="25" width="30" height="60" fill="none" />
-      </svg>
-    );
-  }
-
-  if (type === 'nodes') {
-    return (
-      <svg width="100%" height="100%" viewBox="0 0 240 100" fill="none" stroke="#111111" strokeWidth="2">
-        <circle cx="65" cy="50" r="22" strokeWidth="2.5" />
-        <circle cx="175" cy="50" r="22" strokeWidth="2.5" />
-        <line x1="87" y1="50" x2="153" y2="50" strokeDasharray="4 3" strokeWidth="2" />
-        <polygon points="120,38 128,54 112,54" fill="#111111" />
-      </svg>
-    );
-  }
-
-  // Schema diagram
-  return (
-    <svg width="100%" height="100%" viewBox="0 0 240 100" fill="none" stroke="#111111" strokeWidth="2">
-      <rect x="35" y="25" width="60" height="50" strokeWidth="2.5" />
-      <line x1="45" y1="38" x2="80" y2="38" strokeWidth="1.8" />
-      <line x1="45" y1="50" x2="80" y2="50" strokeWidth="1.8" />
-      <line x1="45" y1="62" x2="70" y2="62" strokeWidth="1.8" />
-      <line x1="95" y1="50" x2="145" y2="50" strokeWidth="2.5" />
-      <rect x="145" y="25" width="60" height="50" strokeWidth="2.5" />
-    </svg>
-  );
-};
 
 const LinkedinIcon = () => (
   <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
@@ -265,7 +204,7 @@ export const TheBrainsPage: React.FC = () => {
         </p>
       </div>
 
-      {/* 3. 2x2 EDITORIAL CARD GRID (MATCHING THE USER'S EXACT REFERENCE DESIGN) */}
+      {/* 3. 2x2 EDITORIAL CARD GRID (NAMES ON SINGLE LINE, SKETCH BOXES REMOVED) */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(480px, 1fr))',
@@ -292,12 +231,12 @@ export const TheBrainsPage: React.FC = () => {
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
-              minHeight: '520px',
+              minHeight: '380px',
               position: 'relative'
             }}
           >
             {/* Card Top Bar: IDX Badge & Corner Symbol */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <div style={{
                 fontFamily: 'JetBrains Mono, monospace',
                 fontSize: '11px',
@@ -317,29 +256,19 @@ export const TheBrainsPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Stacked Large Name */}
-            <div style={{ marginBottom: '16px' }}>
+            {/* SINGLE LINE FOUNDER NAME */}
+            <div style={{ marginBottom: '12px' }}>
               <h2 style={{
                 fontFamily: 'Anton, sans-serif',
-                fontSize: '52px',
-                lineHeight: '0.9',
+                fontSize: 'clamp(32px, 3.2vw, 44px)',
+                lineHeight: '1.0',
                 color: '#111111',
                 textTransform: 'uppercase',
                 margin: 0,
-                letterSpacing: '-0.01em'
+                letterSpacing: '-0.01em',
+                whiteSpace: 'nowrap'
               }}>
-                {member.nameLine1}
-              </h2>
-              <h2 style={{
-                fontFamily: 'Anton, sans-serif',
-                fontSize: '52px',
-                lineHeight: '0.9',
-                color: '#111111',
-                textTransform: 'uppercase',
-                margin: 0,
-                letterSpacing: '-0.01em'
-              }}>
-                {member.nameLine2}
+                {member.fullName}
               </h2>
             </div>
 
@@ -360,28 +289,28 @@ export const TheBrainsPage: React.FC = () => {
             {/* Short Introduction Paragraph */}
             <p style={{
               fontFamily: 'Inter, sans-serif',
-              fontSize: '14px',
+              fontSize: '15px',
               color: '#333333',
-              lineHeight: '1.55',
+              lineHeight: '1.6',
               marginBottom: '24px',
               fontWeight: '400'
             }}>
               {member.shortIntro}
             </p>
 
-            {/* Central Vector Diagram Box */}
+            {/* Specialization Pill Badge */}
             <div style={{
-              border: '1.8px solid #111111',
+              fontSize: '11px',
+              fontFamily: 'JetBrains Mono, monospace',
+              fontWeight: '700',
+              backgroundColor: 'rgba(255,255,255,0.7)',
+              border: '1.5px solid #111111',
+              padding: '6px 12px',
               borderRadius: '4px',
-              height: '130px',
-              backgroundColor: '#FAF9F5',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '12px',
-              marginBottom: '24px'
+              marginBottom: '24px',
+              display: 'inline-block'
             }}>
-              <TechnicalDiagram type={member.diagramType} />
+              SPECIALIZATION: {member.specialization}
             </div>
 
             {/* Bottom Footer Monospace Links */}
