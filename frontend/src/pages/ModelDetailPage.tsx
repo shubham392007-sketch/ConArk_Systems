@@ -13,7 +13,7 @@ export const ModelDetailPage: React.FC = () => {
   const [result, setResult] = useState<any>(null);
   const [spaceRes, setSpaceRes] = useState<SpaceOptimizationResponse | null>(null);
 
-  // Operational Inputs
+  // Canonical Operational Telemetry Inputs
   const [inputs, setInputs] = useState<OperationalInputs>({
     timestamp: new Date().toISOString().slice(0, 19),
     temperature: 32.5,
@@ -26,7 +26,9 @@ export const ModelDetailPage: React.FC = () => {
     task_progress: 0.42,
     safety_incidents: 1,
     equipment_utilization_rate: 91.2,
-    material_shortage_alert: 0
+    material_shortage_alert: 0,
+    cost_deviation: 2707.71,
+    time_deviation: -4.65
   });
 
   // Space Constraints Inputs
@@ -95,70 +97,70 @@ export const ModelDetailPage: React.FC = () => {
           algorithm: 'HistGradientBoosting Classifier',
           version: 'v1.0.0',
           color: '#FFFFFF',
-          outputLabel: 'PREDICTED PERFORMANCE CLASS',
+          outputLabel: 'PREDICTED PERFORMANCE SCORE',
           explanationKey: 'performance_explanation',
           topFactors: [
             { name: 'Task Progress Velocity', pct: 35, val: `${(inputs.task_progress * 100).toFixed(0)}%` },
             { name: 'Equipment Utilization Rate', pct: 28, val: `${inputs.equipment_utilization_rate}%` },
-            { name: 'Worker Productivity Ratio', pct: 18, val: `${inputs.worker_count} Workers` }
+            { name: 'Worker Count', pct: 18, val: `${inputs.worker_count} Workers` }
           ]
         };
       case 'risk':
         return {
-          title: 'OPERATIONAL RISK MODEL',
+          title: 'RISK PREDICTION MODEL',
           algorithm: 'LinearRegression Model',
           version: 'v1.0.0',
           color: '#4FC3F7',
-          outputLabel: 'PREDICTED OPERATIONAL RISK SCORE',
+          outputLabel: 'PREDICTED RISK SCORE (%)',
           explanationKey: 'risk_explanation',
           topFactors: [
-            { name: 'Safety Incidents Accumulator', pct: 42, val: `${inputs.safety_incidents} Incidents` },
-            { name: 'Machinery Vibration Level', pct: 31, val: `${inputs.vibration_level} mm/s` },
-            { name: 'Worker Density Factor', pct: 15, val: `${inputs.worker_count} Workers` }
+            { name: 'Safety Incidents Count', pct: 42, val: `${inputs.safety_incidents} Incidents` },
+            { name: 'Machinery Vibration Level', pct: 31, val: `${inputs.vibration_level} Hz` },
+            { name: 'Equipment Utilization Rate', pct: 15, val: `${inputs.equipment_utilization_rate}%` }
           ]
         };
       case 'cost':
         return {
-          title: 'COST FORECAST MODEL',
+          title: 'COST FORECASTING MODEL',
           algorithm: 'XGBRegressor Model',
           version: 'v1.0.0',
           color: '#E4FF5B',
-          outputLabel: 'PREDICTED COST DEVIATION',
+          outputLabel: 'PREDICTED COST DEVIATION ($)',
           explanationKey: 'cost_explanation',
           topFactors: [
-            { name: 'Material Consumption Rate', pct: 38, val: `${inputs.material_usage} kg` },
-            { name: 'Energy Consumption Intensity', pct: 29, val: `${inputs.energy_consumption} kWh` },
-            { name: 'Equipment Run-time Factor', pct: 19, val: `${inputs.equipment_utilization_rate}%` }
+            { name: 'Material Usage', pct: 38, val: `${inputs.material_usage} kg` },
+            { name: 'Energy Consumption', pct: 29, val: `${inputs.energy_consumption} kWh` },
+            { name: 'Equipment Utilization Rate', pct: 19, val: `${inputs.equipment_utilization_rate}%` }
           ]
         };
       case 'time':
         return {
-          title: 'TIME FORECAST MODEL',
+          title: 'TIME FORECASTING MODEL',
           algorithm: 'HistGradientBoosting Regressor',
           version: 'v1.0.0',
           color: '#7CFFA6',
-          outputLabel: 'PREDICTED TIME DEVIATION',
+          outputLabel: 'PREDICTED TIME DEVIATION (DAYS)',
           explanationKey: 'schedule_explanation',
           topFactors: [
-            { name: 'Task Progress Velocity', pct: 45, val: `${(inputs.task_progress * 100).toFixed(0)}%` },
-            { name: 'Equipment Pressure Ratio', pct: 30, val: `${inputs.equipment_utilization_rate}%` },
-            { name: 'Machinery Operational Status', pct: 15, val: inputs.machinery_status === 1 ? 'ACTIVE' : 'IDLE' }
+            { name: 'Task Progress', pct: 45, val: `${(inputs.task_progress * 100).toFixed(0)}%` },
+            { name: 'Equipment Utilization Rate', pct: 30, val: `${inputs.equipment_utilization_rate}%` },
+            { name: 'Machinery Status', pct: 15, val: inputs.machinery_status === 1 ? 'ACTIVE' : 'IDLE' }
           ]
         };
       case 'optimization':
       case 'space':
       default:
         return {
-          title: 'SPACE OPTIMIZATION & RECOMMENDATION MODEL',
+          title: 'OPTIMIZATION & SPACE OPTIMIZATION MODEL',
           algorithm: 'SciPy SLSQP Constrained Solver + HistGradientBoosting Classifier',
           version: 'v1.0.0',
           color: '#F5F3E3',
-          outputLabel: 'OPTIMIZED SPACE LAYOUT & RECOMMENDATION',
+          outputLabel: 'OPTIMIZATION SUGGESTION & SPATIAL LAYOUT',
           explanationKey: 'optimization_explanation',
           topFactors: [
-            { name: 'Site Area Allocation', pct: 40, val: `${spaceInputs.site_area_sqm} m²` },
-            { name: 'Worker Movement Clearance', pct: 30, val: `${spaceInputs.worker_count} Workers` },
-            { name: 'Equipment Staging Ratio', pct: 20, val: `${spaceInputs.machinery_count} Units` }
+            { name: 'Available Site Area', pct: 40, val: `${spaceInputs.site_area_sqm} m²` },
+            { name: 'Worker Movement Density', pct: 30, val: `${spaceInputs.worker_count} Workers` },
+            { name: 'Equipment Occupancy Ratio', pct: 20, val: `${spaceInputs.machinery_count} Units` }
           ]
         };
     }
@@ -216,7 +218,6 @@ export const ModelDetailPage: React.FC = () => {
 
   const coordinates: ZoneCoordinates[] = spaceRes?.coordinates && spaceRes.coordinates.length > 0 ? spaceRes.coordinates : defaultCoordinates;
   
-  // Dynamic Bounding Box scaling for 100% canvas coverage
   const layoutMaxX = Math.max(...coordinates.map(c => c.x + c.width), spaceInputs.site_length_m || 40);
   const layoutMaxY = Math.max(...coordinates.map(c => c.y + c.height), spaceInputs.site_width_m || 30);
 
@@ -245,16 +246,232 @@ export const ModelDetailPage: React.FC = () => {
   };
 
   const formatCostOutput = () => {
-    const val = result?.ml_results?.cost_forecast?.predicted_cost_deviation ?? 8420;
+    const val = result?.ml_results?.cost_forecast?.predicted_cost_deviation ?? 2707.71;
     if (val > 0) return `+$${val.toLocaleString()}`;
     if (val < 0) return `-$${Math.abs(val).toLocaleString()}`;
     return `$0`;
   };
 
   const formatTimeOutput = () => {
-    const val = result?.ml_results?.time_forecast?.predicted_time_deviation_days ?? 4.8;
+    const val = result?.ml_results?.time_forecast?.predicted_time_deviation_days ?? -4.65;
     if (val > 0) return `+${val.toFixed(1)} DAYS`;
     return `${val.toFixed(1)} DAYS`;
+  };
+
+  // Dynamic Input Form Fields renderer based on modelId
+  const renderModelInputs = () => {
+    if (isSpaceOpt) {
+      return (
+        <>
+          <div>
+            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>TOTAL SITE AREA (m²)</label>
+            <input
+              type="number"
+              value={spaceInputs.site_area_sqm}
+              onChange={e => handleAreaChange(parseFloat(e.target.value) || 0)}
+              style={{ width: '100%', fontSize: '15px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
+            />
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <div>
+              <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>LENGTH (m)</label>
+              <input
+                type="number"
+                value={spaceInputs.site_length_m}
+                onChange={e => handleLengthChange(parseFloat(e.target.value) || 0)}
+                style={{ width: '100%', fontSize: '15px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
+              />
+            </div>
+            <div>
+              <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>WIDTH (m)</label>
+              <input
+                type="number"
+                value={spaceInputs.site_width_m}
+                onChange={e => handleWidthChange(parseFloat(e.target.value) || 0)}
+                style={{ width: '100%', fontSize: '15px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>CONSTRUCTION STAGE</label>
+            <select
+              value={spaceInputs.construction_stage}
+              onChange={e => setSpaceInputs({ ...spaceInputs, construction_stage: e.target.value })}
+              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px', backgroundColor: '#FFFFFF' }}
+            >
+              <option value="EXCAVATION">EXCAVATION</option>
+              <option value="FOUNDATION">FOUNDATION</option>
+              <option value="STRUCTURE">STRUCTURE</option>
+              <option value="FINISHING">FINISHING</option>
+            </select>
+          </div>
+
+          <div>
+            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>WORKER COUNT</label>
+            <input
+              type="number"
+              value={spaceInputs.worker_count}
+              onChange={e => setSpaceInputs({ ...spaceInputs, worker_count: parseInt(e.target.value) || 0 })}
+              style={{ width: '100%', fontSize: '15px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
+            />
+          </div>
+
+          <div>
+            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>MACHINERY COUNT</label>
+            <input
+              type="number"
+              value={spaceInputs.machinery_count}
+              onChange={e => setSpaceInputs({ ...spaceInputs, machinery_count: parseInt(e.target.value) || 0 })}
+              style={{ width: '100%', fontSize: '15px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
+            />
+          </div>
+        </>
+      );
+    }
+
+    // Dynamic field set for specific telemetry models
+    return (
+      <>
+        {/* Core telemetry fields */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+          <div>
+            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>TEMPERATURE (°C)</label>
+            <input
+              type="number"
+              step="0.1"
+              value={inputs.temperature}
+              onChange={e => setInputs({ ...inputs, temperature: parseFloat(e.target.value) || 0 })}
+              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
+            />
+          </div>
+          <div>
+            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>HUMIDITY (%)</label>
+            <input
+              type="number"
+              value={inputs.humidity}
+              onChange={e => setInputs({ ...inputs, humidity: parseFloat(e.target.value) || 0 })}
+              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
+            />
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+          <div>
+            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>VIBRATION LEVEL (Hz)</label>
+            <input
+              type="number"
+              step="0.1"
+              value={inputs.vibration_level}
+              onChange={e => setInputs({ ...inputs, vibration_level: parseFloat(e.target.value) || 0 })}
+              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
+            />
+          </div>
+          <div>
+            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>MATERIAL USAGE (kg)</label>
+            <input
+              type="number"
+              value={inputs.material_usage}
+              onChange={e => setInputs({ ...inputs, material_usage: parseFloat(e.target.value) || 0 })}
+              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
+            />
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+          <div>
+            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>WORKER COUNT</label>
+            <input
+              type="number"
+              value={inputs.worker_count}
+              onChange={e => setInputs({ ...inputs, worker_count: parseInt(e.target.value) || 0 })}
+              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
+            />
+          </div>
+          <div>
+            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>ENERGY CONSUMPTION (kWh)</label>
+            <input
+              type="number"
+              value={inputs.energy_consumption}
+              onChange={e => setInputs({ ...inputs, energy_consumption: parseFloat(e.target.value) || 0 })}
+              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
+            />
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+          <div>
+            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>TASK PROGRESS (0.0 to 1.0)</label>
+            <input
+              type="number"
+              step="0.01"
+              min="0"
+              max="1"
+              value={inputs.task_progress}
+              onChange={e => setInputs({ ...inputs, task_progress: parseFloat(e.target.value) || 0 })}
+              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
+            />
+          </div>
+          <div>
+            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>EQUIPMENT UTILIZATION (%)</label>
+            <input
+              type="number"
+              value={inputs.equipment_utilization_rate}
+              onChange={e => setInputs({ ...inputs, equipment_utilization_rate: parseFloat(e.target.value) || 0 })}
+              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
+            />
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+          <div>
+            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>MACHINERY STATUS</label>
+            <select
+              value={inputs.machinery_status}
+              onChange={e => setInputs({ ...inputs, machinery_status: parseInt(e.target.value) || 0 })}
+              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px', backgroundColor: '#FFFFFF' }}
+            >
+              <option value={1}>1 - ACTIVE</option>
+              <option value={0}>0 - IDLE / OFF</option>
+            </select>
+          </div>
+          <div>
+            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>SAFETY INCIDENTS</label>
+            <input
+              type="number"
+              value={inputs.safety_incidents}
+              onChange={e => setInputs({ ...inputs, safety_incidents: parseInt(e.target.value) || 0 })}
+              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
+            />
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+          <div>
+            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>MATERIAL SHORTAGE ALERT</label>
+            <select
+              value={inputs.material_shortage_alert}
+              onChange={e => setInputs({ ...inputs, material_shortage_alert: parseInt(e.target.value) || 0 })}
+              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px', backgroundColor: '#FFFFFF' }}
+            >
+              <option value={0}>0 - NORMAL</option>
+              <option value={1}>1 - SHORTAGE ALERT</option>
+            </select>
+          </div>
+          <div>
+            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>SIMULATION DEVIATION (%)</label>
+            <input
+              type="number"
+              step="0.01"
+              value={inputs.simulation_deviation ?? 0.77}
+              onChange={e => setInputs({ ...inputs, simulation_deviation: parseFloat(e.target.value) || 0 })}
+              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
+            />
+          </div>
+        </div>
+      </>
+    );
   };
 
   return (
@@ -297,117 +514,15 @@ export const ModelDetailPage: React.FC = () => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
             <Sliders size={22} color="#111111" />
             <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '24px', color: '#111111', textTransform: 'uppercase' }}>
-              {isSpaceOpt ? 'SITE CONSTRAINTS & TELEMETRY' : 'MODEL INPUT PARAMETERS'}
+              {isSpaceOpt ? 'SITE CONSTRAINTS & TELEMETRY' : 'STANDARDIZED MODEL INPUTS'}
             </h2>
           </div>
           <p style={{ fontSize: '13px', color: '#666666', fontFamily: 'Inter, sans-serif', marginBottom: '20px' }}>
-            Configure parameters below and click <strong>"PREDICT FOR THIS MODEL →"</strong>.
+            Configure Building Performance Dataset parameters and click <strong>"PREDICT FOR THIS MODEL →"</strong>.
           </p>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {isSpaceOpt ? (
-              <>
-                <div>
-                  <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>TOTAL SITE AREA (m²)</label>
-                  <input
-                    type="number"
-                    value={spaceInputs.site_area_sqm}
-                    onChange={e => handleAreaChange(parseFloat(e.target.value) || 0)}
-                    style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
-                  />
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                  <div>
-                    <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>LENGTH (m)</label>
-                    <input
-                      type="number"
-                      value={spaceInputs.site_length_m}
-                      onChange={e => handleLengthChange(parseFloat(e.target.value) || 0)}
-                      style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
-                    />
-                  </div>
-                  <div>
-                    <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>WIDTH (m)</label>
-                    <input
-                      type="number"
-                      value={spaceInputs.site_width_m}
-                      onChange={e => handleWidthChange(parseFloat(e.target.value) || 0)}
-                      style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>CONSTRUCTION STAGE</label>
-                  <select
-                    value={spaceInputs.construction_stage}
-                    onChange={e => setSpaceInputs({ ...spaceInputs, construction_stage: e.target.value })}
-                    style={{ width: '100%', fontSize: '15px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px', backgroundColor: '#FFFFFF' }}
-                  >
-                    <option value="EXCAVATION">EXCAVATION</option>
-                    <option value="FOUNDATION">FOUNDATION</option>
-                    <option value="STRUCTURE">STRUCTURE</option>
-                    <option value="FINISHING">FINISHING</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>WORKER COUNT</label>
-                  <input
-                    type="number"
-                    value={spaceInputs.worker_count}
-                    onChange={e => setSpaceInputs({ ...spaceInputs, worker_count: parseInt(e.target.value) || 0 })}
-                    style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
-                  />
-                </div>
-
-                <div>
-                  <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>MACHINERY COUNT</label>
-                  <input
-                    type="number"
-                    value={spaceInputs.machinery_count}
-                    onChange={e => setSpaceInputs({ ...spaceInputs, machinery_count: parseInt(e.target.value) || 0 })}
-                    style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
-                  />
-                </div>
-              </>
-            ) : (
-              <>
-                <div>
-                  <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>TASK PROGRESS (0.0 to 1.0)</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    max="1"
-                    value={inputs.task_progress}
-                    onChange={e => setInputs({ ...inputs, task_progress: parseFloat(e.target.value) || 0 })}
-                    style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
-                  />
-                </div>
-
-                <div>
-                  <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>WORKER COUNT</label>
-                  <input
-                    type="number"
-                    value={inputs.worker_count}
-                    onChange={e => setInputs({ ...inputs, worker_count: parseInt(e.target.value) || 0 })}
-                    style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
-                  />
-                </div>
-
-                <div>
-                  <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>EQUIPMENT UTILIZATION (%)</label>
-                  <input
-                    type="number"
-                    value={inputs.equipment_utilization_rate}
-                    onChange={e => setInputs({ ...inputs, equipment_utilization_rate: parseFloat(e.target.value) || 0 })}
-                    style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
-                  />
-                </div>
-              </>
-            )}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            {renderModelInputs()}
 
             {/* PREDICT BUTTON — MANUAL TRIGGER */}
             <button
@@ -575,18 +690,18 @@ export const ModelDetailPage: React.FC = () => {
                 {/* Clean Formatted Model Output Prediction */}
                 <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: isSpaceOpt ? 'clamp(32px, 5vw, 44px)' : 'clamp(44px, 7vw, 64px)', fontWeight: '800', color: '#111111', lineHeight: '1.0', margin: '14px 0 8px 0', wordBreak: 'break-word' }}>
                   {modelId === 'performance' && (result?.ml_results?.performance?.prediction || 'GOOD')}
-                  {modelId === 'risk' && `${(result?.ml_results?.risk?.risk_score || 72).toFixed(0)}%`}
+                  {modelId === 'risk' && `${(result?.ml_results?.risk?.risk_score || 23.18).toFixed(1)}%`}
                   {modelId === 'cost' && formatCostOutput()}
                   {modelId === 'time' && formatTimeOutput()}
-                  {isSpaceOpt && (result?.ml_results?.optimization?.recommendation || 'REALLOCATE WORKERS & STAGING')}
+                  {isSpaceOpt && (result?.ml_results?.optimization?.recommendation || 'OPTIMIZE MATERIAL USAGE')}
                 </div>
 
                 <div style={{ fontSize: '15px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#111111' }}>
                   {modelId === 'performance' && `CONFIDENCE: ${((result?.ml_results?.performance?.confidence || 0.936) * 100).toFixed(1)}%`}
-                  {modelId === 'risk' && `RISK LEVEL: ${result?.ml_results?.risk?.risk_level || 'HIGH'}`}
-                  {modelId === 'cost' && `STATUS: ${result?.ml_results?.cost_forecast?.budget_status || 'OVER BUDGET'}`}
-                  {modelId === 'time' && `SCHEDULE: ${result?.ml_results?.time_forecast?.schedule_status || 'DELAYED'}`}
-                  {isSpaceOpt && `EFFICIENCY SCORE: ${efficiencyScore.toFixed(1)}/100 · CONFIDENCE: 92.4%`}
+                  {modelId === 'risk' && `PRESENTATION LEVEL: ${result?.ml_results?.risk?.risk_level || 'Low Risk'}`}
+                  {modelId === 'cost' && `STATUS: ${result?.ml_results?.cost_forecast?.budget_status || 'Over Budget'}`}
+                  {modelId === 'time' && `SCHEDULE: ${result?.ml_results?.time_forecast?.schedule_status || 'Ahead'}`}
+                  {isSpaceOpt && `EFFICIENCY IMPROVEMENT: ${result?.ml_results?.optimization?.expected_improvement || '+15% Operational Yield'}`}
                 </div>
               </div>
 
@@ -657,7 +772,7 @@ export const ModelDetailPage: React.FC = () => {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <Sparkles size={20} color="#FF2AA1" />
                     <h3 style={{ fontFamily: 'Anton, sans-serif', fontSize: '22px', color: '#111111', textTransform: 'uppercase' }}>
-                      DETAILED GEMINI 2.5 FLASH ANALYSIS
+                      DETAILED GEMINI 2.5 FLASH EXPLANATION
                     </h3>
                   </div>
                   <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', backgroundColor: '#FF2AA1', color: '#FFFFFF', padding: '3px 8px', borderRadius: '4px' }}>
@@ -744,7 +859,7 @@ export const ModelDetailPage: React.FC = () => {
                 READY FOR INFERENCE & OPTIMIZATION
               </h3>
               <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '14px', color: '#555555', maxWidth: '440px', lineHeight: '1.5' }}>
-                Configure parameters on the left and click <strong>"PREDICT FOR THIS MODEL →"</strong> to generate dynamic 2D spatial layouts, SciPy optimization metrics, and Gemini AI breakdowns.
+                Configure Building Performance Dataset parameters on the left and click <strong>"PREDICT FOR THIS MODEL →"</strong> to generate ML outputs and Gemini explanations.
               </p>
             </div>
           )}

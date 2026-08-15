@@ -60,7 +60,6 @@ class ConstructionIntelligenceEngine:
         opt_res = self.optimization_model.predict(df_feat)
         
         # 4. Alert Engine
-        crit_count = 1 if risk_res["risk_score"] >= 76.0 else 0
         alerts = evaluate_alerts(
             safety_incidents=int(norm_record.get("safety_incidents", 0)),
             vibration_level=float(norm_record.get("vibration_level", 0.0)),
@@ -71,7 +70,12 @@ class ConstructionIntelligenceEngine:
             energy_consumption=float(norm_record.get("energy_consumption", 0.0)),
             predicted_time_deviation_days=time_res["predicted_time_deviation_days"],
             predicted_cost_deviation=cost_res["predicted_cost_deviation"],
-            material_consumption_velocity=float(df_feat["material_consumption_velocity"].iloc[0])
+            material_consumption_velocity=float(df_feat["material_consumption_velocity"].iloc[0]),
+            temperature=float(norm_record.get("temperature", 25.0)),
+            humidity=float(norm_record.get("humidity", 50.0)),
+            worker_count=int(norm_record.get("worker_count", 40)),
+            machinery_status=int(norm_record.get("machinery_status", 1)),
+            task_progress=float(norm_record.get("task_progress", 0.45))
         )
         
         critical_alerts_count = sum(1 for a in alerts if a.get("priority") == 1)

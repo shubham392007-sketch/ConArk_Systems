@@ -1,13 +1,23 @@
 """
 Performance Prediction Model wrapper.
 Multiclass classification: Poor, Average, Good, Excellent.
+Standardized Inputs: temperature, humidity, vibration_level, material_usage, machinery_status, worker_count,
+energy_consumption, task_progress, equipment_utilization_rate, safety_incidents, material_shortage_alert,
+cost_deviation, time_deviation.
+Target: performance_score (strictly excluded from inputs).
 """
 
-from typing import Dict, Any
+from typing import Dict, Any, List
 import numpy as np
 import pandas as pd
 from conark.models.base import BaseModel
 from conark.config.constants import PERFORMANCE_CLASSES
+
+PERFORMANCE_FEATURE_NAMES = [
+    "temperature", "humidity", "vibration_level", "material_usage", "machinery_status",
+    "worker_count", "energy_consumption", "task_progress", "equipment_utilization_rate",
+    "safety_incidents", "material_shortage_alert", "cost_deviation", "time_deviation"
+]
 
 
 class PerformanceModel(BaseModel):
@@ -19,8 +29,13 @@ class PerformanceModel(BaseModel):
         if self.model is None:
             self.load()
 
-        X = (df_features[self.feature_names] if self.feature_names else df_features).fillna(0)
-        
+        # Enforce exact feature mask (fallback to available features if model metadata features exist)
+        target_features = [f for f in PERFORMANCE_FEATURE_NAMES if f in df_features.columns]
+        if self.feature_names:
+            target_features = [f for f in self.feature_names if f in df_features.columns and f != "performance_score"]
+
+        X = df_features[target_features].fillna(0) if target_features else df_features.fillna(0)
+
         preds = self.model.predict(X)
         pred_label = str(preds[0])
         

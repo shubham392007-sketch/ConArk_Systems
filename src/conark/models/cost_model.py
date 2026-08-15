@@ -1,12 +1,20 @@
 """
-Cost Forecasting Model wrapper.
-Regression for cost_deviation and budget status classification.
+Cost Forecasting Model wrapper (Head A of Forecasting Service).
+Predicts cost_deviation ($) and budget status.
+Standardized Inputs: task_progress, material_usage, worker_count, energy_consumption,
+equipment_utilization_rate, machinery_status, temperature, humidity, vibration_level.
+Target: cost_deviation (strictly excluded from inputs).
 """
 
 from typing import Dict, Any
 import numpy as np
 import pandas as pd
 from conark.models.base import BaseModel
+
+COST_FEATURE_NAMES = [
+    "task_progress", "material_usage", "worker_count", "energy_consumption",
+    "equipment_utilization_rate", "machinery_status", "temperature", "humidity", "vibration_level"
+]
 
 
 class CostModel(BaseModel):
@@ -18,7 +26,11 @@ class CostModel(BaseModel):
         if self.model is None:
             self.load()
 
-        X = (df_features[self.feature_names] if self.feature_names else df_features).fillna(0)
+        target_features = [f for f in COST_FEATURE_NAMES if f in df_features.columns]
+        if self.feature_names:
+            target_features = [f for f in self.feature_names if f in df_features.columns and f != "cost_deviation"]
+
+        X = df_features[target_features].fillna(0) if target_features else df_features.fillna(0)
         predicted_deviation = float(self.model.predict(X)[0])
         predicted_deviation = round(predicted_deviation, 2)
         

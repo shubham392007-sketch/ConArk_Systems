@@ -11,6 +11,9 @@ export interface OperationalInputs {
   safety_incidents: number;
   equipment_utilization_rate: number;
   material_shortage_alert: number;
+  cost_deviation?: number;
+  time_deviation?: number;
+  simulation_deviation?: number;
 }
 
 export interface SpaceInputs {
@@ -64,17 +67,23 @@ export interface MasterIntelligenceResponse {
     };
     optimization: {
       recommendation: string;
+      priority?: string;
+      expected_improvement?: string;
+      resource_reallocation?: string;
       confidence: number;
       supporting_factors: string[];
     };
   };
   alerts: Array<{
-    alert_id: string;
+    alert_id?: string;
     type: string;
     title: string;
-    description: string;
+    description?: string;
+    message?: string;
     priority: number;
     severity: string;
+    status?: string;
+    probability?: number;
   }>;
   health: {
     overall_health_score: number;
