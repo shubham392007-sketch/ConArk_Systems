@@ -33,7 +33,6 @@ ENV/
 
 # Frontend
 frontend/node_modules/
-frontend/dist/
 frontend/.vite/
 
 # Data cache (keep placeholder directories)

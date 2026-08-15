@@ -56,20 +56,32 @@ app.include_router(alerts.router, prefix=prefix_v1)
 app.include_router(intelligence.router, prefix=prefix_v1)
 app.include_router(space_optimization.router, prefix=prefix_v1)
 
-# Production Frontend SPA Static File Serving for Render / Single Web Service
-frontend_dist = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "frontend", "dist"))
-if not os.path.exists(frontend_dist):
-    frontend_dist = os.path.abspath("frontend/dist")
+# Resolve production frontend SPA static directory
+possible_dist_paths = [
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "frontend", "dist")),
+    os.path.abspath("frontend/dist"),
+    os.path.abspath("../frontend/dist"),
+    "/opt/render/project/src/frontend/dist"
+]
 
-if os.path.exists(frontend_dist):
+frontend_dist = None
+for p in possible_dist_paths:
+    if os.path.exists(p) and os.path.isdir(p) and os.path.exists(os.path.join(p, "index.html")):
+        frontend_dist = p
+        break
+
+if frontend_dist:
     logger.info(f"Frontend production dist found at {frontend_dist}. Mounting static SPA files.")
     assets_dir = os.path.join(frontend_dist, "assets")
     if os.path.exists(assets_dir):
         app.mount("/assets", StaticFiles(directory=assets_dir), name="static_assets")
 
+    @app.get("/", include_in_schema=False)
+    async def serve_root_spa():
+        return FileResponse(os.path.join(frontend_dist, "index.html"))
+
     @app.get("/{full_path:path}", include_in_schema=False)
     async def serve_spa(full_path: str):
-        # Exclude API endpoints and OpenAPI docs from SPA routing
         if full_path.startswith("api/") or full_path in ["docs", "redoc", "openapi.json"]:
             return None
         target = os.path.join(frontend_dist, full_path)
