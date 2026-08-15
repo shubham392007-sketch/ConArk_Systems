@@ -55,6 +55,38 @@ export const ModelDetailPage: React.FC = () => {
     material_shortage_alert: 0
   });
 
+  const handleLengthChange = (val: number) => {
+    const l = val > 0 ? val : 1;
+    const w = spaceInputs.site_width_m || 30;
+    setSpaceInputs({
+      ...spaceInputs,
+      site_length_m: l,
+      site_area_sqm: Math.round(l * w)
+    });
+  };
+
+  const handleWidthChange = (val: number) => {
+    const w = val > 0 ? val : 1;
+    const l = spaceInputs.site_length_m || 40;
+    setSpaceInputs({
+      ...spaceInputs,
+      site_width_m: w,
+      site_area_sqm: Math.round(l * w)
+    });
+  };
+
+  const handleAreaChange = (val: number) => {
+    const area = val > 0 ? val : 1;
+    const l = Math.round(Math.sqrt(area * 1.33));
+    const w = Math.round(area / l);
+    setSpaceInputs({
+      ...spaceInputs,
+      site_area_sqm: area,
+      site_length_m: l,
+      site_width_m: w
+    });
+  };
+
   const getModelConfig = (id?: string) => {
     switch (id) {
       case 'performance':
@@ -134,7 +166,6 @@ export const ModelDetailPage: React.FC = () => {
 
   const config = getModelConfig(modelId);
 
-  // Run both Intelligence + Space Optimization if Model 05
   const runPrediction = async () => {
     setLoading(true);
     try {
@@ -173,19 +204,21 @@ export const ModelDetailPage: React.FC = () => {
   };
 
   const defaultCoordinates: ZoneCoordinates[] = [
-    { zone_name: 'Material Storage', x: 0, y: 0, width: 20, height: 12 },
-    { zone_name: 'Equipment Area', x: 20, y: 0, width: 20, height: 12 },
-    { zone_name: 'Worker Movement', x: 0, y: 12, width: 18, height: 12 },
-    { zone_name: 'Staging Area', x: 18, y: 12, width: 22, height: 12 },
-    { zone_name: 'Safety Buffer', x: 0, y: 24, width: 15, height: 6 },
-    { zone_name: 'Loading / Unloading', x: 15, y: 24, width: 13, height: 6 },
-    { zone_name: 'Waste Dump', x: 28, y: 24, width: 12, height: 6 },
-    { zone_name: 'Emergency Access Corridor', x: 0, y: 28, width: 40, height: 2 }
+    { zone_name: 'Material Storage', x: 0, y: 0, width: 22.8, height: 12 },
+    { zone_name: 'Equipment Area', x: 22.8, y: 0, width: 17.2, height: 12 },
+    { zone_name: 'Worker Movement', x: 0, y: 12, width: 24, height: 10.5 },
+    { zone_name: 'Staging Area', x: 24, y: 12, width: 16, height: 10.5 },
+    { zone_name: 'Safety Buffer', x: 0, y: 22.5, width: 20, height: 5.4 },
+    { zone_name: 'Loading / Unloading', x: 20, y: 22.5, width: 13.3, height: 5.4 },
+    { zone_name: 'Waste Dump', x: 33.3, y: 22.5, width: 6.7, height: 5.4 },
+    { zone_name: 'Emergency Access Corridor', x: 0, y: 27.9, width: 40, height: 2.1 }
   ];
 
   const coordinates: ZoneCoordinates[] = spaceRes?.coordinates && spaceRes.coordinates.length > 0 ? spaceRes.coordinates : defaultCoordinates;
-  const siteLength = spaceInputs.site_length_m || 40;
-  const siteWidth = spaceInputs.site_width_m || 30;
+  
+  // Dynamic Bounding Box scaling for 100% canvas coverage
+  const layoutMaxX = Math.max(...coordinates.map(c => c.x + c.width), spaceInputs.site_length_m || 40);
+  const layoutMaxY = Math.max(...coordinates.map(c => c.y + c.height), spaceInputs.site_width_m || 30);
 
   const utilization = spaceRes?.metrics?.space_utilization_percentage ?? 91.7;
   const safetyScore = spaceRes?.metrics?.safety_compliance_score ?? 100;
@@ -279,7 +312,7 @@ export const ModelDetailPage: React.FC = () => {
                   <input
                     type="number"
                     value={spaceInputs.site_area_sqm}
-                    onChange={e => setSpaceInputs({ ...spaceInputs, site_area_sqm: parseFloat(e.target.value) || 0 })}
+                    onChange={e => handleAreaChange(parseFloat(e.target.value) || 0)}
                     style={{ width: '100%', fontSize: '18px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
                   />
                 </div>
@@ -290,7 +323,7 @@ export const ModelDetailPage: React.FC = () => {
                     <input
                       type="number"
                       value={spaceInputs.site_length_m}
-                      onChange={e => setSpaceInputs({ ...spaceInputs, site_length_m: parseFloat(e.target.value) || 0 })}
+                      onChange={e => handleLengthChange(parseFloat(e.target.value) || 0)}
                       style={{ width: '100%', fontSize: '18px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
                     />
                   </div>
@@ -299,7 +332,7 @@ export const ModelDetailPage: React.FC = () => {
                     <input
                       type="number"
                       value={spaceInputs.site_width_m}
-                      onChange={e => setSpaceInputs({ ...spaceInputs, site_width_m: parseFloat(e.target.value) || 0 })}
+                      onChange={e => handleWidthChange(parseFloat(e.target.value) || 0)}
                       style={{ width: '100%', fontSize: '18px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
                     />
                   </div>
@@ -408,7 +441,7 @@ export const ModelDetailPage: React.FC = () => {
                 <div style={{ backgroundColor: '#FFFFFF', border: '2.5px dashed #111111', borderRadius: '20px', padding: '28px', boxShadow: '0 8px 20px rgba(0,0,0,0.06)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                     <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '26px', color: '#111111', textTransform: 'uppercase' }}>
-                      DYNAMIC 2D SITE LAYOUT MAP ({siteLength}m × {siteWidth}m)
+                      DYNAMIC 2D SITE LAYOUT MAP ({spaceInputs.site_length_m}m × {spaceInputs.site_width_m}m)
                     </h2>
                     <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', backgroundColor: '#111111', color: '#FFFFFF', padding: '3px 10px', borderRadius: '4px' }}>
                       SCIPY SLSQP SOLVED
@@ -437,7 +470,7 @@ export const ModelDetailPage: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* 2D Canvas rendering 8 zones by (x,y,w,h) with ZERO OVERLAP */}
+                  {/* Proportional 2D Canvas rendering all 8 zones cleanly across 100% bounds */}
                   <div style={{
                     position: 'relative',
                     width: '100%',
@@ -449,13 +482,13 @@ export const ModelDetailPage: React.FC = () => {
                     boxShadow: 'inset 0 0 20px rgba(0,0,0,0.5)'
                   }}>
                     {coordinates.map((coord: ZoneCoordinates, i: number) => {
-                      const leftPct = (coord.x / siteLength) * 100;
-                      const topPct = (coord.y / siteWidth) * 100;
-                      const widthPct = (coord.width / siteLength) * 100;
-                      const heightPct = (coord.height / siteWidth) * 100;
+                      const leftPct = (coord.x / layoutMaxX) * 100;
+                      const topPct = (coord.y / layoutMaxY) * 100;
+                      const widthPct = (coord.width / layoutMaxX) * 100;
+                      const heightPct = (coord.height / layoutMaxY) * 100;
                       const color = getZoneColor(coord.zone_name);
                       const isMagenta = color === '#FF2AA1';
-                      const isNarrow = heightPct < 10;
+                      const isNarrow = heightPct < 12;
 
                       return (
                         <div

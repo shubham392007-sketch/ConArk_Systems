@@ -52,7 +52,6 @@ class SpaceOptimizer:
             )
             logger.warning(f"Optimization INFEASIBLE: {violation_msg}")
             
-            # Return INFEASIBLE response without inventing allocations
             constraint_items = evaluate_constraint_items({}, demand)
             for item in constraint_items:
                 item.status = "VIOLATED" if item.required_sqm > (site_area / 8.0) else "SATISFIED"
@@ -71,7 +70,6 @@ class SpaceOptimizer:
             }
 
         # 3. Setup SciPy optimization problem
-        # Zone order: [material, equipment, worker, safety, loading, waste, emergency, staging]
         zone_keys = [
             "material_storage",
             "equipment",
@@ -83,16 +81,10 @@ class SpaceOptimizer:
             "staging"
         ]
 
-        # Initial guess: x0 = required demand values
         x0 = np.array([demand[k] for k in zone_keys], dtype=float)
-
-        # Bounds for each zone: [required, site_area]
         bounds = [(demand[k], site_area) for k in zone_keys]
-
-        # Hard inequality constraints
         scipy_constraints = build_hard_constraints(site_area, demand)
 
-        # Multi-objective loss function
         obj_func = self.objective_evaluator.build_objective_function(
             site_area,
             demand,
@@ -100,7 +92,6 @@ class SpaceOptimizer:
             input_data.machinery_count
         )
 
-        # 4. Run SciPy SLSQP optimization
         res = minimize(
             fun=obj_func,
             x0=x0,
@@ -115,9 +106,8 @@ class SpaceOptimizer:
             sol_x = np.round(res.x, 2)
         else:
             opt_status = OptimizationStatusEnum.FEASIBLE
-            sol_x = np.round(x0, 2)  # Fallback to minimum required demand vector
+            sol_x = np.round(x0, 2)
 
-        # Build SpaceAllocation object
         allocation_dict = {
             "material_storage_area_sqm": float(sol_x[0]),
             "equipment_area_sqm": float(sol_x[1]),
@@ -129,19 +119,14 @@ class SpaceOptimizer:
             "staging_area_sqm": float(sol_x[7])
         }
 
-        # Evaluate constraints
         constraint_items = evaluate_constraint_items(allocation_dict, demand)
 
-        # 5. Spatial 2D rectangular layout positioning (if site dimensions provided)
-        spatial_layout = []
-        if input_data.site_length_m and input_data.site_width_m and input_data.site_length_m > 0 and input_data.site_width_m > 0:
-            spatial_layout = self._generate_2d_layout(
-                allocation_dict,
-                float(input_data.site_length_m),
-                float(input_data.site_width_m)
-            )
+        # 5. Spatial 2D rectangular layout positioning
+        site_l = float(input_data.site_length_m) if (input_data.site_length_m and input_data.site_length_m > 0) else 40.0
+        site_w = float(input_data.site_width_m) if (input_data.site_width_m and input_data.site_width_m > 0) else 30.0
 
-        # 6. Generate deterministic reasoning statements
+        spatial_layout = self._generate_2d_layout(allocation_dict, site_l, site_w)
+
         reasoning = self._generate_reasoning(input_data, demand, allocation_dict)
 
         return {
@@ -160,47 +145,62 @@ class SpaceOptimizer:
         site_length: float,
         site_width: float
     ) -> List[ZoneLayout]:
-        """Simple rectangular grid packing layout generator for 2D visualization."""
+        """
+        Generates structured 3-tier grid layout for 2D spatial map visualization.
+        Packs all 8 operational site zones into non-overlapping proportional rectangles.
+        """
         layout = []
-        curr_x = 0.0
-        curr_y = 0.0
-        row_max_h = 0.0
 
-        zone_names = [
-            ("Material Storage", allocation["material_storage_area_sqm"]),
-            ("Equipment Parking", allocation["equipment_area_sqm"]),
-            ("Worker Circulation", allocation["worker_movement_area_sqm"]),
-            ("Safety Buffer", allocation["safety_buffer_area_sqm"]),
-            ("Loading/Unloading", allocation["loading_area_sqm"]),
-            ("Waste Area", allocation["waste_area_sqm"]),
-            ("Emergency Access Corridor", allocation["emergency_access_area_sqm"]),
-            ("Staging Area", allocation["staging_area_sqm"]),
-        ]
+        # Tier 1: Main Work Zones (Top Row)
+        # Material Storage & Equipment Area
+        mat_area = allocation.get("material_storage_area_sqm", 320.0)
+        eq_area = allocation.get("equipment_area_sqm", 180.0)
+        t1_total = mat_area + eq_area
+        t1_h = round(site_width * 0.40, 2)
+        
+        mat_w = round(site_length * (mat_area / max(t1_total, 1.0)), 2)
+        eq_w = round(site_length - mat_w, 2)
 
-        for label, area in zone_names:
-            if area <= 0.1:
-                continue
-            # Aspect ratio 1.5 for rectangular zones
-            w = round(min(np.sqrt(area * 1.5), site_length - curr_x), 2)
-            if w <= 0.5:
-                w = round(site_length / 2.0, 2)
-            h = round(area / w, 2)
+        layout.append(ZoneLayout(zone="Material Storage", x=0.0, y=0.0, width=mat_w, height=t1_h))
+        layout.append(ZoneLayout(zone="Equipment Area", x=mat_w, y=0.0, width=eq_w, height=t1_h))
 
-            if curr_x + w > site_length + 0.1:
-                curr_x = 0.0
-                curr_y += row_max_h
-                row_max_h = 0.0
+        # Tier 2: Circulation & Staging (Middle Row)
+        # Worker Movement & Staging Area
+        wrk_area = allocation.get("worker_movement_area_sqm", 150.0)
+        stg_area = allocation.get("staging_area_sqm", 100.0)
+        t2_total = wrk_area + stg_area
+        t2_h = round(site_width * 0.35, 2)
+        t2_y = t1_h
 
-            layout.append(ZoneLayout(
-                zone=label,
-                x=round(curr_x, 2),
-                y=round(curr_y, 2),
-                width=w,
-                height=h
-            ))
+        wrk_w = round(site_length * (wrk_area / max(t2_total, 1.0)), 2)
+        stg_w = round(site_length - wrk_w, 2)
 
-            curr_x += w
-            row_max_h = max(row_max_h, h)
+        layout.append(ZoneLayout(zone="Worker Movement", x=0.0, y=t2_y, width=wrk_w, height=t2_h))
+        layout.append(ZoneLayout(zone="Staging Area", x=wrk_w, y=t2_y, width=stg_w, height=t2_h))
+
+        # Tier 3: Logistics & Safety (Bottom Rows)
+        # Safety Buffer, Loading/Unloading, Waste Dump (Bottom Row 1)
+        safe_area = allocation.get("safety_buffer_area_sqm", 120.0)
+        load_area = allocation.get("loading_area_sqm", 80.0)
+        waste_area = allocation.get("waste_area_sqm", 40.0)
+        t3_total = safe_area + load_area + waste_area
+        t3_h = round(site_width * 0.18, 2)
+        t3_y = round(t1_h + t2_h, 2)
+
+        safe_w = round(site_length * (safe_area / max(t3_total, 1.0)), 2)
+        load_w = round(site_length * (load_area / max(t3_total, 1.0)), 2)
+        waste_w = round(site_length - safe_w - load_w, 2)
+
+        layout.append(ZoneLayout(zone="Safety Buffer", x=0.0, y=t3_y, width=safe_w, height=t3_h))
+        layout.append(ZoneLayout(zone="Loading / Unloading", x=safe_w, y=t3_y, width=load_w, height=t3_h))
+        layout.append(ZoneLayout(zone="Waste Dump", x=round(safe_w + load_w, 2), y=t3_y, width=waste_w, height=t3_h))
+
+        # Tier 4: Emergency Access Corridor (Full Width Strip at Bottom)
+        t4_h = round(site_width - (t1_h + t2_h + t3_h), 2)
+        t4_h = max(t4_h, round(site_width * 0.07, 2))
+        t4_y = round(site_width - t4_h, 2)
+
+        layout.append(ZoneLayout(zone="Emergency Access Corridor", x=0.0, y=t4_y, width=site_length, height=t4_h))
 
         return layout
 
@@ -213,23 +213,19 @@ class SpaceOptimizer:
         """Generates clear, deterministic reasoning statements based on inputs and results."""
         reasons = []
 
-        # Material reason
         reasons.append(
             f"Material storage allocated {allocation['material_storage_area_sqm']:.1f} sqm based on {input_data.material_quantity_kg:.0f} kg material volume for stage {input_data.construction_stage.value}."
         )
 
-        # Equipment reason
         if input_data.machinery_count > 0:
             reasons.append(
                 f"Equipment area allocated {allocation['equipment_area_sqm']:.1f} sqm accommodating {input_data.machinery_count} machines ({input_data.heavy_machinery_count} heavy units)."
             )
 
-        # Safety reason
         reasons.append(
             f"Safety buffer allocated {allocation['safety_buffer_area_sqm']:.1f} sqm to enforce {input_data.safety_requirement_level.value} safety protocol level."
         )
 
-        # Emergency corridor reason
         if input_data.emergency_access_required:
             reasons.append(
                 f"Emergency access corridor allocated {allocation['emergency_access_area_sqm']:.1f} sqm preserving unimpeded emergency evacuation channels."
