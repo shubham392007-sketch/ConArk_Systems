@@ -111,7 +111,7 @@ export const TheBrainsPage: React.FC = () => {
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
 
   return (
-    <div style={{ width: '100%', maxWidth: '1400px', margin: '0 auto', padding: '24px 24px 64px 24px', boxSizing: 'border-box' }}>
+    <div style={{ width: '100%', maxWidth: '1450px', margin: '0 auto', padding: '24px 20px 64px 20px', boxSizing: 'border-box' }}>
       
       {/* 1. PAGE HERO */}
       <motion.div 
@@ -121,36 +121,21 @@ export const TheBrainsPage: React.FC = () => {
         style={{
           position: 'relative',
           textAlign: 'center',
-          padding: '36px 20px 48px 20px',
+          padding: '24px 20px 40px 20px',
           marginBottom: '40px',
           borderBottom: '2.5px dashed #111111'
         }}
       >
-        <div style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '8px',
-          backgroundColor: '#111111',
-          color: '#FFFFFF',
-          padding: '5px 14px',
-          borderRadius: '4px',
-          fontSize: '11px',
-          fontFamily: 'JetBrains Mono, monospace',
-          fontWeight: '800',
-          letterSpacing: '0.08em',
-          marginBottom: '20px'
-        }}>
-          FOUNDING TEAM / 04
-        </div>
-
+        {/* SINGLE LINE TITLE: THE BRAINS BEHIND CONARK */}
         <h1 style={{
           fontFamily: 'Anton, sans-serif',
-          fontSize: 'clamp(56px, 12vw, 160px)',
+          fontSize: 'clamp(40px, 8.5vw, 150px)',
           lineHeight: '0.85',
           color: '#111111',
           letterSpacing: '-0.02em',
           textTransform: 'uppercase',
-          margin: '0 auto'
+          margin: '0 auto',
+          whiteSpace: 'nowrap'
         }}>
           THE BRAINS BEHIND CONARK
         </h1>
@@ -160,10 +145,10 @@ export const TheBrainsPage: React.FC = () => {
           fontSize: '22px',
           fontWeight: '700',
           color: '#111111',
-          marginTop: '20px',
+          marginTop: '18px',
           letterSpacing: '0.02em',
           maxWidth: '900px',
-          margin: '20px auto 0 auto'
+          margin: '18px auto 0 auto'
         }}>
           "Four minds. Different disciplines. One construction intelligence system."
         </p>
@@ -204,7 +189,7 @@ export const TheBrainsPage: React.FC = () => {
         </p>
       </div>
 
-      {/* 3. 2x2 EDITORIAL CARD GRID (NAMES ON SINGLE LINE, SKETCH BOXES REMOVED) */}
+      {/* 3. 2x2 EDITORIAL CARD GRID */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(480px, 1fr))',
