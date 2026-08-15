@@ -93,7 +93,7 @@ export const ModelDetailPage: React.FC = () => {
     switch (id) {
       case 'performance':
         return {
-          title: 'PERFORMANCE MODEL',
+          title: 'PERFORMANCE PREDICTION MODEL',
           algorithm: 'HistGradientBoosting Classifier',
           version: 'v1.0.0',
           color: '#FFFFFF',
@@ -258,6 +258,194 @@ export const ModelDetailPage: React.FC = () => {
     return `${val.toFixed(1)} DAYS`;
   };
 
+  // Render individual input field by key
+  const renderSingleField = (key: string) => {
+    switch (key) {
+      case 'temperature':
+        return (
+          <div key="temperature">
+            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>TEMPERATURE (°C)</label>
+            <input
+              type="number"
+              step="0.1"
+              value={inputs.temperature}
+              onChange={e => setInputs({ ...inputs, temperature: parseFloat(e.target.value) || 0 })}
+              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
+            />
+          </div>
+        );
+      case 'humidity':
+        return (
+          <div key="humidity">
+            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>HUMIDITY (%)</label>
+            <input
+              type="number"
+              value={inputs.humidity}
+              onChange={e => setInputs({ ...inputs, humidity: parseFloat(e.target.value) || 0 })}
+              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
+            />
+          </div>
+        );
+      case 'vibration_level':
+        return (
+          <div key="vibration_level">
+            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>VIBRATION LEVEL (Hz)</label>
+            <input
+              type="number"
+              step="0.1"
+              value={inputs.vibration_level}
+              onChange={e => setInputs({ ...inputs, vibration_level: parseFloat(e.target.value) || 0 })}
+              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
+            />
+          </div>
+        );
+      case 'material_usage':
+        return (
+          <div key="material_usage">
+            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>MATERIAL USAGE (kg)</label>
+            <input
+              type="number"
+              value={inputs.material_usage}
+              onChange={e => setInputs({ ...inputs, material_usage: parseFloat(e.target.value) || 0 })}
+              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
+            />
+          </div>
+        );
+      case 'machinery_status':
+        return (
+          <div key="machinery_status">
+            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>MACHINERY STATUS</label>
+            <select
+              value={inputs.machinery_status}
+              onChange={e => setInputs({ ...inputs, machinery_status: parseInt(e.target.value) || 0 })}
+              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px', backgroundColor: '#FFFFFF' }}
+            >
+              <option value={1}>1 - ACTIVE</option>
+              <option value={0}>0 - IDLE / OFF</option>
+            </select>
+          </div>
+        );
+      case 'worker_count':
+        return (
+          <div key="worker_count">
+            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>WORKER COUNT</label>
+            <input
+              type="number"
+              value={inputs.worker_count}
+              onChange={e => setInputs({ ...inputs, worker_count: parseInt(e.target.value) || 0 })}
+              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
+            />
+          </div>
+        );
+      case 'energy_consumption':
+        return (
+          <div key="energy_consumption">
+            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>ENERGY CONSUMPTION (kWh)</label>
+            <input
+              type="number"
+              value={inputs.energy_consumption}
+              onChange={e => setInputs({ ...inputs, energy_consumption: parseFloat(e.target.value) || 0 })}
+              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
+            />
+          </div>
+        );
+      case 'task_progress':
+        return (
+          <div key="task_progress">
+            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>TASK PROGRESS (0.0 to 1.0)</label>
+            <input
+              type="number"
+              step="0.01"
+              min="0"
+              max="1"
+              value={inputs.task_progress}
+              onChange={e => setInputs({ ...inputs, task_progress: parseFloat(e.target.value) || 0 })}
+              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
+            />
+          </div>
+        );
+      case 'equipment_utilization_rate':
+        return (
+          <div key="equipment_utilization_rate">
+            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>EQUIPMENT UTILIZATION (%)</label>
+            <input
+              type="number"
+              value={inputs.equipment_utilization_rate}
+              onChange={e => setInputs({ ...inputs, equipment_utilization_rate: parseFloat(e.target.value) || 0 })}
+              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
+            />
+          </div>
+        );
+      case 'safety_incidents':
+        return (
+          <div key="safety_incidents">
+            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>SAFETY INCIDENTS</label>
+            <input
+              type="number"
+              value={inputs.safety_incidents}
+              onChange={e => setInputs({ ...inputs, safety_incidents: parseInt(e.target.value) || 0 })}
+              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
+            />
+          </div>
+        );
+      case 'material_shortage_alert':
+        return (
+          <div key="material_shortage_alert">
+            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>MATERIAL SHORTAGE ALERT</label>
+            <select
+              value={inputs.material_shortage_alert}
+              onChange={e => setInputs({ ...inputs, material_shortage_alert: parseInt(e.target.value) || 0 })}
+              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px', backgroundColor: '#FFFFFF' }}
+            >
+              <option value={0}>0 - NORMAL</option>
+              <option value={1}>1 - SHORTAGE ALERT</option>
+            </select>
+          </div>
+        );
+      case 'cost_deviation':
+        return (
+          <div key="cost_deviation">
+            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>COST DEVIATION (USD)</label>
+            <input
+              type="number"
+              step="0.01"
+              value={inputs.cost_deviation ?? 0}
+              onChange={e => setInputs({ ...inputs, cost_deviation: parseFloat(e.target.value) || 0 })}
+              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
+            />
+          </div>
+        );
+      case 'time_deviation':
+        return (
+          <div key="time_deviation">
+            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>TIME DEVIATION (DAYS)</label>
+            <input
+              type="number"
+              step="0.1"
+              value={inputs.time_deviation ?? 0}
+              onChange={e => setInputs({ ...inputs, time_deviation: parseFloat(e.target.value) || 0 })}
+              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
+            />
+          </div>
+        );
+      case 'simulation_deviation':
+        return (
+          <div key="simulation_deviation">
+            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>SIMULATION DEVIATION (%)</label>
+            <input
+              type="number"
+              step="0.01"
+              value={inputs.simulation_deviation ?? 0.77}
+              onChange={e => setInputs({ ...inputs, simulation_deviation: parseFloat(e.target.value) || 0 })}
+              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
+            />
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
   // Dynamic Input Form Fields renderer based on modelId
   const renderModelInputs = () => {
     if (isSpaceOpt) {
@@ -331,145 +519,56 @@ export const ModelDetailPage: React.FC = () => {
       );
     }
 
-    // Dynamic field set for specific telemetry models
+    // Required inputs per specific model
+    const requiredKeysMap: Record<string, string[]> = {
+      performance: [
+        'temperature', 'humidity', 'vibration_level', 'material_usage',
+        'machinery_status', 'worker_count', 'energy_consumption', 'task_progress',
+        'equipment_utilization_rate', 'safety_incidents', 'material_shortage_alert',
+        'cost_deviation', 'time_deviation'
+      ],
+      risk: [
+        'temperature', 'humidity', 'vibration_level', 'worker_count',
+        'machinery_status', 'energy_consumption', 'equipment_utilization_rate',
+        'safety_incidents', 'material_shortage_alert', 'task_progress'
+      ],
+      cost: [
+        'task_progress', 'material_usage', 'worker_count', 'energy_consumption',
+        'equipment_utilization_rate', 'machinery_status', 'temperature',
+        'humidity', 'vibration_level'
+      ],
+      time: [
+        'task_progress', 'worker_count', 'machinery_status',
+        'equipment_utilization_rate', 'vibration_level', 'safety_incidents',
+        'material_usage', 'material_shortage_alert', 'energy_consumption'
+      ],
+      optimization: [
+        'worker_count', 'material_usage', 'material_shortage_alert',
+        'machinery_status', 'equipment_utilization_rate', 'energy_consumption',
+        'task_progress', 'temperature', 'humidity', 'vibration_level',
+        'safety_incidents', 'cost_deviation', 'time_deviation', 'simulation_deviation'
+      ]
+    };
+
+    const keys = requiredKeysMap[modelId || 'performance'] || requiredKeysMap.performance;
+
+    // Group keys into 2-column grid pairs for clean aesthetic layout
+    const pairs: string[][] = [];
+    for (let i = 0; i < keys.length; i += 2) {
+      if (i + 1 < keys.length) {
+        pairs.push([keys[i], keys[i + 1]]);
+      } else {
+        pairs.push([keys[i]]);
+      }
+    }
+
     return (
       <>
-        {/* Core telemetry fields */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-          <div>
-            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>TEMPERATURE (°C)</label>
-            <input
-              type="number"
-              step="0.1"
-              value={inputs.temperature}
-              onChange={e => setInputs({ ...inputs, temperature: parseFloat(e.target.value) || 0 })}
-              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
-            />
+        {pairs.map((pair, idx) => (
+          <div key={idx} style={{ display: 'grid', gridTemplateColumns: pair.length === 2 ? '1fr 1fr' : '1fr', gap: '12px' }}>
+            {pair.map(k => renderSingleField(k))}
           </div>
-          <div>
-            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>HUMIDITY (%)</label>
-            <input
-              type="number"
-              value={inputs.humidity}
-              onChange={e => setInputs({ ...inputs, humidity: parseFloat(e.target.value) || 0 })}
-              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
-            />
-          </div>
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-          <div>
-            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>VIBRATION LEVEL (Hz)</label>
-            <input
-              type="number"
-              step="0.1"
-              value={inputs.vibration_level}
-              onChange={e => setInputs({ ...inputs, vibration_level: parseFloat(e.target.value) || 0 })}
-              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
-            />
-          </div>
-          <div>
-            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>MATERIAL USAGE (kg)</label>
-            <input
-              type="number"
-              value={inputs.material_usage}
-              onChange={e => setInputs({ ...inputs, material_usage: parseFloat(e.target.value) || 0 })}
-              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
-            />
-          </div>
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-          <div>
-            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>WORKER COUNT</label>
-            <input
-              type="number"
-              value={inputs.worker_count}
-              onChange={e => setInputs({ ...inputs, worker_count: parseInt(e.target.value) || 0 })}
-              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
-            />
-          </div>
-          <div>
-            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>ENERGY CONSUMPTION (kWh)</label>
-            <input
-              type="number"
-              value={inputs.energy_consumption}
-              onChange={e => setInputs({ ...inputs, energy_consumption: parseFloat(e.target.value) || 0 })}
-              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
-            />
-          </div>
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-          <div>
-            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>TASK PROGRESS (0.0 to 1.0)</label>
-            <input
-              type="number"
-              step="0.01"
-              min="0"
-              max="1"
-              value={inputs.task_progress}
-              onChange={e => setInputs({ ...inputs, task_progress: parseFloat(e.target.value) || 0 })}
-              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
-            />
-          </div>
-          <div>
-            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>EQUIPMENT UTILIZATION (%)</label>
-            <input
-              type="number"
-              value={inputs.equipment_utilization_rate}
-              onChange={e => setInputs({ ...inputs, equipment_utilization_rate: parseFloat(e.target.value) || 0 })}
-              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
-            />
-          </div>
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-          <div>
-            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>MACHINERY STATUS</label>
-            <select
-              value={inputs.machinery_status}
-              onChange={e => setInputs({ ...inputs, machinery_status: parseInt(e.target.value) || 0 })}
-              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px', backgroundColor: '#FFFFFF' }}
-            >
-              <option value={1}>1 - ACTIVE</option>
-              <option value={0}>0 - IDLE / OFF</option>
-            </select>
-          </div>
-          <div>
-            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>SAFETY INCIDENTS</label>
-            <input
-              type="number"
-              value={inputs.safety_incidents}
-              onChange={e => setInputs({ ...inputs, safety_incidents: parseInt(e.target.value) || 0 })}
-              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
-            />
-          </div>
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-          <div>
-            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>MATERIAL SHORTAGE ALERT</label>
-            <select
-              value={inputs.material_shortage_alert}
-              onChange={e => setInputs({ ...inputs, material_shortage_alert: parseInt(e.target.value) || 0 })}
-              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px', backgroundColor: '#FFFFFF' }}
-            >
-              <option value={0}>0 - NORMAL</option>
-              <option value={1}>1 - SHORTAGE ALERT</option>
-            </select>
-          </div>
-          <div>
-            <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>SIMULATION DEVIATION (%)</label>
-            <input
-              type="number"
-              step="0.01"
-              value={inputs.simulation_deviation ?? 0.77}
-              onChange={e => setInputs({ ...inputs, simulation_deviation: parseFloat(e.target.value) || 0 })}
-              style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
-            />
-          </div>
-        </div>
+        ))}
       </>
     );
   };
@@ -514,11 +613,11 @@ export const ModelDetailPage: React.FC = () => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
             <Sliders size={22} color="#111111" />
             <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '24px', color: '#111111', textTransform: 'uppercase' }}>
-              {isSpaceOpt ? 'SITE CONSTRAINTS & TELEMETRY' : 'STANDARDIZED MODEL INPUTS'}
+              {isSpaceOpt ? 'SITE CONSTRAINTS & TELEMETRY' : 'REQUIRED MODEL INPUTS'}
             </h2>
           </div>
           <p style={{ fontSize: '13px', color: '#666666', fontFamily: 'Inter, sans-serif', marginBottom: '20px' }}>
-            Configure Building Performance Dataset parameters and click <strong>"PREDICT FOR THIS MODEL →"</strong>.
+            Enter the <strong>{modelId?.toUpperCase()} MODEL</strong> inputs below and click <strong>"PREDICT FOR THIS MODEL →"</strong>.
           </p>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
