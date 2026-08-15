@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Sparkles } from 'lucide-react';
 import { analyzeProjectIntelligence } from '../services/api';
@@ -7,6 +7,7 @@ import type { OperationalInputs } from '../types';
 export const ModelDetailPage: React.FC = () => {
   const { modelId } = useParams<{ modelId: string }>();
   const [loading, setLoading] = useState(false);
+  const [hasPredicted, setHasPredicted] = useState(false);
   const [result, setResult] = useState<any>(null);
 
   const [inputs, setInputs] = useState<OperationalInputs>({
@@ -33,7 +34,7 @@ export const ModelDetailPage: React.FC = () => {
           version: 'v1.0.0',
           color: '#FFFFFF',
           outputLabel: 'PREDICTED PERFORMANCE CLASS',
-          fields: ['task_progress', 'worker_count', 'equipment_utilization_rate']
+          explanationKey: 'performance_explanation'
         };
       case 'risk':
         return {
@@ -42,7 +43,7 @@ export const ModelDetailPage: React.FC = () => {
           version: 'v1.0.0',
           color: '#4FC3F7',
           outputLabel: 'PREDICTED OPERATIONAL RISK SCORE',
-          fields: ['safety_incidents', 'vibration_level', 'temperature']
+          explanationKey: 'risk_explanation'
         };
       case 'cost':
         return {
@@ -51,7 +52,7 @@ export const ModelDetailPage: React.FC = () => {
           version: 'v1.0.0',
           color: '#E4FF5B',
           outputLabel: 'PREDICTED COST DEVIATION',
-          fields: ['material_usage', 'energy_consumption', 'worker_count']
+          explanationKey: 'cost_explanation'
         };
       case 'time':
         return {
@@ -60,7 +61,7 @@ export const ModelDetailPage: React.FC = () => {
           version: 'v1.0.0',
           color: '#7CFFA6',
           outputLabel: 'PREDICTED TIME DEVIATION (DAYS)',
-          fields: ['task_progress', 'machinery_status', 'material_shortage_alert']
+          explanationKey: 'schedule_explanation'
         };
       case 'optimization':
       default:
@@ -70,32 +71,37 @@ export const ModelDetailPage: React.FC = () => {
           version: 'v1.0.0',
           color: '#F5F3E3',
           outputLabel: 'RECOMMENDED OPERATIONAL ACTION',
-          fields: ['equipment_utilization_rate', 'worker_count', 'task_progress']
+          explanationKey: 'optimization_explanation'
         };
     }
   };
 
   const config = getModelConfig(modelId);
 
+  // Manual Trigger ONLY — No automatic execution on load!
   const runPrediction = async () => {
     setLoading(true);
     try {
       const data = await analyzeProjectIntelligence(inputs);
       setResult(data);
+      setHasPredicted(true);
     } catch (e) {
       console.error(e);
+      alert('Failed to execute prediction: ' + e);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    runPrediction();
-  }, [modelId]);
+  const getGeminiExplanation = () => {
+    if (!result?.gemini_report?.report) return null;
+    const report = result.gemini_report.report;
+    return report[config.explanationKey] || report.executive_summary || "Gemini analysis generated based on updated model inputs.";
+  };
 
   return (
     <div style={{ maxWidth: '1650px', margin: '0 auto', padding: '24px 32px 64px 32px' }}>
-      {/* Back Button */}
+      {/* Back Navigation Link */}
       <Link
         to="/"
         style={{
@@ -134,7 +140,7 @@ export const ModelDetailPage: React.FC = () => {
             MODEL INPUT PARAMETERS
           </h2>
           <p style={{ fontSize: '13px', color: '#666666', fontFamily: 'Inter, sans-serif', marginBottom: '24px' }}>
-            Modify key input features to run real-time predictions on this model.
+            Configure input features below. Click <strong>"PREDICT FOR THIS MODEL →"</strong> to trigger inference.
           </p>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -220,7 +226,7 @@ export const ModelDetailPage: React.FC = () => {
               />
             </div>
 
-            {/* PREDICT BUTTON */}
+            {/* PREDICT BUTTON — MANUAL TRIGGER */}
             <button
               onClick={runPrediction}
               disabled={loading}
@@ -237,7 +243,7 @@ export const ModelDetailPage: React.FC = () => {
                 letterSpacing: '0.04em'
               }}
             >
-              {loading ? 'RUNNING INFERENCE...' : 'PREDICT FOR THIS MODEL →'}
+              {loading ? 'RUNNING INFERENCE & GEMINI...' : 'PREDICT FOR THIS MODEL →'}
             </button>
           </div>
         </div>
@@ -245,54 +251,85 @@ export const ModelDetailPage: React.FC = () => {
         {/* Right Column: Model Output Card */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           
-          {/* Main Output Box in Model Signature Color */}
-          <div
-            style={{
-              backgroundColor: config.color,
+          {hasPredicted ? (
+            <>
+              {/* Dynamic Prediction Display Box in Model Signature Color */}
+              <div
+                style={{
+                  backgroundColor: config.color,
+                  border: '2.5px dashed #111111',
+                  borderRadius: '20px',
+                  padding: '36px 44px',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.08)'
+                }}
+              >
+                <span style={{ fontSize: '12px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#111111' }}>
+                  {config.outputLabel}
+                </span>
+
+                {/* Model Output Prediction */}
+                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '64px', fontWeight: '800', color: '#111111', lineHeight: '1.0', margin: '16px 0 8px 0' }}>
+                  {modelId === 'performance' && (result?.ml_results?.performance?.prediction || 'GOOD')}
+                  {modelId === 'risk' && `${(result?.ml_results?.risk?.risk_score || 72).toFixed(0)}%`}
+                  {modelId === 'cost' && `$${(result?.ml_results?.cost_forecast?.predicted_cost_deviation || 8420).toLocaleString()}`}
+                  {modelId === 'time' && `+${(result?.ml_results?.time_forecast?.predicted_time_deviation_days || 4.8).toFixed(1)} DAYS`}
+                  {modelId === 'optimization' && (result?.ml_results?.optimization?.recommendation || 'REALLOCATE WORKERS')}
+                </div>
+
+                <div style={{ fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#111111' }}>
+                  {modelId === 'performance' && `CONFIDENCE: ${((result?.ml_results?.performance?.confidence || 0.936) * 100).toFixed(1)}%`}
+                  {modelId === 'risk' && `RISK LEVEL: ${result?.ml_results?.risk?.risk_level || 'HIGH'}`}
+                  {modelId === 'cost' && `STATUS: ${result?.ml_results?.cost_forecast?.budget_status || 'OVER BUDGET'}`}
+                  {modelId === 'time' && `SCHEDULE: ${result?.ml_results?.time_forecast?.schedule_status || 'DELAYED'}`}
+                  {modelId === 'optimization' && `CONFIDENCE: ${((result?.ml_results?.optimization?.confidence || 0.882) * 100).toFixed(1)}%`}
+                </div>
+
+                <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px dashed rgba(17,17,17,0.25)', fontSize: '12px', fontFamily: 'JetBrains Mono, monospace', color: '#111111' }}>
+                  Inference Time: 12ms · ConArk Backend v1.0
+                </div>
+              </div>
+
+              {/* Gemini AI Tailored Narrative Explanation */}
+              <div style={{ backgroundColor: '#FFFFFF', border: '2.5px dashed #111111', borderRadius: '20px', padding: '28px 36px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                  <Sparkles size={18} color="#FF2AA1" />
+                  <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', fontWeight: 'bold' }}>
+                    GEMINI 2.5 FLASH {config.title} EXPLANATION
+                  </span>
+                </div>
+                <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '15px', color: '#111111', lineHeight: '1.6', fontWeight: '500' }}>
+                  "{getGeminiExplanation()}"
+                </p>
+                <div style={{ marginTop: '16px', fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', color: '#666666' }}>
+                  Grounded in: {config.title} · ConArk Rules Engine
+                </div>
+              </div>
+            </>
+          ) : (
+            /* Standby State Before User Clicks Predict */
+            <div style={{
+              backgroundColor: '#FFFFFF',
               border: '2.5px dashed #111111',
               borderRadius: '20px',
-              padding: '36px 44px',
-              boxShadow: '0 8px 24px rgba(0,0,0,0.08)'
-            }}
-          >
-            <span style={{ fontSize: '12px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#111111' }}>
-              {config.outputLabel}
-            </span>
-
-            {/* Dynamic Prediction Display */}
-            <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '64px', fontWeight: '800', color: '#111111', lineHeight: '1.0', margin: '16px 0 8px 0' }}>
-              {modelId === 'performance' && (result?.ml_results?.performance?.prediction || 'GOOD')}
-              {modelId === 'risk' && `${(result?.ml_results?.risk?.risk_score || 72).toFixed(0)}%`}
-              {modelId === 'cost' && `$${(result?.ml_results?.cost_forecast?.predicted_cost_deviation || 8420).toLocaleString()}`}
-              {modelId === 'time' && `+${(result?.ml_results?.time_forecast?.predicted_time_deviation_days || 4.8).toFixed(1)} DAYS`}
-              {modelId === 'optimization' && (result?.ml_results?.optimization?.recommendation || 'REALLOCATE WORKERS')}
+              padding: '48px 36px',
+              textAlign: 'center',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: '360px'
+            }}>
+              <div style={{ width: '48px', height: '48px', backgroundColor: config.color === '#FFFFFF' ? '#EDECE7' : config.color, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #111111', marginBottom: '16px' }}>
+                <Sparkles size={24} color="#111111" />
+              </div>
+              <h3 style={{ fontFamily: 'Anton, sans-serif', fontSize: '28px', color: '#111111', textTransform: 'uppercase', marginBottom: '8px' }}>
+                READY FOR INFERENCE
+              </h3>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '14px', color: '#555555', maxWidth: '380px', lineHeight: '1.5' }}>
+                Adjust the input parameters on the left and click <strong>"PREDICT FOR THIS MODEL →"</strong> to trigger real-time inference and Gemini AI explanations.
+              </p>
             </div>
-
-            <div style={{ fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#111111' }}>
-              {modelId === 'performance' && `CONFIDENCE: ${((result?.ml_results?.performance?.confidence || 0.936) * 100).toFixed(1)}%`}
-              {modelId === 'risk' && `RISK LEVEL: ${result?.ml_results?.risk?.risk_level || 'HIGH'}`}
-              {modelId === 'cost' && `STATUS: ${result?.ml_results?.cost_forecast?.budget_status || 'OVER BUDGET'}`}
-              {modelId === 'time' && `SCHEDULE: ${result?.ml_results?.time_forecast?.schedule_status || 'DELAYED'}`}
-              {modelId === 'optimization' && `CONFIDENCE: ${((result?.ml_results?.optimization?.confidence || 0.882) * 100).toFixed(1)}%`}
-            </div>
-
-            <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px dashed rgba(17,17,17,0.25)', fontSize: '12px', fontFamily: 'JetBrains Mono, monospace', color: '#111111' }}>
-              Inference Time: 12ms · ConArk Backend v1.0
-            </div>
-          </div>
-
-          {/* Gemini AI Context Explanation */}
-          <div style={{ backgroundColor: '#FFFFFF', border: '2.5px dashed #111111', borderRadius: '20px', padding: '28px 36px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-              <Sparkles size={18} color="#FF2AA1" />
-              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', fontWeight: 'bold' }}>
-                GEMINI 2.5 FLASH NARRATIVE
-              </span>
-            </div>
-            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '14px', color: '#333333', lineHeight: '1.6' }}>
-              "{result?.gemini_report?.report?.executive_summary || "Review model input parameters to optimize site conditions."}"
-            </p>
-          </div>
+          )}
         </div>
       </div>
     </div>
