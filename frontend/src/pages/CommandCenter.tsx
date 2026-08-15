@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, Sparkles, Pickaxe, Ruler, Compass } from 'lucide-react';
 import { analyzeProjectIntelligence, optimizeSpaceLayout } from '../services/api';
-import type { MasterIntelligenceResponse, OperationalInputs, SpaceOptimizationResponse, ZoneCoordinates } from '../types';
+import type { MasterIntelligenceResponse, OperationalInputs, SpaceOptimizationResponse } from '../types';
 
 export const CommandCenter: React.FC = () => {
   const navigate = useNavigate();
@@ -95,35 +95,6 @@ export const CommandCenter: React.FC = () => {
     return `${val.toFixed(1)} DAYS`;
   };
 
-  // Color mapping for all 8 zones
-  const getZoneColor = (zoneName: string) => {
-    const name = zoneName.toLowerCase();
-    if (name.includes('material')) return '#E4FF5B'; // Chartreuse
-    if (name.includes('equipment')) return '#7CFFA6'; // Mint
-    if (name.includes('worker')) return '#4FC3F7'; // Blue
-    if (name.includes('safety')) return '#F5F3E3'; // Cream
-    if (name.includes('loading')) return '#E4FF5B'; // Chartreuse
-    if (name.includes('waste')) return '#E0E0E0'; // Gray
-    if (name.includes('emergency')) return '#FF2AA1'; // Magenta accent
-    if (name.includes('staging')) return '#7CFFA6'; // Mint
-    return '#FFFFFF';
-  };
-
-  const defaultCoordinates: ZoneCoordinates[] = [
-    { zone_name: 'Material Storage', x: 0, y: 0, width: 20, height: 12 },
-    { zone_name: 'Equipment Area', x: 20, y: 0, width: 20, height: 12 },
-    { zone_name: 'Worker Movement', x: 0, y: 12, width: 18, height: 12 },
-    { zone_name: 'Staging Area', x: 18, y: 12, width: 22, height: 12 },
-    { zone_name: 'Safety Buffer', x: 0, y: 24, width: 15, height: 6 },
-    { zone_name: 'Loading / Unloading', x: 15, y: 24, width: 13, height: 6 },
-    { zone_name: 'Waste Dump', x: 28, y: 24, width: 12, height: 6 },
-    { zone_name: 'Emergency Access Corridor', x: 0, y: 28, width: 40, height: 2 }
-  ];
-
-  const coordinates: ZoneCoordinates[] = spaceData?.coordinates && spaceData.coordinates.length > 0 ? spaceData.coordinates : defaultCoordinates;
-  const siteLength = 40;
-  const siteWidth = 30;
-
   return (
     <div style={{ width: '100%', maxWidth: '100%', margin: '0 auto', padding: '24px 20px 64px 20px', boxSizing: 'border-box' }}>
       
@@ -211,12 +182,12 @@ export const CommandCenter: React.FC = () => {
       {/* 3-COLUMN MAIN LAYOUT: EXTREME LEFT SVGS (120px) | EXPANDED WIDE CARDS (1fr) | EXTREME RIGHT SVGS (120px) */}
       <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr 120px', gap: '16px', alignItems: 'start', marginBottom: '44px' }}>
         
-        {/* EXTREME LEFT MARGIN COLUMN: CONTINUED FLUSH BESIDE ALL 5 CARDS INCL. SPACE OPTIMIZATION */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '54px', paddingTop: '30px', alignItems: 'center', opacity: 0.85 }}>
+        {/* EXTREME LEFT MARGIN COLUMN: SHIFTED FLUSH BESIDE THE 5 CARDS */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '48px', paddingTop: '20px', alignItems: 'center', opacity: 0.85 }}>
           
           {/* 1. Tower Crane SVG */}
           <div style={{ textAlign: 'center' }}>
-            <svg width="110" height="170" viewBox="0 0 100 130" fill="none" stroke="#111111" strokeWidth="1.8">
+            <svg width="110" height="150" viewBox="0 0 100 130" fill="none" stroke="#111111" strokeWidth="1.8">
               <line x1="25" y1="130" x2="25" y2="10" />
               <line x1="25" y1="10" x2="95" y2="10" />
               <line x1="10" y1="20" x2="25" y2="10" />
@@ -259,7 +230,7 @@ export const CommandCenter: React.FC = () => {
 
           {/* 4. Scaffolding Structure SVG */}
           <div style={{ textAlign: 'center' }}>
-            <svg width="100" height="140" viewBox="0 0 100 130" fill="none" stroke="#111111" strokeWidth="1.5">
+            <svg width="100" height="130" viewBox="0 0 100 130" fill="none" stroke="#111111" strokeWidth="1.5">
               <rect x="15" y="10" width="70" height="110" strokeDasharray="2 2" />
               <line x1="15" y1="40" x2="85" y2="40" strokeWidth="2" />
               <line x1="15" y1="75" x2="85" y2="75" strokeWidth="2" />
@@ -270,38 +241,9 @@ export const CommandCenter: React.FC = () => {
             </svg>
             <span style={{ fontSize: '9px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#555', display: 'block', marginTop: '4px' }}>SCAFFOLDING MATRIX</span>
           </div>
-
-          {/* 5. Concrete Mixer Truck SVG (Beside Space Optimization Card) */}
-          <div style={{ textAlign: 'center' }}>
-            <svg width="110" height="100" viewBox="0 0 120 100" fill="none" stroke="#111111" strokeWidth="1.8">
-              {/* Mixer Drum */}
-              <ellipse cx="45" cy="45" rx="30" ry="20" transform="rotate(-20 45 45)" fill="#E4FF5B" stroke="#111111" />
-              {/* Truck Cabin */}
-              <rect x="75" y="45" width="30" height="30" fill="#4FC3F7" stroke="#111111" />
-              <rect x="85" y="50" width="15" height="12" fill="#FFFFFF" stroke="#111111" />
-              {/* Wheels */}
-              <circle cx="30" cy="80" r="8" fill="#111111" />
-              <circle cx="50" cy="80" r="8" fill="#111111" />
-              <circle cx="90" cy="80" r="8" fill="#111111" />
-            </svg>
-            <span style={{ fontSize: '9px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#555', display: 'block', marginTop: '4px' }}>CONCRETE MIXER</span>
-          </div>
-
-          {/* 6. CAD Spatial Coordinate Grid SVG (Beside Space Optimization Card) */}
-          <div style={{ textAlign: 'center' }}>
-            <svg width="100" height="110" viewBox="0 0 100 110" fill="none" stroke="#111111" strokeWidth="1.6">
-              <rect x="10" y="10" width="80" height="80" fill="#EDECE7" stroke="#111111" />
-              <line x1="10" y1="36" x2="90" y2="36" strokeDasharray="3 3" />
-              <line x1="10" y1="63" x2="90" y2="63" strokeDasharray="3 3" />
-              <line x1="36" y1="10" x2="36" y2="90" strokeDasharray="3 3" />
-              <line x1="63" y1="10" x2="63" y2="90" strokeDasharray="3 3" />
-              <rect x="36" y="36" width="27" height="27" fill="#FF2AA1" stroke="#111111" />
-            </svg>
-            <span style={{ fontSize: '9px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#555', display: 'block', marginTop: '4px' }}>2D SPATIAL GRID</span>
-          </div>
         </div>
 
-        {/* CENTER COLUMN: EXPANDED FULL-WIDTH 5-MODEL STACKED CARD DECK */}
+        {/* CENTER COLUMN: EXPANDED UNIFORM 5-MODEL STACKED CARD DECK */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0px', width: '100%' }}>
           
           {/* MODEL 01: PERFORMANCE MODEL (WHITE #FFFFFF) */}
@@ -538,7 +480,7 @@ export const CommandCenter: React.FC = () => {
             </div>
           </div>
 
-          {/* MODEL 05: COMBINED SPACE OPTIMIZATION & RECOMMENDATION MODEL (CREAM #F5F3E3) */}
+          {/* MODEL 05: COMBINED SPACE OPTIMIZATION & RECOMMENDATION MODEL (CREAM #F5F3E3) — UNIFORM SLEEK CARD */}
           <div
             onClick={() => navigate('/model/optimization')}
             className="card-rotate-neg07 card-hover-lift"
@@ -571,7 +513,7 @@ export const CommandCenter: React.FC = () => {
                 </p>
 
                 {/* Explicit Model Telemetry Inputs */}
-                <div style={{ marginTop: '20px', display: 'flex', flexWrap: 'wrap', gap: '12px', fontSize: '13px', fontFamily: 'JetBrains Mono, monospace' }}>
+                <div style={{ marginTop: '24px', display: 'flex', flexWrap: 'wrap', gap: '12px', fontSize: '13px', fontFamily: 'JetBrains Mono, monospace' }}>
                   <span style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1.5px solid #111111', padding: '8px 14px', borderRadius: '6px' }}>
                     INPUT: Site Area (1200 m²)
                   </span>
@@ -598,77 +540,15 @@ export const CommandCenter: React.FC = () => {
                 </div>
               </div>
             </div>
-
-            {/* Embedded Dynamic 2D Spatial Structure Mini-Canvas Preview */}
-            <div style={{ marginTop: '28px', paddingTop: '24px', borderTop: '1.5px dashed rgba(17,17,17,0.3)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                <span style={{ fontSize: '13px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#111111', textTransform: 'uppercase' }}>
-                  DYNAMIC 2D SPATIAL STRUCTURE PREVIEW (40m × 30m SITE)
-                </span>
-                <span style={{ fontSize: '12px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#FF2AA1' }}>
-                  CLICK CARD TO EDIT & RE-SOLVE →
-                </span>
-              </div>
-
-              <div style={{
-                position: 'relative',
-                width: '100%',
-                height: '200px',
-                backgroundColor: '#111111',
-                borderRadius: '12px',
-                border: '2px solid #111111',
-                overflow: 'hidden'
-              }}>
-                {coordinates.map((coord: ZoneCoordinates, i: number) => {
-                  const leftPct = (coord.x / siteLength) * 100;
-                  const topPct = (coord.y / siteWidth) * 100;
-                  const widthPct = (coord.width / siteLength) * 100;
-                  const heightPct = (coord.height / siteWidth) * 100;
-                  const color = getZoneColor(coord.zone_name);
-                  const isMagenta = color === '#FF2AA1';
-
-                  return (
-                    <div
-                      key={i}
-                      style={{
-                        position: 'absolute',
-                        left: `${leftPct}%`,
-                        top: `${topPct}%`,
-                        width: `${widthPct}%`,
-                        height: `${heightPct}%`,
-                        backgroundColor: color,
-                        border: '1.5px solid #111111',
-                        padding: '2px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        textAlign: 'center',
-                        boxSizing: 'border-box'
-                      }}
-                    >
-                      <span style={{
-                        fontFamily: 'Anton, sans-serif',
-                        fontSize: '11px',
-                        color: isMagenta ? '#FFFFFF' : '#111111',
-                        textTransform: 'uppercase',
-                        lineHeight: '1.0'
-                      }}>
-                        {coord.zone_name}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
           </div>
         </div>
 
-        {/* EXTREME RIGHT MARGIN COLUMN: CONTINUED FLUSH BESIDE ALL 5 CARDS INCL. SPACE OPTIMIZATION */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '54px', paddingTop: '30px', alignItems: 'center', opacity: 0.85 }}>
+        {/* EXTREME RIGHT MARGIN COLUMN: SHIFTED FLUSH BESIDE THE 5 CARDS */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '48px', paddingTop: '20px', alignItems: 'center', opacity: 0.85 }}>
           
           {/* 1. Structural Building Blueprint Skeleton SVG */}
           <div style={{ textAlign: 'center' }}>
-            <svg width="110" height="170" viewBox="0 0 120 150" fill="none" stroke="#111111" strokeWidth="1.8">
+            <svg width="110" height="150" viewBox="0 0 120 150" fill="none" stroke="#111111" strokeWidth="1.8">
               <rect x="15" y="20" width="90" height="120" strokeDasharray="4 4" fill="#EDECE7" />
               <line x1="15" y1="60" x2="105" y2="60" strokeWidth="2" />
               <line x1="15" y1="100" x2="105" y2="100" strokeWidth="2" />
@@ -682,7 +562,7 @@ export const CommandCenter: React.FC = () => {
 
           {/* 2. Architect Drafting Compass SVG */}
           <div style={{ textAlign: 'center' }}>
-            <svg width="110" height="110" viewBox="0 0 110 100" fill="none" stroke="#111111" strokeWidth="1.8">
+            <svg width="110" height="100" viewBox="0 0 110 100" fill="none" stroke="#111111" strokeWidth="1.8">
               <line x1="55" y1="15" x2="25" y2="85" strokeWidth="2.5" />
               <line x1="55" y1="15" x2="85" y2="85" strokeWidth="2.5" />
               <circle cx="55" cy="15" r="7" fill="#111111" />
@@ -694,7 +574,7 @@ export const CommandCenter: React.FC = () => {
 
           {/* 3. Surveying Tripod SVG */}
           <div style={{ textAlign: 'center' }}>
-            <svg width="100" height="120" viewBox="0 0 100 110" fill="none" stroke="#111111" strokeWidth="1.8">
+            <svg width="100" height="110" viewBox="0 0 100 110" fill="none" stroke="#111111" strokeWidth="1.8">
               <line x1="50" y1="35" x2="15" y2="105" strokeWidth="2" />
               <line x1="50" y1="35" x2="50" y2="105" strokeWidth="2" />
               <line x1="50" y1="35" x2="85" y2="105" strokeWidth="2" />
@@ -716,28 +596,6 @@ export const CommandCenter: React.FC = () => {
             </svg>
             <span style={{ fontSize: '9px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#555', display: 'block', marginTop: '4px' }}>LOGISTICS TRUCK</span>
           </div>
-
-          {/* 5. Total Station Surveyor Station SVG (Beside Space Optimization Card) */}
-          <div style={{ textAlign: 'center' }}>
-            <svg width="100" height="110" viewBox="0 0 100 110" fill="none" stroke="#111111" strokeWidth="1.8">
-              <line x1="50" y1="40" x2="20" y2="100" />
-              <line x1="50" y1="40" x2="80" y2="100" />
-              <rect x="35" y="15" width="30" height="25" fill="#7CFFA6" stroke="#111111" />
-              <circle cx="50" cy="27" r="6" fill="#FF2AA1" />
-            </svg>
-            <span style={{ fontSize: '9px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#555', display: 'block', marginTop: '4px' }}>TOTAL STATION</span>
-          </div>
-
-          {/* 6. Structural I-Beam Cross Section SVG (Beside Space Optimization Card) */}
-          <div style={{ textAlign: 'center' }}>
-            <svg width="100" height="110" viewBox="0 0 100 100" fill="none" stroke="#111111" strokeWidth="2">
-              <rect x="15" y="15" width="70" height="14" fill="#111111" />
-              <rect x="15" y="71" width="70" height="14" fill="#111111" />
-              <rect x="43" y="29" width="14" height="42" fill="#E4FF5B" stroke="#111111" />
-            </svg>
-            <span style={{ fontSize: '9px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#555', display: 'block', marginTop: '4px' }}>STEEL I-BEAM RIG</span>
-          </div>
-
         </div>
 
       </div>
