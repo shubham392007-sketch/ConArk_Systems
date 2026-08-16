@@ -78,7 +78,13 @@ class SpaceOptimizationInput(BaseModel):
     @field_validator("material_quantity_kg", "machinery_count", "heavy_machinery_count", "worker_count")
     def validate_non_negative(cls, v: float, info) -> float:
         if v < 0:
-            raise ValueError(f"{info.field_name} cannot be negative")
+            return 0.0
+        return v
+
+    @field_validator("site_length_m", "site_width_m")
+    def validate_positive_dims(cls, v: Optional[float]) -> Optional[float]:
+        if v is not None and v <= 0:
+            return None
         return v
 
 

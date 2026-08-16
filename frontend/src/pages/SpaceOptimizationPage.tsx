@@ -99,9 +99,10 @@ export const SpaceOptimizationPage: React.FC = () => {
       const data = await optimizeSpaceLayout(inputs);
       setRes(data);
       setHasOptimized(true);
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      alert('Space optimization failed: ' + e);
+      const msg = e?.message || (typeof e === 'string' ? e : JSON.stringify(e));
+      alert('Space optimization failed: ' + msg);
     } finally {
       setLoading(false);
     }

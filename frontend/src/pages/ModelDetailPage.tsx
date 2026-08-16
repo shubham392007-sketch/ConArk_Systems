@@ -211,9 +211,10 @@ export const ModelDetailPage: React.FC = () => {
         setResult(intelData);
       }
       setHasPredicted(true);
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      alert('Failed to execute prediction: ' + e);
+      const msg = e?.message || (typeof e === 'string' ? e : JSON.stringify(e));
+      alert('Failed to execute prediction: ' + msg);
     } finally {
       setLoading(false);
     }
