@@ -205,35 +205,104 @@ export const ModelDetailPage: React.FC = () => {
     return '#FFFFFF';
   };
 
-  const defaultCoordinates: ZoneCoordinates[] = [
-    { zone_name: 'Material Storage', x: 0, y: 0, width: 22.8, height: 12 },
-    { zone_name: 'Equipment Area', x: 22.8, y: 0, width: 17.2, height: 12 },
-    { zone_name: 'Worker Movement', x: 0, y: 12, width: 24, height: 10.5 },
-    { zone_name: 'Staging Area', x: 24, y: 12, width: 16, height: 10.5 },
-    { zone_name: 'Safety Buffer', x: 0, y: 22.5, width: 20, height: 5.4 },
-    { zone_name: 'Loading / Unloading', x: 20, y: 22.5, width: 13.3, height: 5.4 },
-    { zone_name: 'Waste Dump', x: 33.3, y: 22.5, width: 6.7, height: 5.4 },
-    { zone_name: 'Emergency Access Corridor', x: 0, y: 27.9, width: 40, height: 2.1 }
-  ];
+  const getDynamicFallbackCoordinates = (siteL?: number, siteW?: number): ZoneCoordinates[] => {
+    const sL = siteL && siteL > 0 ? siteL : 40;
+    const sW = siteW && siteW > 0 ? siteW : 30;
+    const r = (val: number) => parseFloat(val.toFixed(2));
+    
+    const t1_h = r(sW * 0.40);
+    const t2_h = r(sW * 0.35);
+    const t3_h = r(sW * 0.18);
+    const t4_h = r(sW - (t1_h + t2_h + t3_h));
 
-  const coordinates: ZoneCoordinates[] = spaceRes?.coordinates && spaceRes.coordinates.length > 0 ? spaceRes.coordinates : defaultCoordinates;
+    return [
+      { zone_name: 'Material Storage', x: 0, y: 0, width: r(sL * 0.57), height: t1_h },
+      { zone_name: 'Equipment Area', x: r(sL * 0.57), y: 0, width: r(sL * 0.43), height: t1_h },
+      { zone_name: 'Worker Movement', x: 0, y: t1_h, width: r(sL * 0.60), height: t2_h },
+      { zone_name: 'Staging Area', x: r(sL * 0.60), y: t1_h, width: r(sL * 0.40), height: t2_h },
+      { zone_name: 'Safety Buffer', x: 0, y: r(t1_h + t2_h), width: r(sL * 0.445), height: t3_h },
+      { zone_name: 'Loading / Unloading', x: r(sL * 0.445), y: r(t1_h + t2_h), width: r(sL * 0.3875), height: t3_h },
+      { zone_name: 'Waste Dump', x: r(sL * 0.8325), y: r(t1_h + t2_h), width: r(sL * 0.1675), height: t3_h },
+      { zone_name: 'Emergency Access Corridor', x: 0, y: r(t1_h + t2_h + t3_h), width: sL, height: t4_h }
+    ];
+  };
+
+  const coordinates: ZoneCoordinates[] = spaceRes?.coordinates && spaceRes.coordinates.length > 0
+    ? spaceRes.coordinates
+    : getDynamicFallbackCoordinates(spaceInputs.site_length_m, spaceInputs.site_width_m);
   
-  const layoutMaxX = Math.max(...coordinates.map(c => c.x + c.width), spaceInputs.site_length_m || 40);
-  const layoutMaxY = Math.max(...coordinates.map(c => c.y + c.height), spaceInputs.site_width_m || 30);
+  const layoutMaxX = spaceInputs.site_length_m && spaceInputs.site_length_m > 0
+    ? spaceInputs.site_length_m
+    : Math.max(...coordinates.map(c => c.x + c.width), 40);
+  const layoutMaxY = spaceInputs.site_width_m && spaceInputs.site_width_m > 0
+    ? spaceInputs.site_width_m
+    : Math.max(...coordinates.map(c => c.y + c.height), 30);
 
   const utilization = spaceRes?.metrics?.space_utilization_percentage ?? 91.7;
   const safetyScore = spaceRes?.metrics?.safety_compliance_score ?? 100;
   const efficiencyScore = spaceRes?.metrics?.space_efficiency_score ?? spaceRes?.metrics?.layout_efficiency_score ?? 88.4;
 
+  const totalSiteArea = spaceRes?.metrics?.total_allocated_area_sqm 
+    ?? spaceInputs.site_area_sqm 
+    ?? ((spaceInputs.site_length_m || 40) * (spaceInputs.site_width_m || 30));
+
   const zoneAllocations = [
-    { name: 'Material Storage', alloc: spaceRes?.allocation?.material_storage_area_sqm ?? 320, req: 300, pct: '26.7%', status: 'SATISFIED' },
-    { name: 'Equipment Area', alloc: spaceRes?.allocation?.equipment_area_sqm ?? 180, req: 160, pct: '15.0%', status: 'SATISFIED' },
-    { name: 'Worker Movement', alloc: spaceRes?.allocation?.worker_movement_area_sqm ?? 150, req: 140, pct: '12.5%', status: 'SATISFIED' },
-    { name: 'Safety Buffer', alloc: spaceRes?.allocation?.safety_buffer_area_sqm ?? 120, req: 100, pct: '10.0%', status: 'SATISFIED' },
-    { name: 'Loading / Unloading', alloc: spaceRes?.allocation?.loading_area_sqm ?? 80, req: 70, pct: '6.7%', status: 'SATISFIED' },
-    { name: 'Waste Dump', alloc: spaceRes?.allocation?.waste_area_sqm ?? 40, req: 30, pct: '3.3%', status: 'SATISFIED' },
-    { name: 'Emergency Access', alloc: spaceRes?.allocation?.emergency_access_area_sqm ?? 110, req: 100, pct: '9.2%', status: 'SATISFIED' },
-    { name: 'Staging Area', alloc: spaceRes?.allocation?.staging_area_sqm ?? 100, req: 80, pct: '8.3%', status: 'SATISFIED' }
+    {
+      name: 'Material Storage',
+      alloc: spaceRes?.allocation?.material_storage_area_sqm ?? 320,
+      req: spaceRes?.demand?.material_storage ?? 300,
+      pct: `${(((spaceRes?.allocation?.material_storage_area_sqm ?? 320) / totalSiteArea) * 100).toFixed(1)}%`,
+      status: (spaceRes?.allocation?.material_storage_area_sqm ?? 320) >= (spaceRes?.demand?.material_storage ?? 300) ? 'SATISFIED' : 'VIOLATED'
+    },
+    {
+      name: 'Equipment Area',
+      alloc: spaceRes?.allocation?.equipment_area_sqm ?? 180,
+      req: spaceRes?.demand?.equipment ?? 160,
+      pct: `${(((spaceRes?.allocation?.equipment_area_sqm ?? 180) / totalSiteArea) * 100).toFixed(1)}%`,
+      status: (spaceRes?.allocation?.equipment_area_sqm ?? 180) >= (spaceRes?.demand?.equipment ?? 160) ? 'SATISFIED' : 'VIOLATED'
+    },
+    {
+      name: 'Worker Movement',
+      alloc: spaceRes?.allocation?.worker_movement_area_sqm ?? 150,
+      req: spaceRes?.demand?.worker_movement ?? 140,
+      pct: `${(((spaceRes?.allocation?.worker_movement_area_sqm ?? 150) / totalSiteArea) * 100).toFixed(1)}%`,
+      status: (spaceRes?.allocation?.worker_movement_area_sqm ?? 150) >= (spaceRes?.demand?.worker_movement ?? 140) ? 'SATISFIED' : 'VIOLATED'
+    },
+    {
+      name: 'Safety Buffer',
+      alloc: spaceRes?.allocation?.safety_buffer_area_sqm ?? 120,
+      req: spaceRes?.demand?.safety_buffer ?? 100,
+      pct: `${(((spaceRes?.allocation?.safety_buffer_area_sqm ?? 120) / totalSiteArea) * 100).toFixed(1)}%`,
+      status: (spaceRes?.allocation?.safety_buffer_area_sqm ?? 120) >= (spaceRes?.demand?.safety_buffer ?? 100) ? 'SATISFIED' : 'VIOLATED'
+    },
+    {
+      name: 'Loading / Unloading',
+      alloc: spaceRes?.allocation?.loading_area_sqm ?? 80,
+      req: spaceRes?.demand?.loading ?? 70,
+      pct: `${(((spaceRes?.allocation?.loading_area_sqm ?? 80) / totalSiteArea) * 100).toFixed(1)}%`,
+      status: (spaceRes?.allocation?.loading_area_sqm ?? 80) >= (spaceRes?.demand?.loading ?? 70) ? 'SATISFIED' : 'VIOLATED'
+    },
+    {
+      name: 'Waste Dump',
+      alloc: spaceRes?.allocation?.waste_area_sqm ?? 40,
+      req: spaceRes?.demand?.waste ?? 30,
+      pct: `${(((spaceRes?.allocation?.waste_area_sqm ?? 40) / totalSiteArea) * 100).toFixed(1)}%`,
+      status: (spaceRes?.allocation?.waste_area_sqm ?? 40) >= (spaceRes?.demand?.waste ?? 30) ? 'SATISFIED' : 'VIOLATED'
+    },
+    {
+      name: 'Emergency Access',
+      alloc: spaceRes?.allocation?.emergency_access_area_sqm ?? 110,
+      req: spaceRes?.demand?.emergency_access ?? 100,
+      pct: `${(((spaceRes?.allocation?.emergency_access_area_sqm ?? 110) / totalSiteArea) * 100).toFixed(1)}%`,
+      status: (spaceRes?.allocation?.emergency_access_area_sqm ?? 110) >= (spaceRes?.demand?.emergency_access ?? 100) ? 'SATISFIED' : 'VIOLATED'
+    },
+    {
+      name: 'Staging Area',
+      alloc: spaceRes?.allocation?.staging_area_sqm ?? 100,
+      req: spaceRes?.demand?.staging ?? 80,
+      pct: `${(((spaceRes?.allocation?.staging_area_sqm ?? 100) / totalSiteArea) * 100).toFixed(1)}%`,
+      status: (spaceRes?.allocation?.staging_area_sqm ?? 100) >= (spaceRes?.demand?.staging ?? 80) ? 'SATISFIED' : 'VIOLATED'
+    }
   ];
 
   const getGeminiExplanation = () => {
@@ -684,17 +753,20 @@ export const ModelDetailPage: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Proportional 2D Canvas rendering all 8 zones cleanly across 100% bounds */}
+                  {/* Proportional Auto-Adjusting 2D Canvas rendering all 8 zones cleanly */}
                   <div style={{
                     position: 'relative',
                     width: '100%',
-                    minHeight: '360px',
-                    height: 'clamp(320px, 45vh, 480px)',
+                    minHeight: '380px',
+                    height: layoutMaxY > 0 && layoutMaxX > 0 
+                      ? `clamp(360px, ${Math.min(55, Math.max(30, (layoutMaxY / layoutMaxX) * 45))}vh, 580px)`
+                      : '420px',
+                    maxHeight: '600px',
                     backgroundColor: '#111111',
                     borderRadius: '12px',
                     border: '2px solid #111111',
                     overflow: 'hidden',
-                    boxShadow: 'inset 0 0 20px rgba(0,0,0,0.5)'
+                    boxShadow: 'inset 0 0 25px rgba(0,0,0,0.6)'
                   }}>
                     {coordinates.map((coord: ZoneCoordinates, i: number) => {
                       const leftPct = (coord.x / layoutMaxX) * 100;
@@ -703,7 +775,8 @@ export const ModelDetailPage: React.FC = () => {
                       const heightPct = (coord.height / layoutMaxY) * 100;
                       const color = getZoneColor(coord.zone_name);
                       const isMagenta = color === '#FF2AA1';
-                      const isNarrow = heightPct < 12;
+                      const isVeryNarrow = heightPct < 10;
+                      const zoneArea = coord.width * coord.height;
 
                       return (
                         <div
@@ -714,28 +787,31 @@ export const ModelDetailPage: React.FC = () => {
                             top: `${topPct}%`,
                             width: `${widthPct}%`,
                             height: `${heightPct}%`,
+                            minHeight: '26px',
                             backgroundColor: color,
                             border: '1.5px solid #111111',
-                            padding: isNarrow ? '0px 8px' : '6px',
+                            padding: isVeryNarrow ? '2px 8px' : '6px 10px',
                             display: 'flex',
-                            flexDirection: isNarrow ? 'row' : 'column',
+                            flexDirection: isVeryNarrow ? 'row' : 'column',
                             alignItems: 'center',
-                            justifyContent: isNarrow ? 'space-between' : 'center',
+                            justifyContent: isVeryNarrow ? 'space-between' : 'center',
                             textAlign: 'center',
                             boxSizing: 'border-box',
                             overflow: 'hidden',
                             transition: 'all 0.4s ease'
                           }}
+                          title={`${coord.zone_name}: ${coord.width.toFixed(1)}m × ${coord.height.toFixed(1)}m (${zoneArea.toFixed(1)} m²)`}
                         >
                           <span style={{
                             fontFamily: 'Anton, sans-serif',
-                            fontSize: isNarrow ? '11px' : 'clamp(10px, 1.2vw, 15px)',
+                            fontSize: isVeryNarrow ? '10px' : 'clamp(10px, 1.2vw, 15px)',
                             color: isMagenta ? '#FFFFFF' : '#111111',
                             textTransform: 'uppercase',
                             lineHeight: '1.1',
                             whiteSpace: 'nowrap',
                             overflow: 'hidden',
-                            textOverflow: 'ellipsis'
+                            textOverflow: 'ellipsis',
+                            maxWidth: '100%'
                           }}>
                             {coord.zone_name}
                           </span>
@@ -743,11 +819,11 @@ export const ModelDetailPage: React.FC = () => {
                             fontFamily: 'JetBrains Mono, monospace',
                             fontSize: '9px',
                             color: isMagenta ? '#FFFFFF' : '#333333',
-                            marginTop: isNarrow ? '0' : '2px',
+                            marginTop: isVeryNarrow ? '0' : '2px',
                             fontWeight: 'bold',
                             whiteSpace: 'nowrap'
                           }}>
-                            {coord.width.toFixed(1)}m × {coord.height.toFixed(1)}m
+                            {coord.width.toFixed(1)}m × {coord.height.toFixed(1)}m ({zoneArea.toFixed(0)} m²)
                           </span>
                         </div>
                       );

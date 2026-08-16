@@ -129,6 +129,7 @@ export interface SpaceOptimizationResponse {
   request_id: string;
   status: string;
   reason?: string;
+  demand?: Record<string, number>;
   allocation?: {
     material_storage_area_sqm: number;
     equipment_area_sqm: number;
