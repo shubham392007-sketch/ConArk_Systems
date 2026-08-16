@@ -28,6 +28,13 @@ html, body, #root {
 
 body {
   background-color: var(--bg-base);
+  background-image: 
+    linear-gradient(to right, rgba(17, 17, 17, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(17, 17, 17, 0.06) 1px, transparent 1px),
+    linear-gradient(to right, rgba(17, 17, 17, 0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(17, 17, 17, 0.025) 1px, transparent 1px);
+  background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+  background-position: -1px -1px;
   color: var(--ink-black);
   font-family: var(--font-body);
   min-height: 100vh;
@@ -96,6 +103,17 @@ input, select, textarea {
 /* Dashed active border indicator */
 .active-dashed-border {
   border: 2px dashed #111111 !important;
+}
+
+/* Engineering blueprint grid utility */
+.bg-grid-blueprint {
+  background-image: 
+    linear-gradient(to right, rgba(17, 17, 17, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(17, 17, 17, 0.06) 1px, transparent 1px),
+    linear-gradient(to right, rgba(17, 17, 17, 0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(17, 17, 17, 0.025) 1px, transparent 1px);
+  background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+  background-position: -1px -1px;
 }
 
 /* Responsive Media Query Classes */
