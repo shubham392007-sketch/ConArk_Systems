@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Sparkles, CheckCircle2, ShieldCheck, Activity, Sliders } from 'lucide-react';
 import { analyzeProjectIntelligence, optimizeSpaceLayout } from '../services/api';
 import type { OperationalInputs, SpaceInputs, SpaceOptimizationResponse, ZoneCoordinates } from '../types';
+import { ReportActionBanner } from '../components/pdf/ReportActionBanner';
 
 export const ModelDetailPage: React.FC = () => {
   const { modelId } = useParams<{ modelId: string }>();
@@ -1052,6 +1053,20 @@ export const ModelDetailPage: React.FC = () => {
                   </div>
                 </div>
               </div>
+
+              {/* Official ConArk Intelligence PDF Report Action Banner */}
+              <ReportActionBanner
+                payload={{
+                  modelType: isSpaceOpt ? 'space_optimization' : ((modelId as any) || 'performance'),
+                  modelName: config.title,
+                  inputs: isSpaceOpt ? spaceInputs : inputs,
+                  outputs: isSpaceOpt ? (spaceRes || {}) : (result || {}),
+                  geminiExplanation: isSpaceOpt 
+                    ? ((spaceRes as any)?.gemini_report?.space_report?.summary || (spaceRes as any)?.gemini_report?.narrative) 
+                    : (result?.gemini_report?.report?.explanation || result?.gemini_report?.narrative),
+                  metrics: result?.ml_results || (spaceRes as any)?.ml_results
+                }}
+              />
             </>
           ) : (
             /* Standby State Before User Clicks Predict */

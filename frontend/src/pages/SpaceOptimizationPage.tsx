@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Sparkles, Sliders } from 'lucide-react';
 import { optimizeSpaceLayout } from '../services/api';
 import type { SpaceOptimizationResponse, SpaceInputs, ZoneCoordinates } from '../types';
+import { ReportActionBanner } from '../components/pdf/ReportActionBanner';
 
 export const SpaceOptimizationPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -513,6 +514,20 @@ export const SpaceOptimizationPage: React.FC = () => {
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '15px', color: '#111111', lineHeight: '1.6', fontWeight: '500' }}>
           "{res?.gemini_report?.space_report?.summary || "Space allocation completed with status 'OPTIMAL'. Site space utilization is 91.7% with an overall efficiency score of 88.4/100 and safety compliance of 100/100."}"
         </p>
+      </div>
+
+      {/* Official ConArk Intelligence PDF Report Action Banner */}
+      <div style={{ marginTop: '28px' }}>
+        <ReportActionBanner
+          payload={{
+            modelType: 'space_optimization',
+            modelName: 'SPACE OPTIMIZATION ENGINE',
+            inputs,
+            outputs: res || {},
+            geminiExplanation: res?.gemini_report?.space_report?.summary || (res as any)?.gemini_report?.narrative,
+            metrics: (res as any)?.ml_results
+          }}
+        />
       </div>
     </div>
   );
