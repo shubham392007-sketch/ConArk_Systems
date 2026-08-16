@@ -33,35 +33,63 @@ export const SpaceOptimizationPage: React.FC = () => {
     material_shortage_alert: 0
   });
 
-  const handleLengthChange = (val: number) => {
-    const l = val > 0 ? val : 1;
-    const w = inputs.site_width_m || 30;
-    setInputs({
-      ...inputs,
-      site_length_m: l,
-      site_area_sqm: Math.round(l * w)
+  const handleLengthChange = (valStr: string) => {
+    if (valStr === '') {
+      setInputs(prev => ({
+        ...prev,
+        site_length_m: 0,
+        site_area_sqm: 0
+      }));
+      return;
+    }
+    const l = parseFloat(valStr);
+    if (isNaN(l)) return;
+    setInputs(prev => {
+      const w = prev.site_width_m || 0;
+      return {
+        ...prev,
+        site_length_m: l,
+        site_area_sqm: w > 0 ? Math.round(l * w) : prev.site_area_sqm
+      };
     });
   };
 
-  const handleWidthChange = (val: number) => {
-    const w = val > 0 ? val : 1;
-    const l = inputs.site_length_m || 40;
-    setInputs({
-      ...inputs,
-      site_width_m: w,
-      site_area_sqm: Math.round(l * w)
+  const handleWidthChange = (valStr: string) => {
+    if (valStr === '') {
+      setInputs(prev => ({
+        ...prev,
+        site_width_m: 0,
+        site_area_sqm: 0
+      }));
+      return;
+    }
+    const w = parseFloat(valStr);
+    if (isNaN(w)) return;
+    setInputs(prev => {
+      const l = prev.site_length_m || 0;
+      return {
+        ...prev,
+        site_width_m: w,
+        site_area_sqm: l > 0 ? Math.round(l * w) : prev.site_area_sqm
+      };
     });
   };
 
-  const handleAreaChange = (val: number) => {
-    const area = val > 0 ? val : 1;
-    const l = Math.round(Math.sqrt(area * 1.33));
-    const w = Math.round(area / l);
-    setInputs({
-      ...inputs,
-      site_area_sqm: area,
-      site_length_m: l,
-      site_width_m: w
+  const handleAreaChange = (valStr: string) => {
+    if (valStr === '') {
+      setInputs(prev => ({
+        ...prev,
+        site_area_sqm: 0
+      }));
+      return;
+    }
+    const area = parseFloat(valStr);
+    if (isNaN(area)) return;
+    setInputs(prev => {
+      return {
+        ...prev,
+        site_area_sqm: area
+      };
     });
   };
 
@@ -222,8 +250,8 @@ export const SpaceOptimizationPage: React.FC = () => {
               <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>TOTAL SITE AREA (m²)</label>
               <input
                 type="number"
-                value={inputs.site_area_sqm}
-                onChange={e => handleAreaChange(parseFloat(e.target.value) || 0)}
+                value={inputs.site_area_sqm === 0 ? '' : inputs.site_area_sqm}
+                onChange={e => handleAreaChange(e.target.value)}
                 style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '4px' }}
               />
             </div>
@@ -233,8 +261,8 @@ export const SpaceOptimizationPage: React.FC = () => {
                 <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>LENGTH (m)</label>
                 <input
                   type="number"
-                  value={inputs.site_length_m}
-                  onChange={e => handleLengthChange(parseFloat(e.target.value) || 0)}
+                  value={inputs.site_length_m === 0 ? '' : inputs.site_length_m}
+                  onChange={e => handleLengthChange(e.target.value)}
                   style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '4px' }}
                 />
               </div>
@@ -242,8 +270,8 @@ export const SpaceOptimizationPage: React.FC = () => {
                 <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>WIDTH (m)</label>
                 <input
                   type="number"
-                  value={inputs.site_width_m}
-                  onChange={e => handleWidthChange(parseFloat(e.target.value) || 0)}
+                  value={inputs.site_width_m === 0 ? '' : inputs.site_width_m}
+                  onChange={e => handleWidthChange(e.target.value)}
                   style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '4px' }}
                 />
               </div>
@@ -267,8 +295,8 @@ export const SpaceOptimizationPage: React.FC = () => {
               <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>WORKER COUNT</label>
               <input
                 type="number"
-                value={inputs.worker_count}
-                onChange={e => setInputs({ ...inputs, worker_count: parseInt(e.target.value) || 0 })}
+                value={inputs.worker_count === 0 ? '' : inputs.worker_count}
+                onChange={e => setInputs({ ...inputs, worker_count: e.target.value === '' ? 0 : (parseInt(e.target.value) || 0) })}
                 style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '4px' }}
               />
             </div>
@@ -277,8 +305,8 @@ export const SpaceOptimizationPage: React.FC = () => {
               <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>MACHINERY COUNT</label>
               <input
                 type="number"
-                value={inputs.machinery_count}
-                onChange={e => setInputs({ ...inputs, machinery_count: parseInt(e.target.value) || 0 })}
+                value={inputs.machinery_count === 0 ? '' : inputs.machinery_count}
+                onChange={e => setInputs({ ...inputs, machinery_count: e.target.value === '' ? 0 : (parseInt(e.target.value) || 0) })}
                 style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '4px' }}
               />
             </div>
