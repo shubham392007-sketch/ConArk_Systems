@@ -5,8 +5,17 @@ import type {
   SpaceOptimizationResponse
 } from '../types';
 
-// Use relative /api/v1 for Render single-origin deployment or fallback to VITE_API_BASE_URL / localhost
-const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api/v1';
+const getApiBase = (): string => {
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL;
+  }
+  if (typeof window !== 'undefined' && (window.location.port === '5173' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    return 'http://localhost:8000/api/v1';
+  }
+  return '/api/v1';
+};
+
+const API_BASE = getApiBase();
 
 export async function fetchHealth(): Promise<{ status: string; system: string; version: string }> {
   const res = await fetch(`${API_BASE}/health`);
