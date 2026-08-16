@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field, field_validator
 
 
 class ConstructionStageEnum(str, Enum):
+    EXCAVATION = "EXCAVATION"
     FOUNDATION = "FOUNDATION"
     STRUCTURE = "STRUCTURE"
     MASONRY = "MASONRY"
@@ -68,6 +69,24 @@ class SpaceOptimizationInput(BaseModel):
     working_hours_per_day: Optional[float] = Field(default=8.0, description="Daily working hours")
     loading_zone_available: Optional[bool] = Field(default=True, description="Dedicated loading zone availability")
     existing_layout_efficiency: Optional[float] = Field(default=75.0, description="Perceived existing layout efficiency score")
+
+    @field_validator("construction_stage", mode="before")
+    def validate_construction_stage(cls, v: Any) -> Any:
+        if isinstance(v, str):
+            v_upper = v.strip().upper()
+            valid_names = [e.value for e in ConstructionStageEnum]
+            if v_upper in valid_names:
+                return v_upper
+            if "EXCAV" in v_upper:
+                return "EXCAVATION"
+            if "FOUND" in v_upper:
+                return "FOUNDATION"
+            if "STRUCT" in v_upper:
+                return "STRUCTURE"
+            if "FINISH" in v_upper:
+                return "FINISHING"
+            return "OTHER"
+        return v
 
     @field_validator("site_area_sqm")
     def validate_site_area(cls, v: float) -> float:

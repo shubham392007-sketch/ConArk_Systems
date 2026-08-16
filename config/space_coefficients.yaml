@@ -11,6 +11,11 @@ base_coefficients:
   base_staging_sqm: 60.0               # base staging area
 
 stage_multipliers:
+  EXCAVATION:
+    equipment: 1.5
+    material: 0.7
+    heavy_equipment: 1.6
+    staging: 0.7
   FOUNDATION:
     equipment: 1.4
     material: 0.9

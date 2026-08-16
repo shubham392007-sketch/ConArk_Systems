@@ -288,7 +288,12 @@ export const SpaceOptimizationPage: React.FC = () => {
                 <option value="EXCAVATION">EXCAVATION</option>
                 <option value="FOUNDATION">FOUNDATION</option>
                 <option value="STRUCTURE">STRUCTURE</option>
+                <option value="MASONRY">MASONRY</option>
+                <option value="ELECTRICAL">ELECTRICAL</option>
+                <option value="PLUMBING">PLUMBING</option>
                 <option value="FINISHING">FINISHING</option>
+                <option value="MIXED">MIXED</option>
+                <option value="OTHER">OTHER</option>
               </select>
             </div>
 

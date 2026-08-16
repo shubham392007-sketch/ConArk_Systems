@@ -82,11 +82,18 @@ export async function optimizeSpaceLayout(payload: SpaceInputs): Promise<SpaceOp
     }
   }
 
+  const validStages = ['EXCAVATION', 'FOUNDATION', 'STRUCTURE', 'MASONRY', 'ELECTRICAL', 'PLUMBING', 'FINISHING', 'MIXED', 'OTHER'];
+  let stage = (payload.construction_stage || 'STRUCTURE').toUpperCase();
+  if (!validStages.includes(stage)) {
+    stage = 'STRUCTURE';
+  }
+
   const sanitizedPayload: any = {
     ...payload,
     site_area_sqm: area,
     site_length_m: sL,
     site_width_m: sW,
+    construction_stage: stage,
     worker_count: Math.max(0, payload.worker_count || 0),
     machinery_count: Math.max(0, payload.machinery_count || 0),
     material_quantity_kg: Math.max(0, payload.material_quantity_kg || 1000),
