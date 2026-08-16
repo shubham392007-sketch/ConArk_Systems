@@ -749,15 +749,15 @@ export const ModelDetailPage: React.FC = () => {
         </div>
 
         {/* Right Column: Deep Output & 2D Spatial Structure */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%', maxWidth: '100%', overflow: 'hidden' }}>
           
           {hasPredicted ? (
             <>
               {/* Dynamic 2D Site Layout Map Canvas (For Space & Optimization Model) */}
               {isSpaceOpt && (
-                <div className="card-responsive-padding" style={{ backgroundColor: '#FFFFFF', border: '2.5px dashed #111111', borderRadius: '20px', padding: '24px', boxShadow: '0 8px 20px rgba(0,0,0,0.06)' }}>
+                <div className="card-responsive-padding" style={{ backgroundColor: '#FFFFFF', border: '2.5px dashed #111111', borderRadius: '20px', padding: '24px', boxShadow: '0 8px 20px rgba(0,0,0,0.06)', width: '100%', maxWidth: '100%', boxSizing: 'border-box', overflow: 'hidden' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
-                    <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(20px, 3vw, 26px)', color: '#111111', textTransform: 'uppercase' }}>
+                    <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(18px, 3vw, 26px)', color: '#111111', textTransform: 'uppercase', wordBreak: 'break-word' }}>
                       DYNAMIC 2D SITE LAYOUT MAP ({spaceInputs.site_length_m}m × {spaceInputs.site_width_m}m)
                     </h2>
                     <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', backgroundColor: '#111111', color: '#FFFFFF', padding: '3px 10px', borderRadius: '4px' }}>
@@ -766,22 +766,22 @@ export const ModelDetailPage: React.FC = () => {
                   </div>
 
                   {/* Metrics Banner */}
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px', marginBottom: '20px' }}>
-                    <div style={{ backgroundColor: '#EDECE7', border: '1.5px solid #111111', borderRadius: '8px', padding: '10px 14px' }}>
-                      <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>SPACE UTILIZATION</span>
-                      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '24px', fontWeight: '800', color: '#111111' }}>
+                  <div className="metrics-banner-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))', gap: '10px', marginBottom: '20px', width: '100%' }}>
+                    <div style={{ backgroundColor: '#EDECE7', border: '1.5px solid #111111', borderRadius: '8px', padding: '8px 12px', minWidth: 0 }}>
+                      <span style={{ fontSize: '9px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', display: 'block' }}>SPACE UTILIZATION</span>
+                      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 'clamp(18px, 2vw, 24px)', fontWeight: '800', color: '#111111' }}>
                         {utilization.toFixed(1)}%
                       </div>
                     </div>
-                    <div style={{ backgroundColor: '#EDECE7', border: '1.5px solid #111111', borderRadius: '8px', padding: '10px 14px' }}>
-                      <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>SAFETY COMPLIANCE</span>
-                      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '24px', fontWeight: '800', color: '#15803d' }}>
+                    <div style={{ backgroundColor: '#EDECE7', border: '1.5px solid #111111', borderRadius: '8px', padding: '8px 12px', minWidth: 0 }}>
+                      <span style={{ fontSize: '9px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', display: 'block' }}>SAFETY COMPLIANCE</span>
+                      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 'clamp(18px, 2vw, 24px)', fontWeight: '800', color: '#15803d' }}>
                         {safetyScore.toFixed(0)}%
                       </div>
                     </div>
-                    <div style={{ backgroundColor: '#EDECE7', border: '1.5px solid #111111', borderRadius: '8px', padding: '10px 14px' }}>
-                      <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>EFFICIENCY SCORE</span>
-                      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '24px', fontWeight: '800', color: '#111111' }}>
+                    <div style={{ backgroundColor: '#EDECE7', border: '1.5px solid #111111', borderRadius: '8px', padding: '8px 12px', minWidth: 0 }}>
+                      <span style={{ fontSize: '9px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', display: 'block' }}>EFFICIENCY SCORE</span>
+                      <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 'clamp(18px, 2vw, 24px)', fontWeight: '800', color: '#111111' }}>
                         {efficiencyScore.toFixed(1)}
                       </div>
                     </div>
@@ -791,16 +791,18 @@ export const ModelDetailPage: React.FC = () => {
                   <div style={{
                     position: 'relative',
                     width: '100%',
-                    minHeight: '380px',
+                    maxWidth: '100%',
+                    minHeight: '340px',
                     height: layoutMaxY > 0 && layoutMaxX > 0 
-                      ? `clamp(360px, ${Math.min(55, Math.max(30, (layoutMaxY / layoutMaxX) * 45))}vh, 580px)`
-                      : '420px',
+                      ? `clamp(320px, ${Math.min(55, Math.max(30, (layoutMaxY / layoutMaxX) * 45))}vh, 580px)`
+                      : '400px',
                     maxHeight: '600px',
                     backgroundColor: '#111111',
                     borderRadius: '12px',
                     border: '2px solid #111111',
                     overflow: 'hidden',
-                    boxShadow: 'inset 0 0 25px rgba(0,0,0,0.6)'
+                    boxShadow: 'inset 0 0 25px rgba(0,0,0,0.6)',
+                    boxSizing: 'border-box'
                   }}>
                     {coordinates.map((coord: ZoneCoordinates, i: number) => {
                       const leftPct = (coord.x / layoutMaxX) * 100;
@@ -821,10 +823,10 @@ export const ModelDetailPage: React.FC = () => {
                             top: `${topPct}%`,
                             width: `${widthPct}%`,
                             height: `${heightPct}%`,
-                            minHeight: '26px',
+                            minHeight: '24px',
                             backgroundColor: color,
                             border: '1.5px solid #111111',
-                            padding: isVeryNarrow ? '2px 8px' : '6px 10px',
+                            padding: isVeryNarrow ? '1px 4px' : '4px 6px',
                             display: 'flex',
                             flexDirection: isVeryNarrow ? 'row' : 'column',
                             alignItems: 'center',
@@ -838,24 +840,29 @@ export const ModelDetailPage: React.FC = () => {
                         >
                           <span style={{
                             fontFamily: 'Anton, sans-serif',
-                            fontSize: isVeryNarrow ? '10px' : 'clamp(10px, 1.2vw, 15px)',
+                            fontSize: isVeryNarrow ? '9px' : 'clamp(9px, 1.1vw, 14px)',
                             color: isMagenta ? '#FFFFFF' : '#111111',
                             textTransform: 'uppercase',
-                            lineHeight: '1.1',
+                            lineHeight: '1.05',
                             whiteSpace: 'nowrap',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
-                            maxWidth: '100%'
+                            maxWidth: '100%',
+                            display: 'block'
                           }}>
                             {coord.zone_name}
                           </span>
                           <span style={{
                             fontFamily: 'JetBrains Mono, monospace',
-                            fontSize: '9px',
+                            fontSize: isVeryNarrow ? '8px' : '9px',
                             color: isMagenta ? '#FFFFFF' : '#333333',
-                            marginTop: isVeryNarrow ? '0' : '2px',
+                            marginTop: isVeryNarrow ? '0' : '1px',
                             fontWeight: 'bold',
-                            whiteSpace: 'nowrap'
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            maxWidth: '100%',
+                            display: 'block'
                           }}>
                             {coord.width.toFixed(1)}m × {coord.height.toFixed(1)}m ({zoneArea.toFixed(0)} m²)
                           </span>
@@ -865,13 +872,13 @@ export const ModelDetailPage: React.FC = () => {
                   </div>
 
                   {/* 8-Zone Color Key Legend */}
-                  <div style={{ marginTop: '16px', display: 'flex', flexWrap: 'wrap', gap: '10px', padding: '12px 14px', backgroundColor: '#EDECE7', borderRadius: '8px', border: '1px solid #111111', fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ width: '12px', height: '12px', backgroundColor: '#E4FF5B', border: '1px solid #111' }} /> Material Storage & Loading</span>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ width: '12px', height: '12px', backgroundColor: '#7CFFA6', border: '1px solid #111' }} /> Equipment & Staging</span>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ width: '12px', height: '12px', backgroundColor: '#4FC3F7', border: '1px solid #111' }} /> Worker Movement</span>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ width: '12px', height: '12px', backgroundColor: '#F5F3E3', border: '1px solid #111' }} /> Safety Buffer</span>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ width: '12px', height: '12px', backgroundColor: '#FF2AA1', border: '1px solid #111' }} /> Emergency Corridor</span>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ width: '12px', height: '12px', backgroundColor: '#E0E0E0', border: '1px solid #111' }} /> Waste Dump</span>
+                  <div style={{ marginTop: '14px', display: 'flex', flexWrap: 'wrap', gap: '8px', padding: '10px 12px', backgroundColor: '#EDECE7', borderRadius: '8px', border: '1px solid #111111', fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', maxWidth: '100%', overflow: 'hidden' }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><span style={{ width: '10px', height: '10px', backgroundColor: '#E4FF5B', border: '1px solid #111', flexShrink: 0 }} /> Material Storage & Loading</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><span style={{ width: '10px', height: '10px', backgroundColor: '#7CFFA6', border: '1px solid #111', flexShrink: 0 }} /> Equipment & Staging</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><span style={{ width: '10px', height: '10px', backgroundColor: '#4FC3F7', border: '1px solid #111', flexShrink: 0 }} /> Worker Movement</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><span style={{ width: '10px', height: '10px', backgroundColor: '#F5F3E3', border: '1px solid #111', flexShrink: 0 }} /> Safety Buffer</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><span style={{ width: '10px', height: '10px', backgroundColor: '#FF2AA1', border: '1px solid #111', flexShrink: 0 }} /> Emergency Corridor</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><span style={{ width: '10px', height: '10px', backgroundColor: '#E0E0E0', border: '1px solid #111', flexShrink: 0 }} /> Waste Dump</span>
                   </div>
                 </div>
               )}
