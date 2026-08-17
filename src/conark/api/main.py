@@ -76,6 +76,19 @@ if frontend_dist:
     if os.path.exists(assets_dir):
         app.mount("/assets", StaticFiles(directory=assets_dir), name="static_assets")
 
+    @app.get("/favicon.svg", include_in_schema=False)
+    @app.get("/favicon.ico", include_in_schema=False)
+    async def serve_favicon():
+        fav_path = os.path.join(frontend_dist, "favicon.svg")
+        if os.path.exists(fav_path):
+            return FileResponse(
+                fav_path,
+                media_type="image/svg+xml",
+                headers={"Cache-Control": "no-cache, no-store, must-revalidate, max-age=0"}
+            )
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="Favicon not found")
+
     @app.get("/", include_in_schema=False)
     async def serve_root_spa():
         return FileResponse(
