@@ -25,48 +25,48 @@ const teamMembers: TeamMember[] = [
     id: 'siddhesh',
     index: '01',
     fullName: 'SIDDHESH BIREWAR',
-    role: 'RESEARCH ENGINEER & TECHNICAL SUPPORT SPECIALIST',
-    shortIntro: 'Bridging the gap between theoretical models and practical implementation. Focuses on system architecture robustness and emergent AI behaviors.',
-    specialization: 'RESEARCH / ENGINEERING / TECHNICAL SUPPORT',
+    role: 'RESEARCH ENGINEER & PR SPECIALIST',
+    shortIntro: 'Bridging theoretical research with public relations and systems engineering. Specializes in technical communications, system architecture robustness, and public engagement.',
+    specialization: 'RESEARCH ENGINEERING / PUBLIC RELATIONS / SYSTEMS',
     email: 'siddhesh.birewar25@pccoepune.org',
     cardBg: '#FFFFFF',
     rotation: '-1.5deg',
-    linkedin: 'https://linkedin.com',
-    github: 'https://github.com',
-    instagram: 'https://instagram.com',
-    contribution: 'Research and engineering contribution to bridging technical investigation with practical system implementation.',
+    linkedin: 'https://www.linkedin.com/in/siddhesh-birewar-20bb3136b/',
+    github: 'https://github.com/Siddhesh-Birewar',
+    instagram: 'https://www.instagram.com/s_i_d_d_h_e_s_h_1o1/?hl=en',
+    contribution: 'Research, engineering, and public relations contribution bridging technical investigation with system implementation and platform outreach.',
     cornerIcon: '✳'
   },
   {
     id: 'vernit',
     index: '02',
     fullName: 'VERNIT GARG',
-    role: 'RESEARCH SPECIALIST & ML ENGINEER',
-    shortIntro: 'Designing predictive models for complex structural anomalies. Specializes in transforming raw site telemetries into actionable intelligence matrices.',
-    specialization: 'RESEARCH / MACHINE LEARNING / PREDICTIVE SYSTEMS',
+    role: 'RESEARCH SPECIALIST & MACHINE LEARNING ENGINEER',
+    shortIntro: 'Designing predictive ML models for complex structural anomalies. Specializes in transforming raw site telemetries into actionable intelligence matrices.',
+    specialization: 'RESEARCH SPECIALIST / MACHINE LEARNING / PREDICTIVE SYSTEMS',
     email: 'vernit.gerg25@pccoepune.org',
     cardBg: '#4FC3F7',
     rotation: '1.2deg',
-    linkedin: 'https://linkedin.com',
-    github: 'https://github.com',
-    instagram: 'https://instagram.com',
-    contribution: "Research and machine learning contribution to ConArk's predictive intelligence layer.",
+    linkedin: 'https://www.linkedin.com/in/vernit-garg-231539385/',
+    github: 'https://github.com/Vernit185',
+    instagram: 'https://www.instagram.com/qubec_185/?hl=en',
+    contribution: "Research and machine learning engineering contribution to ConArk's core predictive intelligence layer.",
     cornerIcon: '■'
   },
   {
     id: 'shubham',
     index: '03',
     fullName: 'SHUBHAM POKALE',
-    role: 'AI ENGINEER & TECHNICAL SUPPORT',
-    shortIntro: 'Integrating large language models with core analytical engines. Ensuring Gemini interfaces seamlessly with internal ConArk protocols.',
-    specialization: 'ARTIFICIAL INTELLIGENCE / SYSTEMS / TECHNICAL SUPPORT',
+    role: 'ARTIFICIAL INTELLIGENCE ENGINEER & TECHNICAL SUPPORT SPECIALIST',
+    shortIntro: 'Integrating large language models with core analytical engines and technical support. Ensuring Gemini interfaces seamlessly with internal ConArk protocols.',
+    specialization: 'ARTIFICIAL INTELLIGENCE / TECHNICAL SUPPORT / SYSTEMS',
     email: 'shubham.pokale25@pccopepune.org',
     cardBg: '#E4FF5B',
     rotation: '-1.2deg',
-    linkedin: 'https://linkedin.com',
-    github: 'https://github.com',
-    instagram: 'https://instagram.com',
-    contribution: 'Artificial intelligence engineering contribution connecting intelligence models with system execution and technical support.',
+    linkedin: 'https://www.linkedin.com/in/shubham-pokale-94030b37a/',
+    github: 'https://github.com/shubham392007-sketch',
+    instagram: 'https://www.instagram.com/shubhamofficial_2007/?hl=en',
+    contribution: 'Artificial intelligence engineering and technical support specialist contribution connecting intelligence models with full platform execution.',
     cornerIcon: '◇'
   },
   {
@@ -79,10 +79,10 @@ const teamMembers: TeamMember[] = [
     email: 'ram.khabale25@pccoepune.org',
     cardBg: '#7CFFA6',
     rotation: '1.8deg',
-    linkedin: 'https://linkedin.com',
-    github: 'https://github.com',
-    instagram: 'https://instagram.com',
-    contribution: "Data analysis and architecture contribution to ConArk's information and intelligence pipeline.",
+    linkedin: 'https://www.linkedin.com/in/ram-khabale-b7b1a23b0/',
+    github: 'https://github.com/Ram19RK',
+    instagram: 'https://www.instagram.com/ramkhabale1819/?hl=en',
+    contribution: "Data analysis and data architecture contribution to ConArk's information and intelligence pipeline.",
     cornerIcon: '≡'
   }
 ];
@@ -543,7 +543,7 @@ export const TheBrainsPage: React.FC = () => {
             <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#666' }}>01</div>
             <div style={{ fontFamily: 'Anton, sans-serif', fontSize: '20px', color: '#111111' }}>SIDDHESH</div>
             <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '700', color: '#555', marginTop: '4px' }}>
-              Research + Technical Support
+              Research + PR Specialist
             </div>
           </div>
 
