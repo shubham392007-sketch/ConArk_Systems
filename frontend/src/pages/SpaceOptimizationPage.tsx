@@ -228,7 +228,7 @@ export const SpaceOptimizationPage: React.FC = () => {
       {/* Header */}
       <div style={{ marginBottom: '24px', borderBottom: '2.5px dashed #111111', paddingBottom: '18px' }}>
         <h1 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(28px, 5.5vw, 54px)', color: '#111111', textTransform: 'uppercase', lineHeight: '1.05' }}>
-          CONSTRAINED SPACE OPTIMIZATION ENGINE
+          RECOMMENDATION AND SPACE OPTIMIZATION MODEL
         </h1>
         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '15px', color: '#555555', marginTop: '4px' }}>
           SciPy SLSQP Constrained Optimization — Solves dynamic 8-zone area allocation & 2D spatial layouts.

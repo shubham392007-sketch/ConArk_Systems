@@ -180,7 +180,7 @@ export const ModelDetailPage: React.FC = () => {
       case 'space':
       default:
         return {
-          title: 'OPTIMIZATION & SPACE OPTIMIZATION MODEL',
+          title: 'RECOMMENDATION AND SPACE OPTIMIZATION MODEL',
           algorithm: 'SciPy SLSQP Constrained Solver + HistGradientBoosting Classifier',
           version: 'v1.0.0',
           color: '#F5F3E3',

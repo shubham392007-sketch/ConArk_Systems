@@ -93,7 +93,7 @@ export const PredictionsHub: React.FC = () => {
     {
       id: 'optimization',
       index: '05',
-      title: 'OPTIMIZATION RECOMMENDATION MODEL',
+      title: 'RECOMMENDATION AND SPACE OPTIMIZATION MODEL',
       color: '#F5F3E3',
       algorithm: 'HistGradientBoosting Classifier',
       version: 'v1.0',

@@ -502,7 +502,7 @@ export const CommandCenter: React.FC = () => {
                   <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', color: '#111' }}>[CLICK FOR FULL 2D CANVAS & PAGE →]</span>
                 </div>
                 <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(28px, 3.5vw, 44px)', color: '#111111', textTransform: 'uppercase', lineHeight: '1.05', marginTop: '6px' }}>
-                  SPACE OPTIMIZATION & RECOMMENDATION MODEL
+                  RECOMMENDATION AND SPACE OPTIMIZATION MODEL
                 </h2>
                 <p style={{ fontSize: '14px', color: '#111111', fontFamily: 'Inter, sans-serif', marginTop: '2px' }}>
                   SciPy SLSQP Constrained Solver + HistGradientBoosting Classifier · v1.0

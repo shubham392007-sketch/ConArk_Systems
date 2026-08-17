@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { TopNav } from './components/layout/TopNav';
 import { Footer } from './components/layout/Footer';
@@ -12,6 +12,18 @@ import { ReportsPage } from './pages/ReportsPage';
 import { ModelRegistryPage } from './pages/ModelRegistryPage';
 import { ModelDetailPage } from './pages/ModelDetailPage';
 import { TheBrainsPage } from './pages/TheBrainsPage';
+
+const ScrollToTop: React.FC = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+  }, [pathname]);
+
+  return null;
+};
 
 const MainContent: React.FC = () => {
   const location = useLocation();
@@ -43,6 +55,7 @@ const MainContent: React.FC = () => {
 export const App: React.FC = () => {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#EDECE7' }}>
         <TopNav />
         <MainContent />
