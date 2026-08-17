@@ -24,12 +24,12 @@ def create_feature_pipeline(df: pd.DataFrame) -> pd.DataFrame:
     
     # 1. Timestamp extractions
     if "timestamp" in df_feat.columns:
-        ts = pd.to_datetime(df_feat["timestamp"])
-        df_feat["hour"] = ts.dt.hour
-        df_feat["day"] = ts.dt.day
-        df_feat["day_of_week"] = ts.dt.dayofweek
-        df_feat["day_of_month"] = ts.dt.day
-        df_feat["week_of_year"] = ts.dt.isocalendar().week.astype(int)
+        ts = pd.to_datetime(df_feat["timestamp"], errors="coerce")
+        df_feat["hour"] = pd.to_numeric(ts.dt.hour, errors="coerce").fillna(12).astype(int)
+        df_feat["day"] = pd.to_numeric(ts.dt.day, errors="coerce").fillna(1).astype(int)
+        df_feat["day_of_week"] = pd.to_numeric(ts.dt.dayofweek, errors="coerce").fillna(2).astype(int)
+        df_feat["day_of_month"] = pd.to_numeric(ts.dt.day, errors="coerce").fillna(1).astype(int)
+        df_feat["week_of_year"] = pd.to_numeric(ts.dt.isocalendar().week, errors="coerce").fillna(1).astype(int)
         df_feat["is_weekend"] = ts.dt.dayofweek.isin([5, 6]).astype(int)
     else:
         # Default temporal values if timestamp string omitted

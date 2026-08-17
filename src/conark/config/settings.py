@@ -10,7 +10,12 @@ class Settings(BaseSettings):
     APP_NAME: str = "ConArk Systems"
     APP_ENV: str = "development"
     
-    GEMINI_API_KEY: str = ""
+    GEMINI_API_KEY: str = "AQ.Ab8RN6JFFQ5ouLZZkaqw8uJFfJoWa2p8GI24mV_bOGm_UbqYCg"
+    GEMINI_API_KEY_PERFORMANCE: str = "AQ.Ab8RN6IJkVMCvmUS8u7TbtfT83v72y-hcTWyJda_8U38G7nU9A"
+    GEMINI_API_KEY_RISK: str = "AQ.Ab8RN6IJkVMCvmUS8u7TbtfT83v72y-hcTWyJda_8U38G7nU9A"
+    GEMINI_API_KEY_COST: str = "AQ.Ab8RN6JFFQ5ouLZZkaqw8uJFfJoWa2p8GI24mV_bOGm_UbqYCg"
+    GEMINI_API_KEY_TIME: str = "AQ.Ab8RN6JFFQ5ouLZZkaqw8uJFfJoWa2p8GI24mV_bOGm_UbqYCg"
+    GEMINI_API_KEY_OPTIMIZATION: str = "AQ.Ab8RN6JsQsJTxgdTBFtuJ3bSBlT3NVhyZmRqOLCYnsG6wEyIwQ"
     GEMINI_MODEL: str = "gemini-1.5-flash"
     GEMINI_TIMEOUT_SECONDS: int = 30
     GEMINI_MAX_RETRIES: int = 2

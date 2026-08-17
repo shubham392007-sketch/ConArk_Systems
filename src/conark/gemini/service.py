@@ -133,9 +133,11 @@ class GeminiService:
                 
                 loop = asyncio.get_event_loop()
                 def _call_gemini():
-                    client = self.client_wrapper.client
+                    model_target = intelligence_payload.get("target_model") or "performance"
+                    client_wrapper = GeminiClient.for_model(model_target)
+                    client = client_wrapper.client
                     response = client.models.generate_content(
-                        model=self.client_wrapper.model_name,
+                        model=client_wrapper.model_name,
                         contents=prompt,
                         config=types.GenerateContentConfig(
                             system_instruction=GEMINI_SYSTEM_PROMPT,
@@ -247,9 +249,10 @@ class GeminiService:
                 logger.info(f"Calling Gemini 2.5 Flash for Space Report (Attempt {attempt}/{max_retries})...")
                 loop = asyncio.get_event_loop()
                 def _call_gemini():
-                    client = self.client_wrapper.client
+                    client_wrapper = GeminiClient.for_model("space_optimization")
+                    client = client_wrapper.client
                     response = client.models.generate_content(
-                        model=self.client_wrapper.model_name,
+                        model=client_wrapper.model_name,
                         contents=prompt,
                         config=types.GenerateContentConfig(
                             system_instruction=GEMINI_SPACE_SYSTEM_PROMPT,
