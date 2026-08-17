@@ -78,7 +78,10 @@ if frontend_dist:
 
     @app.get("/", include_in_schema=False)
     async def serve_root_spa():
-        return FileResponse(os.path.join(frontend_dist, "index.html"))
+        return FileResponse(
+            os.path.join(frontend_dist, "index.html"),
+            headers={"Cache-Control": "no-cache, no-store, must-revalidate, max-age=0"}
+        )
 
     @app.get("/{full_path:path}", include_in_schema=False)
     async def serve_spa(full_path: str):
@@ -86,8 +89,20 @@ if frontend_dist:
             return None
         target = os.path.join(frontend_dist, full_path)
         if os.path.exists(target) and os.path.isfile(target):
-            return FileResponse(target)
-        return FileResponse(os.path.join(frontend_dist, "index.html"))
+            headers = {}
+            if full_path.startswith("assets/"):
+                headers["Cache-Control"] = "public, max-age=31536000, immutable"
+            return FileResponse(target, headers=headers)
+
+        # Do not return index.html for missing static assets (prevents MIME type syntax error)
+        if full_path.startswith("assets/"):
+            from fastapi import HTTPException
+            raise HTTPException(status_code=404, detail=f"Asset {full_path} not found")
+
+        return FileResponse(
+            os.path.join(frontend_dist, "index.html"),
+            headers={"Cache-Control": "no-cache, no-store, must-revalidate, max-age=0"}
+        )
 else:
     logger.info("Frontend dist directory not found. Running in standalone API mode.")
 
