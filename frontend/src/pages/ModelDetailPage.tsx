@@ -58,64 +58,110 @@ export const ModelDetailPage: React.FC = () => {
     material_shortage_alert: 0
   });
 
+  // Raw String States for smooth typing (no auto-zero or decimal truncation glitches)
+  const [rawInputs, setRawInputs] = useState<Record<string, string>>({
+    temperature: '32.5',
+    humidity: '45',
+    vibration_level: '28.4',
+    material_usage: '680',
+    machinery_status: '1',
+    worker_count: '45',
+    energy_consumption: '340',
+    task_progress: '0.42',
+    safety_incidents: '1',
+    equipment_utilization_rate: '91.2',
+    material_shortage_alert: '0',
+    cost_deviation: '2707.71',
+    time_deviation: '-4.65',
+    simulation_deviation: '0.77'
+  });
+
+  const [rawSpaceInputs, setRawSpaceInputs] = useState<Record<string, string>>({
+    site_area_sqm: '1200',
+    site_length_m: '40',
+    site_width_m: '30',
+    worker_count: '65',
+    machinery_count: '8'
+  });
+
+  const handleRawInputChange = (key: string, valStr: string) => {
+    setRawInputs(prev => ({ ...prev, [key]: valStr }));
+    const pFloat = parseFloat(valStr);
+    const pInt = parseInt(valStr, 10);
+    setInputs(prev => ({
+      ...prev,
+      [key]: (key === 'machinery_status' || key === 'worker_count' || key === 'safety_incidents' || key === 'material_shortage_alert')
+        ? (isNaN(pInt) ? 0 : pInt)
+        : (isNaN(pFloat) ? 0 : pFloat)
+    }));
+  };
+
+  const handleRawSpaceChange = (key: string, valStr: string) => {
+    setRawSpaceInputs(prev => ({ ...prev, [key]: valStr }));
+    if (key === 'site_length_m') {
+      handleLengthChange(valStr);
+    } else if (key === 'site_width_m') {
+      handleWidthChange(valStr);
+    } else if (key === 'site_area_sqm') {
+      handleAreaChange(valStr);
+    } else {
+      const pInt = parseInt(valStr, 10);
+      const validInt = isNaN(pInt) ? 0 : pInt;
+      if (key === 'worker_count') {
+        setSpaceInputs(prev => ({ ...prev, worker_count: validInt }));
+      } else if (key === 'machinery_count') {
+        setSpaceInputs(prev => ({ ...prev, machinery_count: validInt }));
+      }
+    }
+  };
+
   const handleLengthChange = (valStr: string) => {
+    setRawSpaceInputs(prev => ({ ...prev, site_length_m: valStr }));
     if (valStr === '') {
-      setSpaceInputs(prev => ({
-        ...prev,
-        site_length_m: 0,
-        site_area_sqm: 0
-      }));
+      setSpaceInputs(prev => ({ ...prev, site_length_m: 0, site_area_sqm: 0 }));
+      setRawSpaceInputs(prev => ({ ...prev, site_length_m: '', site_area_sqm: '' }));
       return;
     }
     const l = parseFloat(valStr);
     if (isNaN(l)) return;
     setSpaceInputs(prev => {
       const w = prev.site_width_m || 0;
-      return {
-        ...prev,
-        site_length_m: l,
-        site_area_sqm: w > 0 ? Math.round(l * w) : prev.site_area_sqm
-      };
+      const area = w > 0 ? Math.round(l * w) : prev.site_area_sqm;
+      if (w > 0) {
+        setRawSpaceInputs(r => ({ ...r, site_area_sqm: String(area) }));
+      }
+      return { ...prev, site_length_m: l, site_area_sqm: area };
     });
   };
 
   const handleWidthChange = (valStr: string) => {
+    setRawSpaceInputs(prev => ({ ...prev, site_width_m: valStr }));
     if (valStr === '') {
-      setSpaceInputs(prev => ({
-        ...prev,
-        site_width_m: 0,
-        site_area_sqm: 0
-      }));
+      setSpaceInputs(prev => ({ ...prev, site_width_m: 0, site_area_sqm: 0 }));
+      setRawSpaceInputs(prev => ({ ...prev, site_width_m: '', site_area_sqm: '' }));
       return;
     }
     const w = parseFloat(valStr);
     if (isNaN(w)) return;
     setSpaceInputs(prev => {
       const l = prev.site_length_m || 0;
-      return {
-        ...prev,
-        site_width_m: w,
-        site_area_sqm: l > 0 ? Math.round(l * w) : prev.site_area_sqm
-      };
+      const area = l > 0 ? Math.round(l * w) : prev.site_area_sqm;
+      if (l > 0) {
+        setRawSpaceInputs(r => ({ ...r, site_area_sqm: String(area) }));
+      }
+      return { ...prev, site_width_m: w, site_area_sqm: area };
     });
   };
 
   const handleAreaChange = (valStr: string) => {
+    setRawSpaceInputs(prev => ({ ...prev, site_area_sqm: valStr }));
     if (valStr === '') {
-      setSpaceInputs(prev => ({
-        ...prev,
-        site_area_sqm: 0
-      }));
+      setSpaceInputs(prev => ({ ...prev, site_area_sqm: 0 }));
       return;
     }
     const area = parseFloat(valStr);
     if (isNaN(area)) return;
-    setSpaceInputs(prev => {
-      return {
-        ...prev,
-        site_area_sqm: area
-      };
-    });
+    setSpaceInputs(prev => ({ ...prev, site_area_sqm: area }));
   };
 
   const getModelConfig = (id?: string) => {
@@ -200,15 +246,41 @@ export const ModelDetailPage: React.FC = () => {
   const runPrediction = async () => {
     setLoading(true);
     try {
+      const finalInputs: OperationalInputs = {
+        ...inputs,
+        temperature: parseFloat(rawInputs.temperature) || 0,
+        humidity: parseFloat(rawInputs.humidity) || 0,
+        vibration_level: parseFloat(rawInputs.vibration_level) || 0,
+        material_usage: parseFloat(rawInputs.material_usage) || 0,
+        machinery_status: parseInt(rawInputs.machinery_status, 10) || 0,
+        worker_count: parseInt(rawInputs.worker_count, 10) || 0,
+        energy_consumption: parseFloat(rawInputs.energy_consumption) || 0,
+        task_progress: parseFloat(rawInputs.task_progress) || 0,
+        safety_incidents: parseInt(rawInputs.safety_incidents, 10) || 0,
+        equipment_utilization_rate: parseFloat(rawInputs.equipment_utilization_rate) || 0,
+        material_shortage_alert: parseInt(rawInputs.material_shortage_alert, 10) || 0,
+        cost_deviation: parseFloat(rawInputs.cost_deviation) || 0,
+        time_deviation: parseFloat(rawInputs.time_deviation) || 0
+      };
+
+      const finalSpaceInputs: SpaceInputs = {
+        ...spaceInputs,
+        site_area_sqm: parseFloat(rawSpaceInputs.site_area_sqm) || spaceInputs.site_area_sqm || 1200,
+        site_length_m: parseFloat(rawSpaceInputs.site_length_m) || spaceInputs.site_length_m || 40,
+        site_width_m: parseFloat(rawSpaceInputs.site_width_m) || spaceInputs.site_width_m || 30,
+        worker_count: parseInt(rawSpaceInputs.worker_count, 10) || spaceInputs.worker_count || 65,
+        machinery_count: parseInt(rawSpaceInputs.machinery_count, 10) || spaceInputs.machinery_count || 8
+      };
+
       if (isSpaceOpt) {
         const [intelData, spaceData] = await Promise.all([
-          analyzeProjectIntelligence(inputs),
-          optimizeSpaceLayout(spaceInputs)
+          analyzeProjectIntelligence(finalInputs),
+          optimizeSpaceLayout(finalSpaceInputs)
         ]);
         setResult(intelData);
         setSpaceRes(spaceData);
       } else {
-        const intelData = await analyzeProjectIntelligence(inputs);
+        const intelData = await analyzeProjectIntelligence(finalInputs);
         setResult(intelData);
       }
       setHasPredicted(true);
@@ -365,10 +437,10 @@ export const ModelDetailPage: React.FC = () => {
           <div key="temperature">
             <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>TEMPERATURE (°C)</label>
             <input
-              type="number"
-              step="0.1"
-              value={inputs.temperature}
-              onChange={e => setInputs({ ...inputs, temperature: parseFloat(e.target.value) || 0 })}
+              type="text"
+              inputMode="decimal"
+              value={rawInputs.temperature ?? ''}
+              onChange={e => handleRawInputChange('temperature', e.target.value)}
               style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
             />
           </div>
@@ -378,9 +450,10 @@ export const ModelDetailPage: React.FC = () => {
           <div key="humidity">
             <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>HUMIDITY (%)</label>
             <input
-              type="number"
-              value={inputs.humidity}
-              onChange={e => setInputs({ ...inputs, humidity: parseFloat(e.target.value) || 0 })}
+              type="text"
+              inputMode="decimal"
+              value={rawInputs.humidity ?? ''}
+              onChange={e => handleRawInputChange('humidity', e.target.value)}
               style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
             />
           </div>
@@ -390,10 +463,10 @@ export const ModelDetailPage: React.FC = () => {
           <div key="vibration_level">
             <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>VIBRATION LEVEL (Hz)</label>
             <input
-              type="number"
-              step="0.1"
-              value={inputs.vibration_level}
-              onChange={e => setInputs({ ...inputs, vibration_level: parseFloat(e.target.value) || 0 })}
+              type="text"
+              inputMode="decimal"
+              value={rawInputs.vibration_level ?? ''}
+              onChange={e => handleRawInputChange('vibration_level', e.target.value)}
               style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
             />
           </div>
@@ -403,9 +476,10 @@ export const ModelDetailPage: React.FC = () => {
           <div key="material_usage">
             <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>MATERIAL USAGE (kg)</label>
             <input
-              type="number"
-              value={inputs.material_usage}
-              onChange={e => setInputs({ ...inputs, material_usage: parseFloat(e.target.value) || 0 })}
+              type="text"
+              inputMode="decimal"
+              value={rawInputs.material_usage ?? ''}
+              onChange={e => handleRawInputChange('material_usage', e.target.value)}
               style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
             />
           </div>
@@ -415,8 +489,8 @@ export const ModelDetailPage: React.FC = () => {
           <div key="machinery_status">
             <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>MACHINERY STATUS</label>
             <select
-              value={inputs.machinery_status}
-              onChange={e => setInputs({ ...inputs, machinery_status: parseInt(e.target.value) || 0 })}
+              value={rawInputs.machinery_status ?? '1'}
+              onChange={e => handleRawInputChange('machinery_status', e.target.value)}
               style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px', backgroundColor: '#FFFFFF' }}
             >
               <option value={1}>1 - ACTIVE</option>
@@ -429,9 +503,10 @@ export const ModelDetailPage: React.FC = () => {
           <div key="worker_count">
             <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>WORKER COUNT</label>
             <input
-              type="number"
-              value={inputs.worker_count}
-              onChange={e => setInputs({ ...inputs, worker_count: parseInt(e.target.value) || 0 })}
+              type="text"
+              inputMode="numeric"
+              value={rawInputs.worker_count ?? ''}
+              onChange={e => handleRawInputChange('worker_count', e.target.value)}
               style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
             />
           </div>
@@ -441,9 +516,10 @@ export const ModelDetailPage: React.FC = () => {
           <div key="energy_consumption">
             <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>ENERGY CONSUMPTION (kWh)</label>
             <input
-              type="number"
-              value={inputs.energy_consumption}
-              onChange={e => setInputs({ ...inputs, energy_consumption: parseFloat(e.target.value) || 0 })}
+              type="text"
+              inputMode="decimal"
+              value={rawInputs.energy_consumption ?? ''}
+              onChange={e => handleRawInputChange('energy_consumption', e.target.value)}
               style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
             />
           </div>
@@ -453,12 +529,10 @@ export const ModelDetailPage: React.FC = () => {
           <div key="task_progress">
             <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>TASK PROGRESS (0.0 to 1.0)</label>
             <input
-              type="number"
-              step="0.01"
-              min="0"
-              max="1"
-              value={inputs.task_progress}
-              onChange={e => setInputs({ ...inputs, task_progress: parseFloat(e.target.value) || 0 })}
+              type="text"
+              inputMode="decimal"
+              value={rawInputs.task_progress ?? ''}
+              onChange={e => handleRawInputChange('task_progress', e.target.value)}
               style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
             />
           </div>
@@ -468,9 +542,10 @@ export const ModelDetailPage: React.FC = () => {
           <div key="equipment_utilization_rate">
             <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>EQUIPMENT UTILIZATION (%)</label>
             <input
-              type="number"
-              value={inputs.equipment_utilization_rate}
-              onChange={e => setInputs({ ...inputs, equipment_utilization_rate: parseFloat(e.target.value) || 0 })}
+              type="text"
+              inputMode="decimal"
+              value={rawInputs.equipment_utilization_rate ?? ''}
+              onChange={e => handleRawInputChange('equipment_utilization_rate', e.target.value)}
               style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
             />
           </div>
@@ -480,9 +555,10 @@ export const ModelDetailPage: React.FC = () => {
           <div key="safety_incidents">
             <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>SAFETY INCIDENTS</label>
             <input
-              type="number"
-              value={inputs.safety_incidents}
-              onChange={e => setInputs({ ...inputs, safety_incidents: parseInt(e.target.value) || 0 })}
+              type="text"
+              inputMode="numeric"
+              value={rawInputs.safety_incidents ?? ''}
+              onChange={e => handleRawInputChange('safety_incidents', e.target.value)}
               style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
             />
           </div>
@@ -492,8 +568,8 @@ export const ModelDetailPage: React.FC = () => {
           <div key="material_shortage_alert">
             <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>MATERIAL SHORTAGE ALERT</label>
             <select
-              value={inputs.material_shortage_alert}
-              onChange={e => setInputs({ ...inputs, material_shortage_alert: parseInt(e.target.value) || 0 })}
+              value={rawInputs.material_shortage_alert ?? '0'}
+              onChange={e => handleRawInputChange('material_shortage_alert', e.target.value)}
               style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px', backgroundColor: '#FFFFFF' }}
             >
               <option value={0}>0 - NORMAL</option>
@@ -506,10 +582,10 @@ export const ModelDetailPage: React.FC = () => {
           <div key="cost_deviation">
             <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>COST DEVIATION (USD)</label>
             <input
-              type="number"
-              step="0.01"
-              value={inputs.cost_deviation ?? 0}
-              onChange={e => setInputs({ ...inputs, cost_deviation: parseFloat(e.target.value) || 0 })}
+              type="text"
+              inputMode="decimal"
+              value={rawInputs.cost_deviation ?? ''}
+              onChange={e => handleRawInputChange('cost_deviation', e.target.value)}
               style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
             />
           </div>
@@ -519,10 +595,10 @@ export const ModelDetailPage: React.FC = () => {
           <div key="time_deviation">
             <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>TIME DEVIATION (DAYS)</label>
             <input
-              type="number"
-              step="0.1"
-              value={inputs.time_deviation ?? 0}
-              onChange={e => setInputs({ ...inputs, time_deviation: parseFloat(e.target.value) || 0 })}
+              type="text"
+              inputMode="decimal"
+              value={rawInputs.time_deviation ?? ''}
+              onChange={e => handleRawInputChange('time_deviation', e.target.value)}
               style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
             />
           </div>
@@ -532,10 +608,10 @@ export const ModelDetailPage: React.FC = () => {
           <div key="simulation_deviation">
             <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>SIMULATION DEVIATION (%)</label>
             <input
-              type="number"
-              step="0.01"
-              value={inputs.simulation_deviation ?? 0.77}
-              onChange={e => setInputs({ ...inputs, simulation_deviation: parseFloat(e.target.value) || 0 })}
+              type="text"
+              inputMode="decimal"
+              value={rawInputs.simulation_deviation ?? ''}
+              onChange={e => handleRawInputChange('simulation_deviation', e.target.value)}
               style={{ width: '100%', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '6px 10px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '3px' }}
             />
           </div>
@@ -553,9 +629,10 @@ export const ModelDetailPage: React.FC = () => {
           <div>
             <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>TOTAL SITE AREA (m²)</label>
             <input
-              type="number"
-              value={spaceInputs.site_area_sqm === 0 ? '' : spaceInputs.site_area_sqm}
-              onChange={e => handleAreaChange(e.target.value)}
+              type="text"
+              inputMode="decimal"
+              value={rawSpaceInputs.site_area_sqm ?? ''}
+              onChange={e => handleRawSpaceChange('site_area_sqm', e.target.value)}
               style={{ width: '100%', fontSize: '15px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
             />
           </div>
@@ -564,18 +641,20 @@ export const ModelDetailPage: React.FC = () => {
             <div>
               <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>LENGTH (m)</label>
               <input
-                type="number"
-                value={spaceInputs.site_length_m === 0 ? '' : spaceInputs.site_length_m}
-                onChange={e => handleLengthChange(e.target.value)}
+                type="text"
+                inputMode="decimal"
+                value={rawSpaceInputs.site_length_m ?? ''}
+                onChange={e => handleRawSpaceChange('site_length_m', e.target.value)}
                 style={{ width: '100%', fontSize: '15px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
               />
             </div>
             <div>
               <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>WIDTH (m)</label>
               <input
-                type="number"
-                value={spaceInputs.site_width_m === 0 ? '' : spaceInputs.site_width_m}
-                onChange={e => handleWidthChange(e.target.value)}
+                type="text"
+                inputMode="decimal"
+                value={rawSpaceInputs.site_width_m ?? ''}
+                onChange={e => handleRawSpaceChange('site_width_m', e.target.value)}
                 style={{ width: '100%', fontSize: '15px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
               />
             </div>
@@ -603,9 +682,10 @@ export const ModelDetailPage: React.FC = () => {
           <div>
             <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>WORKER COUNT</label>
             <input
-              type="number"
-              value={spaceInputs.worker_count === 0 ? '' : spaceInputs.worker_count}
-              onChange={e => setSpaceInputs({ ...spaceInputs, worker_count: e.target.value === '' ? 0 : (parseInt(e.target.value) || 0) })}
+              type="text"
+              inputMode="numeric"
+              value={rawSpaceInputs.worker_count ?? ''}
+              onChange={e => handleRawSpaceChange('worker_count', e.target.value)}
               style={{ width: '100%', fontSize: '15px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
             />
           </div>
@@ -613,9 +693,10 @@ export const ModelDetailPage: React.FC = () => {
           <div>
             <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>MACHINERY COUNT</label>
             <input
-              type="number"
-              value={spaceInputs.machinery_count === 0 ? '' : spaceInputs.machinery_count}
-              onChange={e => setSpaceInputs({ ...spaceInputs, machinery_count: e.target.value === '' ? 0 : (parseInt(e.target.value) || 0) })}
+              type="text"
+              inputMode="numeric"
+              value={rawSpaceInputs.machinery_count ?? ''}
+              onChange={e => handleRawSpaceChange('machinery_count', e.target.value)}
               style={{ width: '100%', fontSize: '15px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '8px', marginTop: '4px' }}
             />
           </div>

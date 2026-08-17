@@ -34,70 +34,86 @@ export const SpaceOptimizationPage: React.FC = () => {
     material_shortage_alert: 0
   });
 
+  const [rawInputs, setRawInputs] = useState<Record<string, string>>({
+    site_area_sqm: '1200',
+    site_length_m: '40',
+    site_width_m: '30',
+    worker_count: '65',
+    machinery_count: '8'
+  });
+
+  const handleRawChange = (key: string, valStr: string) => {
+    setRawInputs(prev => ({ ...prev, [key]: valStr }));
+    if (key === 'site_length_m') {
+      handleLengthChange(valStr);
+    } else if (key === 'site_width_m') {
+      handleWidthChange(valStr);
+    } else if (key === 'site_area_sqm') {
+      handleAreaChange(valStr);
+    } else {
+      const pInt = parseInt(valStr, 10);
+      const validInt = isNaN(pInt) ? 0 : pInt;
+      setInputs(prev => ({ ...prev, [key]: validInt }));
+    }
+  };
+
   const handleLengthChange = (valStr: string) => {
+    setRawInputs(prev => ({ ...prev, site_length_m: valStr }));
     if (valStr === '') {
-      setInputs(prev => ({
-        ...prev,
-        site_length_m: 0,
-        site_area_sqm: 0
-      }));
+      setInputs(prev => ({ ...prev, site_length_m: 0, site_area_sqm: 0 }));
+      setRawInputs(prev => ({ ...prev, site_length_m: '', site_area_sqm: '' }));
       return;
     }
     const l = parseFloat(valStr);
     if (isNaN(l)) return;
     setInputs(prev => {
       const w = prev.site_width_m || 0;
-      return {
-        ...prev,
-        site_length_m: l,
-        site_area_sqm: w > 0 ? Math.round(l * w) : prev.site_area_sqm
-      };
+      const area = w > 0 ? Math.round(l * w) : prev.site_area_sqm;
+      if (w > 0) setRawInputs(r => ({ ...r, site_area_sqm: String(area) }));
+      return { ...prev, site_length_m: l, site_area_sqm: area };
     });
   };
 
   const handleWidthChange = (valStr: string) => {
+    setRawInputs(prev => ({ ...prev, site_width_m: valStr }));
     if (valStr === '') {
-      setInputs(prev => ({
-        ...prev,
-        site_width_m: 0,
-        site_area_sqm: 0
-      }));
+      setInputs(prev => ({ ...prev, site_width_m: 0, site_area_sqm: 0 }));
+      setRawInputs(prev => ({ ...prev, site_width_m: '', site_area_sqm: '' }));
       return;
     }
     const w = parseFloat(valStr);
     if (isNaN(w)) return;
     setInputs(prev => {
       const l = prev.site_length_m || 0;
-      return {
-        ...prev,
-        site_width_m: w,
-        site_area_sqm: l > 0 ? Math.round(l * w) : prev.site_area_sqm
-      };
+      const area = l > 0 ? Math.round(l * w) : prev.site_area_sqm;
+      if (l > 0) setRawInputs(r => ({ ...r, site_area_sqm: String(area) }));
+      return { ...prev, site_width_m: w, site_area_sqm: area };
     });
   };
 
   const handleAreaChange = (valStr: string) => {
+    setRawInputs(prev => ({ ...prev, site_area_sqm: valStr }));
     if (valStr === '') {
-      setInputs(prev => ({
-        ...prev,
-        site_area_sqm: 0
-      }));
+      setInputs(prev => ({ ...prev, site_area_sqm: 0 }));
       return;
     }
     const area = parseFloat(valStr);
     if (isNaN(area)) return;
-    setInputs(prev => {
-      return {
-        ...prev,
-        site_area_sqm: area
-      };
-    });
+    setInputs(prev => ({ ...prev, site_area_sqm: area }));
   };
 
   const runOptimization = async () => {
     setLoading(true);
     try {
-      const data = await optimizeSpaceLayout(inputs);
+      const finalInputs: SpaceInputs = {
+        ...inputs,
+        site_area_sqm: parseFloat(rawInputs.site_area_sqm) || inputs.site_area_sqm || 1200,
+        site_length_m: parseFloat(rawInputs.site_length_m) || inputs.site_length_m || 40,
+        site_width_m: parseFloat(rawInputs.site_width_m) || inputs.site_width_m || 30,
+        worker_count: parseInt(rawInputs.worker_count, 10) || inputs.worker_count || 65,
+        machinery_count: parseInt(rawInputs.machinery_count, 10) || inputs.machinery_count || 8
+      };
+      const data = await optimizeSpaceLayout(finalInputs);
       setRes(data);
       setHasOptimized(true);
     } catch (e: any) {
@@ -251,9 +267,10 @@ export const SpaceOptimizationPage: React.FC = () => {
             <div>
               <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>TOTAL SITE AREA (m²)</label>
               <input
-                type="number"
-                value={inputs.site_area_sqm === 0 ? '' : inputs.site_area_sqm}
-                onChange={e => handleAreaChange(e.target.value)}
+                type="text"
+                inputMode="decimal"
+                value={rawInputs.site_area_sqm ?? ''}
+                onChange={e => handleRawChange('site_area_sqm', e.target.value)}
                 style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '4px' }}
               />
             </div>
@@ -262,18 +279,20 @@ export const SpaceOptimizationPage: React.FC = () => {
               <div>
                 <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>LENGTH (m)</label>
                 <input
-                  type="number"
-                  value={inputs.site_length_m === 0 ? '' : inputs.site_length_m}
-                  onChange={e => handleLengthChange(e.target.value)}
+                  type="text"
+                  inputMode="decimal"
+                  value={rawInputs.site_length_m ?? ''}
+                  onChange={e => handleRawChange('site_length_m', e.target.value)}
                   style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '4px' }}
                 />
               </div>
               <div>
                 <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>WIDTH (m)</label>
                 <input
-                  type="number"
-                  value={inputs.site_width_m === 0 ? '' : inputs.site_width_m}
-                  onChange={e => handleWidthChange(e.target.value)}
+                  type="text"
+                  inputMode="decimal"
+                  value={rawInputs.site_width_m ?? ''}
+                  onChange={e => handleRawChange('site_width_m', e.target.value)}
                   style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '4px' }}
                 />
               </div>
@@ -301,9 +320,10 @@ export const SpaceOptimizationPage: React.FC = () => {
             <div>
               <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>WORKER COUNT</label>
               <input
-                type="number"
-                value={inputs.worker_count === 0 ? '' : inputs.worker_count}
-                onChange={e => setInputs({ ...inputs, worker_count: e.target.value === '' ? 0 : (parseInt(e.target.value) || 0) })}
+                type="text"
+                inputMode="numeric"
+                value={rawInputs.worker_count ?? ''}
+                onChange={e => handleRawChange('worker_count', e.target.value)}
                 style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '4px' }}
               />
             </div>
@@ -311,9 +331,10 @@ export const SpaceOptimizationPage: React.FC = () => {
             <div>
               <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold' }}>MACHINERY COUNT</label>
               <input
-                type="number"
-                value={inputs.machinery_count === 0 ? '' : inputs.machinery_count}
-                onChange={e => setInputs({ ...inputs, machinery_count: e.target.value === '' ? 0 : (parseInt(e.target.value) || 0) })}
+                type="text"
+                inputMode="numeric"
+                value={rawInputs.machinery_count ?? ''}
+                onChange={e => handleRawChange('machinery_count', e.target.value)}
                 style={{ width: '100%', fontSize: '16px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', padding: '8px 12px', border: '1.5px solid #111111', borderRadius: '6px', marginTop: '4px' }}
               />
             </div>
