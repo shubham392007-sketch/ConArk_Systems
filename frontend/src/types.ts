@@ -179,3 +179,26 @@ export interface SpaceOptimizationResponse {
     };
   };
 }
+
+export interface ConstructionAIMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: string;
+  error?: boolean;
+}
+
+export interface ConstructionAISession {
+  id: string;
+  title: string;
+  createdAt: string;
+  messages: ConstructionAIMessage[];
+}
+
+export interface ConstructionAIResponse {
+  success: boolean;
+  message: string;
+  conversation_id: string;
+  model: string;
+  error_code?: string;
+}

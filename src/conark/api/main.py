@@ -12,7 +12,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from conark.config.settings import settings
 from conark.api.dependencies import get_intelligence_engine
-from conark.api.routes import health, prediction, forecasting, recommendation, alerts, intelligence, space_optimization
+from conark.api.routes import health, prediction, forecasting, recommendation, alerts, intelligence, space_optimization, construction_ai
 from conark.utils.logging import get_logger
 
 logger = get_logger("fastapi_main")
@@ -30,7 +30,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title=settings.APP_NAME,
-    description="Complete Construction AI Intelligence Platform powered by 5 ML Models, Space Optimization Engine, Alert Engine, and Gemini 2.5 Flash.",
+    description="Complete Construction AI Intelligence Platform powered by 5 ML Models, Space Optimization Engine, OpenRouter Construction Assistant, Alert Engine, and Gemini 2.5 Flash.",
     version="1.0.0",
     lifespan=lifespan,
     docs_url="/docs",
@@ -55,6 +55,7 @@ app.include_router(recommendation.router, prefix=prefix_v1)
 app.include_router(alerts.router, prefix=prefix_v1)
 app.include_router(intelligence.router, prefix=prefix_v1)
 app.include_router(space_optimization.router, prefix=prefix_v1)
+app.include_router(construction_ai.router, prefix=prefix_v1)
 
 # Resolve production frontend SPA static directory
 possible_dist_paths = [

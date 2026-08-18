@@ -40,7 +40,7 @@ export const Footer: React.FC = () => {
             textTransform: 'uppercase',
             letterSpacing: '0.05em'
           }}>
-            ML PREDICTS · OPTIMIZATION DECIDES · GEMINI EXPLAINS
+            ML PREDICTS · OPTIMIZATION DECIDES · GEMINI EXPLAINS · CONARK AI ANSWERS
           </div>
 
           <div style={{ fontSize: '11px', color: '#777777', fontFamily: 'JetBrains Mono, monospace' }}>
@@ -62,6 +62,8 @@ export const Footer: React.FC = () => {
         }}>
           <Link to="/" style={{ color: '#111111', textDecoration: 'none' }}>COMMAND CENTER</Link>
           <span style={{ color: '#999' }}>·</span>
+          <Link to="/construction-ai" style={{ color: '#FF2AA1', textDecoration: 'none' }}>CONARK AI</Link>
+          <span style={{ color: '#999' }}>·</span>
           <Link to="/predictions" style={{ color: '#111111', textDecoration: 'none' }}>PREDICTIONS</Link>
           <span style={{ color: '#999' }}>·</span>
           <Link to="/space-optimization" style={{ color: '#111111', textDecoration: 'none' }}>SPACE</Link>
@@ -72,7 +74,7 @@ export const Footer: React.FC = () => {
           <span style={{ color: '#999' }}>·</span>
           <Link to="/reports" style={{ color: '#111111', textDecoration: 'none' }}>REPORTS</Link>
           <span style={{ color: '#999' }}>·</span>
-          <Link to="/brains" style={{ color: '#FF2AA1', textDecoration: 'none' }}>THE BRAINS BEHIND CONARK</Link>
+          <Link to="/brains" style={{ color: '#111111', textDecoration: 'none' }}>THE BRAINS BEHIND CONARK</Link>
         </div>
       </div>
     </footer>

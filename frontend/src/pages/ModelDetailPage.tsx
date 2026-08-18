@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Sparkles, CheckCircle2, ShieldCheck, Activity, Sliders } from 'lucide-react';
 import { analyzeProjectIntelligence, optimizeSpaceLayout } from '../services/api';
 import type { OperationalInputs, SpaceInputs, SpaceOptimizationResponse, ZoneCoordinates } from '../types';
@@ -7,6 +7,7 @@ import { ReportActionBanner } from '../components/pdf/ReportActionBanner';
 
 export const ModelDetailPage: React.FC = () => {
   const { modelId } = useParams<{ modelId: string }>();
+  const navigate = useNavigate();
   const isSpaceOpt = modelId === 'optimization' || modelId === 'space';
 
   const [loading, setLoading] = useState(false);
@@ -1000,6 +1001,28 @@ export const ModelDetailPage: React.FC = () => {
                   {modelId === 'cost' && `STATUS: ${result?.ml_results?.cost_forecast?.budget_status || 'Over Budget'}`}
                   {modelId === 'time' && `SCHEDULE: ${result?.ml_results?.time_forecast?.schedule_status || 'Ahead'}`}
                   {isSpaceOpt && `EFFICIENCY IMPROVEMENT: ${result?.ml_results?.optimization?.expected_improvement || '+15% Operational Yield'}`}
+                </div>
+
+                <div style={{ marginTop: '16px' }}>
+                  <button
+                    onClick={() => navigate(`/construction-ai?context=${modelId || 'performance'}`)}
+                    style={{
+                      backgroundColor: '#FF2AA1',
+                      color: '#FFFFFF',
+                      border: '2px solid #111111',
+                      borderRadius: '8px',
+                      padding: '10px 16px',
+                      fontFamily: 'Anton, sans-serif',
+                      fontSize: '15px',
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      boxShadow: '3px 3px 0px #111111'
+                    }}
+                  >
+                    ASK CONARK AI ABOUT THIS RESULT →
+                  </button>
                 </div>
               </div>
 

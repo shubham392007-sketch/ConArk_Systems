@@ -19,6 +19,11 @@ class Settings(BaseSettings):
     GEMINI_MODEL: str = "gemini-2.5-flash"
     GEMINI_TIMEOUT_SECONDS: int = 30
     GEMINI_MAX_RETRIES: int = 2
+
+    # OpenRouter API Integration (openai/gpt-oss-120b:free)
+    OPENROUTER_API_KEY: str = ""
+    OPENROUTER_MODEL: str = "openai/gpt-oss-120b:free"
+    OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1"
     
     BASE_DIR: Path = Path(__file__).resolve().parent.parent.parent.parent
     MODEL_DIR: Path = BASE_DIR / "models"

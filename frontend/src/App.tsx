@@ -12,6 +12,7 @@ import { ReportsPage } from './pages/ReportsPage';
 import { ModelRegistryPage } from './pages/ModelRegistryPage';
 import { ModelDetailPage } from './pages/ModelDetailPage';
 import { TheBrainsPage } from './pages/TheBrainsPage';
+import { ConstructionAIPage } from './pages/ConstructionAIPage';
 
 const ScrollToTop: React.FC = () => {
   const { pathname } = useLocation();
@@ -37,6 +38,7 @@ const MainContent: React.FC = () => {
     <main className={showGrid ? 'bg-grid-blueprint' : ''} style={{ flex: 1 }}>
       <Routes>
         <Route path="/" element={<CommandCenter />} />
+        <Route path="/construction-ai" element={<ConstructionAIPage />} />
         <Route path="/input" element={<ProjectInput />} />
         <Route path="/predictions" element={<PredictionsHub />} />
         <Route path="/space-optimization" element={<SpaceOptimizationPage />} />

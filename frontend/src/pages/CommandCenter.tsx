@@ -529,6 +529,127 @@ export const CommandCenter: React.FC = () => {
               </div>
             </div>
           </div>
+
+          {/* FEATURE 07: ASK CONARK AI ASSISTANT */}
+          <div
+            onClick={() => navigate('/construction-ai')}
+            className="card-hover-lift card-responsive-padding"
+            style={{
+              backgroundColor: '#4FC3F7',
+              border: '2.5px dashed #111111',
+              borderRadius: '20px',
+              padding: '44px 48px',
+              boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)',
+              position: 'relative',
+              marginTop: '-20px',
+              zIndex: 0,
+              cursor: 'pointer'
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px' }}>
+              <div style={{ flex: 1, minWidth: '280px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', color: '#111111', fontWeight: 'bold' }}>07 / AI ASSISTANT</span>
+                  <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', backgroundColor: '#111111', color: '#FFFFFF', padding: '3px 10px', borderRadius: '4px' }}>
+                    OPENAI GPT-OSS-120B VIA OPENROUTER
+                  </span>
+                  <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', color: '#111' }}>[CLICK TO OPEN CONARK AI ASSISTANT →]</span>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '10px' }}>
+                  <div style={{
+                    width: '32px',
+                    height: '32px',
+                    backgroundColor: '#FF2AA1',
+                    transform: 'rotate(45deg)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 2px 8px rgba(255,42,161,0.4)',
+                    flexShrink: 0
+                  }}>
+                    <span style={{ transform: 'rotate(-45deg)', color: '#FFF', fontFamily: 'Anton, sans-serif', fontSize: '15px' }}>CA</span>
+                  </div>
+                  
+                  <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(36px, 4.5vw, 56px)', color: '#111111', textTransform: 'uppercase', lineHeight: '0.95', margin: 0 }}>
+                    ASK CONARK
+                  </h2>
+                </div>
+
+                <p style={{ fontSize: '16px', fontWeight: '700', color: '#111111', fontFamily: 'Inter, sans-serif', marginTop: '10px' }}>
+                  Construction intelligence, without the manual search.
+                </p>
+
+                <p style={{ fontSize: '14px', color: '#111111', fontFamily: 'Inter, sans-serif', marginTop: '6px', maxWidth: '640px', lineHeight: '1.5' }}>
+                  Ask questions about construction, safety, materials, scheduling, cost, workforce, machinery, optimization, and site operations.
+                </p>
+
+                <div style={{ marginTop: '20px', display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                  <button style={{
+                    backgroundColor: '#111111',
+                    color: '#FFFFFF',
+                    fontFamily: 'Anton, sans-serif',
+                    fontSize: '18px',
+                    letterSpacing: '0.04em',
+                    padding: '12px 24px',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}>
+                    ASK CONARK →
+                  </button>
+
+                  {/* Minimal Animated Conversation Diagram */}
+                  <div style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    backgroundColor: 'rgba(255,255,255,0.75)',
+                    border: '1.5px solid #111111',
+                    padding: '8px 14px',
+                    borderRadius: '8px',
+                    fontFamily: 'JetBrains Mono, monospace',
+                    fontSize: '11px',
+                    fontWeight: '800'
+                  }}>
+                    <span>QUESTION</span>
+                    <span style={{ color: '#FF2AA1' }}>→</span>
+                    <span>CONARK AI</span>
+                    <span style={{ color: '#FF2AA1' }}>→</span>
+                    <span>EXPLANATION</span>
+                    <span style={{ color: '#FF2AA1' }}>→</span>
+                    <span>ACTION</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Floating White Assistant Card Visual */}
+              <div style={{
+                backgroundColor: '#FFFFFF',
+                border: '2px solid #111111',
+                borderRadius: '12px',
+                padding: '18px',
+                width: '320px',
+                boxShadow: '6px 6px 0px #111111'
+              }}>
+                <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#555', marginBottom: '6px' }}>
+                  EXAMPLE CONVERSATION
+                </div>
+
+                <div style={{ backgroundColor: '#111111', color: '#FFF', padding: '8px 12px', borderRadius: '6px', fontSize: '12px', fontFamily: 'Inter, sans-serif', fontWeight: '600', marginBottom: '10px' }}>
+                  "How can I reduce construction delays?"
+                </div>
+
+                <div style={{ backgroundColor: '#F5F3E3', border: '1px solid #111', padding: '10px 12px', borderRadius: '6px', fontSize: '12px', fontFamily: 'Inter, sans-serif', color: '#111' }}>
+                  <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '10px', fontWeight: '800', color: '#FF2AA1', marginBottom: '4px' }}>CONARK AI</div>
+                  "Start by identifying the current critical path tasks, enforcing fatigue limits, and reallocating material storage..."
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* EXTREME RIGHT MARGIN COLUMN: 5 LARGE SVGS */}

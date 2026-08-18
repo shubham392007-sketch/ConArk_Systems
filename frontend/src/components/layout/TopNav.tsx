@@ -66,6 +66,24 @@ export const TopNav: React.FC = () => {
           {/* Right Navigation & Status Trigger */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <Link
+              to="/construction-ai"
+              style={{
+                fontSize: '11px',
+                fontFamily: 'JetBrains Mono, monospace',
+                fontWeight: '800',
+                textTransform: 'uppercase',
+                border: '1.5px solid #111111',
+                padding: '6px 12px',
+                borderRadius: '6px',
+                backgroundColor: location.pathname === '/construction-ai' ? '#FF2AA1' : '#FFFFFF',
+                color: location.pathname === '/construction-ai' ? '#FFFFFF' : '#111111',
+                textDecoration: 'none'
+              }}
+            >
+              CONARK AI
+            </Link>
+
+            <Link
               to="/brains"
               style={{
                 fontSize: '11px',
