@@ -533,7 +533,7 @@ export const CommandCenter: React.FC = () => {
           {/* FEATURE 07: ASK CONARK AI ASSISTANT */}
           <div
             onClick={() => navigate('/construction-ai')}
-            className="card-hover-lift card-responsive-padding"
+            className="card-rotate-pos1 card-hover-lift card-responsive-padding"
             style={{
               backgroundColor: '#4FC3F7',
               border: '2.5px dashed #111111',
@@ -542,7 +542,7 @@ export const CommandCenter: React.FC = () => {
               boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)',
               position: 'relative',
               marginTop: '-20px',
-              zIndex: 0,
+              zIndex: 1,
               cursor: 'pointer'
             }}
           >

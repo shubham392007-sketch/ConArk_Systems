@@ -69,6 +69,12 @@ When technical terminology is necessary, explain it."""
 
 
 class OpenRouterService:
+    FALLBACK_MODELS = [
+        "openai/gpt-4o-mini",
+        "openrouter/auto",
+        "openai/gpt-oss-120b:free"
+    ]
+
     def __init__(
         self,
         api_key: Optional[str] = None,
@@ -76,7 +82,7 @@ class OpenRouterService:
         base_url: Optional[str] = None
     ):
         self.api_key = api_key or settings.OPENROUTER_API_KEY or os.getenv("OPENROUTER_API_KEY", "")
-        self.model = model or settings.OPENROUTER_MODEL or "openai/gpt-oss-120b:free"
+        self.primary_model = model or settings.OPENROUTER_MODEL or "openai/gpt-4o-mini"
         self.base_url = (base_url or settings.OPENROUTER_BASE_URL or "https://openrouter.ai/api/v1").rstrip("/")
 
     def _get_headers(self) -> Dict[str, str]:
@@ -126,71 +132,54 @@ class OpenRouterService:
         history: Optional[List[Dict[str, str]]] = None,
         project_context: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
-        """Non-streaming request to OpenRouter API."""
+        """Non-streaming request to OpenRouter API with automatic model fallback."""
         if not self.api_key:
             logger.warning("OpenRouter API key missing.")
             return {
                 "success": False,
                 "error_code": "KEY_MISSING",
                 "message": "ConArk AI service is not configured with an OpenRouter API key.",
-                "model": self.model
+                "model": self.primary_model
             }
 
         messages = self.format_messages(message, history, project_context)
-        payload = {
-            "model": self.model,
-            "messages": messages,
-            "temperature": 0.3,
-            "max_tokens": 2048
-        }
+        models_to_try = [self.primary_model] + [m for m in self.FALLBACK_MODELS if m != self.primary_model]
 
         url = f"{self.base_url}/chat/completions"
-        try:
-            async with httpx.AsyncClient(timeout=45.0) as client:
-                response = await client.post(url, headers=self._get_headers(), json=payload)
-                
-                if response.status_code == 429:
-                    logger.warning("OpenRouter Rate Limit 429 encountered.")
-                    return {
-                        "success": False,
-                        "error_code": "RATE_LIMIT",
-                        "message": "ConArk AI is temporarily busy. Please try again in a moment.",
-                        "model": self.model
-                    }
-                
-                if response.status_code != 200:
-                    logger.error(f"OpenRouter HTTP Error {response.status_code}: {response.text}")
-                    return {
-                        "success": False,
-                        "error_code": f"HTTP_{response.status_code}",
-                        "message": "Unable to reach the intelligence service right now.",
-                        "model": self.model
-                    }
-
-                data = response.json()
-                content = data["choices"][0]["message"]["content"]
-                return {
-                    "success": True,
-                    "message": content,
-                    "model": self.model
+        async with httpx.AsyncClient(timeout=45.0) as client:
+            for target_model in models_to_try:
+                payload = {
+                    "model": target_model,
+                    "messages": messages,
+                    "temperature": 0.3,
+                    "max_tokens": 2048
                 }
+                try:
+                    response = await client.post(url, headers=self._get_headers(), json=payload)
+                    if response.status_code == 200:
+                        data = response.json()
+                        content = data["choices"][0]["message"]["content"]
+                        return {
+                            "success": True,
+                            "message": content,
+                            "model": target_model
+                        }
+                    elif response.status_code == 429:
+                        logger.warning(f"OpenRouter 429 Rate Limit on model {target_model}")
+                        continue
+                    else:
+                        logger.warning(f"OpenRouter {response.status_code} on model {target_model}: {response.text}")
+                        continue
+                except Exception as e:
+                    logger.warning(f"OpenRouter exception on {target_model}: {e}")
+                    continue
 
-        except httpx.TimeoutException:
-            logger.error("OpenRouter request timeout.")
-            return {
-                "success": False,
-                "error_code": "TIMEOUT",
-                "message": "Request timed out while connecting to ConArk AI.",
-                "model": self.model
-            }
-        except Exception as e:
-            logger.error(f"OpenRouter unexpected exception: {e}")
-            return {
-                "success": False,
-                "error_code": "INTERNAL_ERROR",
-                "message": "Unable to reach the intelligence service right now.",
-                "model": self.model
-            }
+        return {
+            "success": False,
+            "error_code": "ALL_MODELS_FAILED",
+            "message": "Unable to reach the intelligence service right now. Please try again in a moment.",
+            "model": self.primary_model
+        }
 
     async def stream_chat_response(
         self,
@@ -198,7 +187,7 @@ class OpenRouterService:
         history: Optional[List[Dict[str, str]]] = None,
         project_context: Optional[Dict[str, Any]] = None
     ) -> AsyncGenerator[str, None]:
-        """Streaming Server-Sent Events generator for OpenRouter API."""
+        """Streaming Server-Sent Events generator for OpenRouter API with fallback."""
         if not self.api_key:
             err_json = json.dumps({
                 "error": True,
@@ -209,62 +198,56 @@ class OpenRouterService:
             return
 
         messages = self.format_messages(message, history, project_context)
-        payload = {
-            "model": self.model,
-            "messages": messages,
-            "temperature": 0.3,
-            "max_tokens": 2048,
-            "stream": True
-        }
-
+        models_to_try = [self.primary_model] + [m for m in self.FALLBACK_MODELS if m != self.primary_model]
         url = f"{self.base_url}/chat/completions"
-        try:
-            async with httpx.AsyncClient(timeout=60.0) as client:
-                async with client.stream("POST", url, headers=self._get_headers(), json=payload) as response:
-                    if response.status_code == 429:
-                        err_json = json.dumps({
-                            "error": True,
-                            "message": "ConArk AI is temporarily busy. Please try again in a moment.",
-                            "done": True
-                        })
-                        yield f"data: {err_json}\n\n"
-                        return
 
-                    if response.status_code != 200:
-                        err_json = json.dumps({
-                            "error": True,
-                            "message": "Unable to reach the intelligence service right now.",
-                            "done": True
-                        })
-                        yield f"data: {err_json}\n\n"
-                        return
-
-                    async for line in response.aiter_lines():
-                        if not line:
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            for target_model in models_to_try:
+                payload = {
+                    "model": target_model,
+                    "messages": messages,
+                    "temperature": 0.3,
+                    "max_tokens": 2048,
+                    "stream": True
+                }
+                try:
+                    async with client.stream("POST", url, headers=self._get_headers(), json=payload) as response:
+                        if response.status_code != 200:
+                            logger.warning(f"Streaming failed on {target_model} with status {response.status_code}")
                             continue
-                        if line.startswith("data: "):
-                            data_str = line[6:].strip()
-                            if data_str == "[DONE]":
-                                done_json = json.dumps({"done": True})
-                                yield f"data: {done_json}\n\n"
-                                break
-                            try:
-                                chunk_obj = json.loads(data_str)
-                                choices = chunk_obj.get("choices", [])
-                                if choices:
-                                    delta = choices[0].get("delta", {})
-                                    delta_content = delta.get("content", "")
-                                    if delta_content:
-                                        out_json = json.dumps({"chunk": delta_content, "done": False})
-                                        yield f"data: {out_json}\n\n"
-                            except Exception:
-                                continue
 
-        except Exception as e:
-            logger.error(f"OpenRouter streaming error: {e}")
-            err_json = json.dumps({
-                "error": True,
-                "message": "Unable to reach the intelligence service right now.",
-                "done": True
-            })
-            yield f"data: {err_json}\n\n"
+                        got_data = False
+                        async for line in response.aiter_lines():
+                            if not line:
+                                continue
+                            if line.startswith("data: "):
+                                data_str = line[6:].strip()
+                                if data_str == "[DONE]":
+                                    done_json = json.dumps({"done": True})
+                                    yield f"data: {done_json}\n\n"
+                                    return
+                                try:
+                                    chunk_obj = json.loads(data_str)
+                                    choices = chunk_obj.get("choices", [])
+                                    if choices:
+                                        delta = choices[0].get("delta", {})
+                                        delta_content = delta.get("content", "")
+                                        if delta_content:
+                                            got_data = True
+                                            out_json = json.dumps({"chunk": delta_content, "done": False})
+                                            yield f"data: {out_json}\n\n"
+                                except Exception:
+                                    continue
+
+                        if got_data:
+                            return
+                except Exception as e:
+                    logger.warning(f"Streaming exception on model {target_model}: {e}")
+                    continue
+
+        err_json = json.dumps({
+            "error": True,
+            "message": "Unable to reach the intelligence service right now. Please try again in a moment.",
+            "done": True
+        })
+        yield f"data: {err_json}\n\n"

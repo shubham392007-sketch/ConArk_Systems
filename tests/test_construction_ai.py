@@ -19,6 +19,8 @@ def test_construction_ai_chat_endpoint():
     assert response.status_code == 200
     data = response.json()
     assert "success" in data
+    assert data["success"] is True
     assert "message" in data
+    assert len(data["message"]) > 0
     assert "conversation_id" in data
-    assert data["model"] == "openai/gpt-oss-120b:free"
+    assert "model" in data
