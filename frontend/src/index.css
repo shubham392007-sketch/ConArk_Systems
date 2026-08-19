@@ -100,6 +100,38 @@ input, select, textarea {
   border: 2px dashed #111111 !important;
 }
 
+/* Text Loading & Streaming Typing Animations */
+@keyframes typing-cursor-blink {
+  0%, 100% { opacity: 1; transform: scaleY(1); }
+  50% { opacity: 0.15; transform: scaleY(0.85); }
+}
+
+@keyframes text-stream-pulse {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+.typing-cursor {
+  display: inline-block;
+  width: 9px;
+  height: 17px;
+  background-color: #FF2AA1;
+  margin-left: 4px;
+  vertical-align: sub;
+  border-radius: 2px;
+  animation: typing-cursor-blink 0.75s infinite ease-in-out;
+}
+
+.streaming-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #FF2AA1;
+  display: inline-block;
+  animation: text-stream-pulse 1.2s infinite ease-in-out;
+}
+
 /* Visible Light Technical Blueprint Grid (Active ONLY on Model Pages) */
 .bg-grid-blueprint {
   background-color: var(--bg-base);

@@ -769,8 +769,19 @@ Disclaimer: ConArk AI responses provide technical operational guidance. Safety-c
                       <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '15px' }}>
                         {isUser ? (
                           <div style={{ whiteSpace: 'pre-wrap' }}>{msg.content}</div>
+                        ) : !msg.content && (status === 'THINKING' || status === 'GENERATING') ? (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#555555', fontFamily: 'JetBrains Mono, monospace', fontSize: '13px', padding: '6px 0' }}>
+                            <span className="streaming-pulse-dot" />
+                            <span>Formulating construction intelligence response...</span>
+                          </div>
                         ) : (
-                          renderMarkdown(msg.content)
+                          <div>
+                            {renderMarkdown(msg.content)}
+                            {(status === 'THINKING' || status === 'GENERATING') &&
+                              msg.id === currentSession.messages[currentSession.messages.length - 1]?.id && (
+                                <span className="typing-cursor" title="Streaming incoming text from OpenRouter..." />
+                              )}
+                          </div>
                         )}
                       </div>
 
