@@ -11,6 +11,7 @@ import {
   Mic,
   MicOff,
   Menu,
+  X,
   MessageSquare,
   Sparkles,
   AlertTriangle,
@@ -270,7 +271,7 @@ export const ConstructionAIPage: React.FC = () => {
 ==================================================
 Date: ${new Date().toLocaleString()}
 Conversation ID: ${currentSessionId}
-Model: openai/gpt-oss-120b:free (via OpenRouter)
+Model: google/gemma-4-26b-a4b-it:free (via OpenRouter)
 --------------------------------------------------
 
 QUESTION:
@@ -419,7 +420,7 @@ Disclaimer: ConArk AI responses provide technical operational guidance. Safety-c
             gap: '8px'
           }}>
             <Cpu size={14} color="#FF2AA1" />
-            <span>AI MODEL: <strong>OPENAI GPT-OSS-120B</strong> VIA OPENROUTER</span>
+            <span>AI MODEL: <strong>GOOGLE GEMMA 4 26B A4B</strong> VIA OPENROUTER</span>
           </div>
 
           <div style={{
@@ -452,35 +453,46 @@ Disclaimer: ConArk AI responses provide technical operational guidance. Safety-c
         </div>
       </motion.div>
 
+      {/* MOBILE DRAWER BACKDROP OVERLAY */}
+      {mobileDrawerOpen && (
+        <div
+          className="mobile-drawer-overlay"
+          onClick={() => setMobileDrawerOpen(false)}
+        />
+      )}
+
       {/* MOBILE DRAWER TOGGLE BAR */}
-      <div className="mobile-drawer-toggle" style={{ display: 'none', marginBottom: '16px' }}>
+      <div className="mobile-drawer-toggle" style={{ marginBottom: '16px' }}>
         <button
           onClick={() => setMobileDrawerOpen(!mobileDrawerOpen)}
           style={{
             width: '100%',
             backgroundColor: '#111111',
             color: '#FFFFFF',
-            border: 'none',
-            padding: '12px 16px',
-            borderRadius: '8px',
+            border: '2px solid #111111',
+            padding: '14px 18px',
+            borderRadius: '10px',
             fontFamily: 'JetBrains Mono, monospace',
             fontSize: '13px',
             fontWeight: '800',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            boxShadow: '4px 4px 0px #FF2AA1'
           }}
         >
           <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Menu size={18} /> ☰ CONARK AI CHAT MENU
+            <Menu size={18} color="#FF2AA1" /> ☰ CONARK AI CHAT MENU & TOPICS
           </span>
-          <span>{sessions.length} CHATS</span>
+          <span style={{ backgroundColor: '#FF2AA1', color: '#FFF', padding: '2px 8px', borderRadius: '4px', fontSize: '11px' }}>
+            {sessions.length} CHATS
+          </span>
         </button>
       </div>
 
       {/* 2. MAIN TWO-COLUMN WORKSPACE */}
-      <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: '24px', alignItems: 'start' }}>
+      <div className="construction-ai-grid" style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: '24px', alignItems: 'start' }}>
         
         {/* LEFT SIDEBAR: CONVERSATION HISTORY & TOPICS (DESKTOP + MOBILE DRAWER) */}
         <div
@@ -498,6 +510,14 @@ Disclaimer: ConArk AI responses provide technical operational guidance. Safety-c
             overflowY: 'auto'
           }}
         >
+          {/* Mobile Close Button Header */}
+          <div className="mobile-drawer-toggle" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1.5px solid #111', paddingBottom: '12px' }}>
+            <span style={{ fontFamily: 'Anton, sans-serif', fontSize: '18px', color: '#111' }}>CONARK AI MENU</span>
+            <button onClick={() => setMobileDrawerOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}>
+              <X size={20} color="#111" />
+            </button>
+          </div>
+
           {/* + NEW CHAT Button */}
           <button
             onClick={() => {

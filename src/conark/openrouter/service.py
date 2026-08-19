@@ -70,9 +70,9 @@ When technical terminology is necessary, explain it."""
 
 class OpenRouterService:
     FALLBACK_MODELS = [
+        "google/gemma-4-26b-a4b-it:free",
         "openai/gpt-4o-mini",
-        "openrouter/auto",
-        "openai/gpt-oss-120b:free"
+        "openrouter/auto"
     ]
 
     def __init__(
@@ -82,7 +82,7 @@ class OpenRouterService:
         base_url: Optional[str] = None
     ):
         self.api_key = api_key or settings.OPENROUTER_API_KEY or os.getenv("OPENROUTER_API_KEY", "")
-        self.primary_model = model or settings.OPENROUTER_MODEL or "openai/gpt-4o-mini"
+        self.primary_model = model or settings.OPENROUTER_MODEL or "google/gemma-4-26b-a4b-it:free"
         self.base_url = (base_url or settings.OPENROUTER_BASE_URL or "https://openrouter.ai/api/v1").rstrip("/")
 
     def _get_headers(self) -> Dict[str, str]:

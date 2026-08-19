@@ -551,7 +551,7 @@ export const CommandCenter: React.FC = () => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
                   <span style={{ fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', color: '#111111', fontWeight: 'bold' }}>07 / AI ASSISTANT</span>
                   <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', backgroundColor: '#111111', color: '#FFFFFF', padding: '3px 10px', borderRadius: '4px' }}>
-                    OPENAI GPT-OSS-120B VIA OPENROUTER
+                    GOOGLE GEMMA 4 26B A4B VIA OPENROUTER
                   </span>
                   <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', color: '#111' }}>[CLICK TO OPEN CONARK AI ASSISTANT →]</span>
                 </div>

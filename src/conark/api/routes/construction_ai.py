@@ -29,7 +29,7 @@ class ChatResponse(BaseModel):
     success: bool
     message: str
     conversation_id: str
-    model: str = "openai/gpt-oss-120b:free"
+    model: str = "google/gemma-4-26b-a4b-it:free"
     error_code: Optional[str] = None
 
 

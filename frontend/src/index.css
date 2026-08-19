@@ -174,6 +174,61 @@ input, select, textarea {
   .founder-grid-responsive {
     grid-template-columns: 1fr !important;
   }
+  
+  /* Construction AI Mobile Responsive Sidebar & Workspace Drawer */
+  .construction-ai-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .mobile-drawer-toggle {
+    display: block !important;
+  }
+
+  .chat-sidebar {
+    display: none !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 320px !important;
+    max-width: 88vw !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    z-index: 9999 !important;
+    border-radius: 0 16px 16px 0 !important;
+    box-shadow: 10px 0px 30px rgba(0, 0, 0, 0.4) !important;
+    background-color: #FFFFFF !important;
+    overflow-y: auto !important;
+  }
+
+  .chat-sidebar.mobile-drawer-active {
+    display: flex !important;
+    animation: slideInLeft 0.25s ease-out forwards;
+  }
+}
+
+.mobile-drawer-toggle {
+  display: none;
+}
+
+.mobile-drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(3px);
+  z-index: 9998;
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 
 @media (max-width: 768px) {
