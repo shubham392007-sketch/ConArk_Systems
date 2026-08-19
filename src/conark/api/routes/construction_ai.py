@@ -79,3 +79,47 @@ async def stream_construction_ai(payload: ChatRequest):
         ),
         media_type="text/event-stream"
     )
+
+
+from fastapi import File, UploadFile
+from conark.gemini.stt_service import GeminiSTTService
+
+stt_service = GeminiSTTService()
+
+
+class STTBase64Request(BaseModel):
+    audio_b64: str = Field(..., description="Base64 encoded audio string")
+    mime_type: Optional[str] = Field(default="audio/webm", description="MIME type of the audio stream")
+
+
+@router.post("/stt")
+async def transcribe_audio(
+    file: Optional[UploadFile] = File(default=None),
+    payload: Optional[STTBase64Request] = None
+):
+    """
+    Transcribes spoken construction voice audio into text using Gemini API with GEMINI_API_KEY_OPTIMIZATION.
+    Supports either file upload or JSON base64 payload.
+    """
+    audio_bytes = b""
+    mime_type = "audio/webm"
+
+    if file:
+        audio_bytes = await file.read()
+        mime_type = file.content_type or "audio/webm"
+    elif payload and payload.audio_b64:
+        import base64
+        audio_bytes = base64.b64decode(payload.audio_b64)
+        mime_type = payload.mime_type or "audio/webm"
+    else:
+        raise HTTPException(status_code=400, detail="Either audio file or audio_b64 payload must be provided.")
+
+    res = await stt_service.transcribe_audio_bytes(audio_bytes, mime_type)
+    if not res["success"]:
+        raise HTTPException(status_code=500, detail=res.get("error", "Failed to transcribe audio via Gemini API."))
+
+    return {
+        "success": True,
+        "transcript": res["transcript"],
+        "model": res.get("model", "gemini-flash-latest")
+    }

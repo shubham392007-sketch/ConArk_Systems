@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     GEMINI_API_KEY_COST: str = ""
     GEMINI_API_KEY_TIME: str = ""
     GEMINI_API_KEY_OPTIMIZATION: str = ""
-    GEMINI_MODEL: str = "gemini-2.5-flash"
+    GEMINI_MODEL: str = "gemini-1.5-flash"
     GEMINI_TIMEOUT_SECONDS: int = 30
     GEMINI_MAX_RETRIES: int = 2
 

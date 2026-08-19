@@ -19,6 +19,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { useConstructionAI } from '../hooks/useConstructionAI';
+import { transcribeSpeechAudio } from '../services/constructionAI';
 
 // Topic Categories
 const TOPIC_CATEGORIES = [
@@ -133,10 +134,14 @@ export const ConstructionAIPage: React.FC = () => {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState<boolean>(false);
   const [copiedMsgId, setCopiedMsgId] = useState<string | null>(null);
 
-  // Speech Recognition state
+  // Gemini STT Audio MediaRecorder state
   const [isListening, setIsListening] = useState<boolean>(false);
   const [speechSupported, setSpeechSupported] = useState<boolean>(false);
+  const [isRecordingAudio, setIsRecordingAudio] = useState<boolean>(false);
+  const [isTranscribing, setIsTranscribing] = useState<boolean>(false);
   const recognitionRef = useRef<any>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -240,17 +245,65 @@ export const ConstructionAIPage: React.FC = () => {
     }
   };
 
-  const toggleSpeech = () => {
-    if (!speechSupported || !recognitionRef.current) return;
-    if (isListening) {
-      recognitionRef.current.stop();
-      setIsListening(false);
-    } else {
+  const toggleSpeech = async () => {
+    if (isRecordingAudio) {
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+        mediaRecorderRef.current.stop();
+      }
+      setIsRecordingAudio(false);
+      return;
+    }
+
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       try {
-        recognitionRef.current.start();
-        setIsListening(true);
-      } catch {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        audioChunksRef.current = [];
+        const recorder = new MediaRecorder(stream);
+
+        recorder.ondataavailable = (e) => {
+          if (e.data.size > 0) {
+            audioChunksRef.current.push(e.data);
+          }
+        };
+
+        recorder.onstop = async () => {
+          stream.getTracks().forEach(track => track.stop());
+          const audioBlob = new Blob(audioChunksRef.current, { type: recorder.mimeType || 'audio/webm' });
+          if (audioBlob.size > 0) {
+            setIsTranscribing(true);
+            try {
+              const res = await transcribeSpeechAudio(audioBlob);
+              if (res && res.transcript) {
+                setInputPrompt(prev => (prev ? prev + ' ' + res.transcript : res.transcript));
+              }
+            } catch (err: any) {
+              console.error('Gemini STT error:', err);
+            } finally {
+              setIsTranscribing(false);
+            }
+          }
+        };
+
+        recorder.start();
+        mediaRecorderRef.current = recorder;
+        setIsRecordingAudio(true);
+        return;
+      } catch (err) {
+        console.warn('Microphone access for Gemini STT failed, falling back to Web Speech API', err);
+      }
+    }
+
+    if (speechSupported && recognitionRef.current) {
+      if (isListening) {
+        recognitionRef.current.stop();
         setIsListening(false);
+      } else {
+        try {
+          recognitionRef.current.start();
+          setIsListening(true);
+        } catch {
+          setIsListening(false);
+        }
       }
     }
   };
@@ -927,27 +980,41 @@ Disclaimer: ConArk AI responses provide technical operational guidance. Safety-c
                 }}
               />
 
-              {/* Voice Input Microphone Button */}
-              {speechSupported && (
-                <button
-                  type="button"
-                  onClick={toggleSpeech}
-                  style={{
-                    backgroundColor: isListening ? '#FF2AA1' : '#EDECE7',
-                    color: isListening ? '#FFFFFF' : '#111111',
-                    border: '1.5px solid #111111',
-                    borderRadius: '6px',
-                    padding: '8px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                  title={isListening ? 'Listening...' : 'Voice Input'}
-                >
-                  {isListening ? <MicOff size={18} /> : <Mic size={18} />}
-                </button>
-              )}
+              {/* Voice Input Microphone Button (Gemini STT Enabled) */}
+              <button
+                type="button"
+                onClick={toggleSpeech}
+                disabled={isTranscribing}
+                style={{
+                  backgroundColor: isRecordingAudio ? '#FF2AA1' : (isListening ? '#E4FF5B' : '#EDECE7'),
+                  color: isRecordingAudio ? '#FFFFFF' : '#111111',
+                  border: '1.5px solid #111111',
+                  borderRadius: '6px',
+                  padding: '8px 12px',
+                  cursor: isTranscribing ? 'wait' : 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  fontFamily: 'JetBrains Mono, monospace',
+                  fontSize: '11px',
+                  fontWeight: '800'
+                }}
+                title={isRecordingAudio ? 'Click to Stop Recording & Transcribe via Gemini' : 'Voice Input (Gemini STT)'}
+              >
+                {isTranscribing ? (
+                  <>
+                    <RotateCw size={14} />
+                    <span>GEMINI STT...</span>
+                  </>
+                ) : isRecordingAudio ? (
+                  <>
+                    <MicOff size={14} color="#FFF" />
+                    <span>STOP & TRANSCRIBE</span>
+                  </>
+                ) : (
+                  <Mic size={18} />
+                )}
+              </button>
 
               {/* Send Button */}
               <button

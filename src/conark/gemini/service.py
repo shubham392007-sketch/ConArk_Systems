@@ -136,17 +136,26 @@ class GeminiService:
                     model_target = intelligence_payload.get("target_model") or "performance"
                     client_wrapper = GeminiClient.for_model(model_target)
                     client = client_wrapper.client
-                    response = client.models.generate_content(
-                        model=client_wrapper.model_name,
-                        contents=prompt,
-                        config=types.GenerateContentConfig(
-                            system_instruction=GEMINI_SYSTEM_PROMPT,
-                            response_mime_type="application/json",
-                            response_schema=GeminiConstructionReport,
-                            temperature=0.2,
-                        )
-                    )
-                    return response
+                    candidate_models = ["gemini-flash-latest", "gemini-1.5-flash", "gemini-3.6-flash", "gemini-2.5-flash-lite"]
+                    last_exc = None
+                    for m_name in candidate_models:
+                        try:
+                            response = client.models.generate_content(
+                                model=m_name,
+                                contents=prompt,
+                                config=types.GenerateContentConfig(
+                                    system_instruction=GEMINI_SYSTEM_PROMPT,
+                                    response_mime_type="application/json",
+                                    response_schema=GeminiConstructionReport,
+                                    temperature=0.2,
+                                )
+                            )
+                            return response
+                        except Exception as e:
+                            last_exc = e
+                            continue
+                    if last_exc:
+                        raise last_exc
 
                 response = await asyncio.wait_for(loop.run_in_executor(None, _call_gemini), timeout=timeout)
                 

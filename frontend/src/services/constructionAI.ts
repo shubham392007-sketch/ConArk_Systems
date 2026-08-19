@@ -127,3 +127,24 @@ export async function streamConstructionAIMessage(
     callbacks.onError(err?.message || 'Unable to reach the intelligence service right now.');
   }
 }
+
+export async function transcribeSpeechAudio(audioBlob: Blob): Promise<{ success: boolean; transcript: string }> {
+  const formData = new FormData();
+  formData.append('file', audioBlob, 'voice_recording.webm');
+
+  const res = await fetch(`${API_BASE}/construction-ai/stt`, {
+    method: 'POST',
+    body: formData
+  });
+
+  if (!res.ok) {
+    let errorMsg = 'Gemini STT transcription failed.';
+    try {
+      const err = await res.json();
+      if (err.detail) errorMsg = err.detail;
+    } catch {}
+    throw new Error(errorMsg);
+  }
+
+  return res.json();
+}
