@@ -181,15 +181,13 @@ export const CommandCenter: React.FC = () => {
         <span>30m</span>
         <span style={{ flex: 1, borderTop: '1px dashed #999', margin: '0 12px', minWidth: '20px' }} />
         <span>40m SITE BOUNDARY</span>
-      </div>
-
-      {/* 3-COLUMN MAIN LAYOUT (RESPONSIVE: 1fr on mobile/tablets) */}
-      <div className="command-center-grid" style={{ display: 'grid', gridTemplateColumns: '160px 1fr 160px', gap: '16px', alignItems: 'stretch', marginBottom: '44px' }}>
+      </div>      {/* 6-CARD STACK WITH 1-TO-1 DEDICATED LEFT & RIGHT CONSTRUCTION SVGS */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0px', width: '100%', marginBottom: '44px' }}>
         
-        {/* EXTREME LEFT MARGIN COLUMN: 5 LARGE SVGS */}
-        <div className="side-svg-column" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', opacity: 0.9, height: '100%' }}>
-          
-          <div style={{ height: '175px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        {/* ROW 01: CARD 01 - PERFORMANCE MODEL */}
+        <div className="card-row-grid" style={{ display: 'grid', gridTemplateColumns: '160px 1fr 160px', gap: '16px', alignItems: 'center', zIndex: 6, position: 'relative' }}>
+          {/* Left SVG: TOWER CRANE 01 */}
+          <div className="side-svg-column" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.9 }}>
             <svg width="140" height="135" viewBox="0 0 100 130" fill="none" stroke="#111111" strokeWidth="2">
               <line x1="25" y1="130" x2="25" y2="10" />
               <line x1="25" y1="10" x2="95" y2="10" />
@@ -202,62 +200,9 @@ export const CommandCenter: React.FC = () => {
               <rect x="70" y="75" width="10" height="8" fill="#FF2AA1" stroke="#111111" />
               <rect x="5" y="15" width="12" height="12" fill="#111111" />
             </svg>
-            <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '2px' }}>TOWER CRANE 01</span>
+            <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '4px' }}>TOWER CRANE 01</span>
           </div>
 
-          <div style={{ height: '175px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <svg width="140" height="120" viewBox="0 0 120 100" fill="none" stroke="#111111" strokeWidth="2">
-              <rect x="10" y="70" width="70" height="20" rx="10" fill="#EDECE7" />
-              <circle cx="25" cy="80" r="5" />
-              <circle cx="45" cy="80" r="5" />
-              <circle cx="65" cy="80" r="5" />
-              <rect x="20" y="40" width="35" height="30" fill="#E4FF5B" stroke="#111111" />
-              <rect x="25" y="45" width="15" height="15" fill="#FFFFFF" stroke="#111111" />
-              <path d="M50 50 L80 25 L105 55 L95 70" strokeWidth="2.5" />
-              <path d="M95 70 L115 75 L110 85 Z" fill="#111111" />
-            </svg>
-            <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '2px' }}>EXCAVATOR UNIT</span>
-          </div>
-
-          <div style={{ height: '175px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <svg width="130" height="110" viewBox="0 0 100 90" fill="none" stroke="#111111" strokeWidth="2">
-              <path d="M20 50 C20 25, 80 25, 80 50 Z" fill="#E4FF5B" stroke="#111111" />
-              <path d="M10 50 Q50 42 90 50 L95 56 L5 56 Z" fill="#111111" />
-              <rect x="42" y="32" width="16" height="10" fill="#FF2AA1" rx="2" />
-            </svg>
-            <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '2px' }}>SITE SAFETY RIG</span>
-          </div>
-
-          <div style={{ height: '175px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <svg width="130" height="135" viewBox="0 0 100 130" fill="none" stroke="#111111" strokeWidth="1.8">
-              <rect x="15" y="10" width="70" height="110" strokeDasharray="3 3" />
-              <line x1="15" y1="40" x2="85" y2="40" strokeWidth="2" />
-              <line x1="15" y1="75" x2="85" y2="75" strokeWidth="2" />
-              <line x1="15" y1="10" x2="85" y2="75" />
-              <line x1="85" y1="10" x2="15" y2="75" />
-              <line x1="15" y1="75" x2="85" y2="120" />
-              <line x1="85" y1="75" x2="15" y2="120" />
-            </svg>
-            <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '2px' }}>SCAFFOLD MATRIX</span>
-          </div>
-
-          <div style={{ height: '175px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <svg width="140" height="120" viewBox="0 0 120 100" fill="none" stroke="#111111" strokeWidth="2">
-              <ellipse cx="45" cy="45" rx="30" ry="20" transform="rotate(-20 45 45)" fill="#E4FF5B" stroke="#111111" />
-              <rect x="75" y="45" width="30" height="30" fill="#4FC3F7" stroke="#111111" />
-              <rect x="85" y="50" width="15" height="12" fill="#FFFFFF" stroke="#111111" />
-              <circle cx="30" cy="80" r="8" fill="#111111" />
-              <circle cx="50" cy="80" r="8" fill="#111111" />
-              <circle cx="90" cy="80" r="8" fill="#111111" />
-            </svg>
-            <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '2px' }}>CONCRETE MIXER</span>
-          </div>
-
-        </div>
-
-        {/* CENTER COLUMN: EXPANDED 5-MODEL CARD DECK */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0px', width: '100%' }}>
-          
           {/* MODEL 01: PERFORMANCE MODEL */}
           <div
             onClick={() => navigate('/model/performance')}
@@ -269,7 +214,7 @@ export const CommandCenter: React.FC = () => {
               padding: '44px 48px',
               boxShadow: '0 12px 24px rgba(0, 0, 0, 0.08)',
               position: 'relative',
-              zIndex: 5,
+              zIndex: 6,
               cursor: 'pointer'
             }}
           >
@@ -314,6 +259,38 @@ export const CommandCenter: React.FC = () => {
             </div>
           </div>
 
+          {/* Right SVG: BUILDING SKELETON */}
+          <div className="side-svg-column" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.9 }}>
+            <svg width="130" height="135" viewBox="0 0 120 150" fill="none" stroke="#111111" strokeWidth="1.8">
+              <rect x="15" y="20" width="90" height="120" strokeDasharray="4 4" fill="#EDECE7" />
+              <line x1="15" y1="60" x2="105" y2="60" strokeWidth="2" />
+              <line x1="15" y1="100" x2="105" y2="100" strokeWidth="2" />
+              <line x1="45" y1="20" x2="45" y2="140" strokeWidth="2" />
+              <line x1="75" y1="20" x2="75" y2="140" strokeWidth="2" />
+              <circle cx="45" cy="60" r="5" fill="#FF2AA1" />
+              <circle cx="75" cy="100" r="5" fill="#7CFFA6" stroke="#111" />
+            </svg>
+            <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '4px' }}>BUILDING SKELETON</span>
+          </div>
+        </div>
+
+        {/* ROW 02: CARD 02 - OPERATIONAL RISK MODEL */}
+        <div className="card-row-grid" style={{ display: 'grid', gridTemplateColumns: '160px 1fr 160px', gap: '16px', alignItems: 'center', marginTop: '-20px', zIndex: 5, position: 'relative' }}>
+          {/* Left SVG: EXCAVATOR UNIT */}
+          <div className="side-svg-column" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.9 }}>
+            <svg width="140" height="120" viewBox="0 0 120 100" fill="none" stroke="#111111" strokeWidth="2">
+              <rect x="10" y="70" width="70" height="20" rx="10" fill="#EDECE7" />
+              <circle cx="25" cy="80" r="5" fill="#111" />
+              <circle cx="45" cy="80" r="5" fill="#111" />
+              <circle cx="65" cy="80" r="5" fill="#111" />
+              <rect x="20" y="40" width="35" height="30" fill="#E4FF5B" stroke="#111111" />
+              <rect x="25" y="45" width="15" height="15" fill="#FFFFFF" stroke="#111111" />
+              <path d="M50 50 L80 25 L105 55 L95 70" strokeWidth="2.5" />
+              <path d="M95 70 L115 75 L110 85 Z" fill="#111111" />
+            </svg>
+            <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '4px' }}>EXCAVATOR UNIT</span>
+          </div>
+
           {/* MODEL 02: RISK MODEL */}
           <div
             onClick={() => navigate('/model/risk')}
@@ -325,8 +302,7 @@ export const CommandCenter: React.FC = () => {
               padding: '44px 48px',
               boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)',
               position: 'relative',
-              marginTop: '-20px',
-              zIndex: 4,
+              zIndex: 5,
               cursor: 'pointer'
             }}
           >
@@ -368,6 +344,37 @@ export const CommandCenter: React.FC = () => {
             </div>
           </div>
 
+          {/* Right SVG: DRAFTING TOOL */}
+          <div className="side-svg-column" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.9 }}>
+            <svg width="130" height="120" viewBox="0 0 110 100" fill="none" stroke="#111111" strokeWidth="1.8">
+              <line x1="55" y1="15" x2="25" y2="85" strokeWidth="2.5" />
+              <line x1="55" y1="15" x2="85" y2="85" strokeWidth="2.5" />
+              <circle cx="55" cy="15" r="7" fill="#111111" />
+              <line x1="35" y1="55" x2="75" y2="55" strokeWidth="1.5" />
+              <path d="M 30 75 A 35 35 0 0 1 80 75" strokeDasharray="3 3" stroke="#FF2AA1" strokeWidth="2" />
+            </svg>
+            <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '4px' }}>DRAFTING TOOL</span>
+          </div>
+        </div>
+
+        {/* ROW 03: CARD 03 - COST FORECAST MODEL */}
+        <div className="card-row-grid" style={{ display: 'grid', gridTemplateColumns: '160px 1fr 160px', gap: '16px', alignItems: 'center', marginTop: '-20px', zIndex: 4, position: 'relative' }}>
+          {/* Left SVG: BULLDOZER UNIT */}
+          <div className="side-svg-column" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.9 }}>
+            <svg width="140" height="120" viewBox="0 0 120 100" fill="none" stroke="#111111" strokeWidth="2">
+              <rect x="25" y="68" width="65" height="18" rx="9" fill="#EDECE7" />
+              <circle cx="38" cy="77" r="5" fill="#111111" />
+              <circle cx="58" cy="77" r="5" fill="#111111" />
+              <circle cx="78" cy="77" r="5" fill="#111111" />
+              <rect x="35" y="38" width="35" height="30" fill="#E4FF5B" stroke="#111111" />
+              <rect x="42" y="44" width="14" height="14" fill="#FFFFFF" stroke="#111111" />
+              <path d="M 15 50 L 25 78 L 10 78 Z" fill="#111111" />
+              <path d="M 70 50 L 95 62 L 95 78" strokeWidth="2.5" />
+              <rect x="92" y="55" width="10" height="25" fill="#111111" rx="2" />
+            </svg>
+            <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '4px' }}>BULLDOZER UNIT</span>
+          </div>
+
           {/* MODEL 03: COST FORECAST MODEL */}
           <div
             onClick={() => navigate('/model/cost')}
@@ -379,8 +386,7 @@ export const CommandCenter: React.FC = () => {
               padding: '44px 48px',
               boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)',
               position: 'relative',
-              marginTop: '-20px',
-              zIndex: 3,
+              zIndex: 4,
               cursor: 'pointer'
             }}
           >
@@ -422,6 +428,34 @@ export const CommandCenter: React.FC = () => {
             </div>
           </div>
 
+          {/* Right SVG: MATERIAL SILO */}
+          <div className="side-svg-column" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.9 }}>
+            <svg width="130" height="125" viewBox="0 0 110 120" fill="none" stroke="#111111" strokeWidth="1.8">
+              <rect x="30" y="20" width="50" height="50" rx="4" fill="#E4FF5B" stroke="#111111" />
+              <path d="M 30 20 Q 55 5 80 20 Z" fill="#111111" />
+              <path d="M 30 70 L 55 92 L 80 70 Z" fill="#EDECE7" stroke="#111111" />
+              <line x1="30" y1="70" x2="20" y2="115" strokeWidth="2.5" />
+              <line x1="80" y1="70" x2="90" y2="115" strokeWidth="2.5" />
+              <line x1="42" y1="80" x2="38" y2="115" strokeWidth="2" />
+              <line x1="68" y1="80" x2="72" y2="115" strokeWidth="2" />
+              <circle cx="55" cy="45" r="8" fill="#FF2AA1" stroke="#111" />
+            </svg>
+            <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '4px' }}>MATERIAL SILO</span>
+          </div>
+        </div>
+
+        {/* ROW 04: CARD 04 - TIME FORECAST MODEL */}
+        <div className="card-row-grid" style={{ display: 'grid', gridTemplateColumns: '160px 1fr 160px', gap: '16px', alignItems: 'center', marginTop: '-20px', zIndex: 3, position: 'relative' }}>
+          {/* Left SVG: SITE SAFETY RIG */}
+          <div className="side-svg-column" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.9 }}>
+            <svg width="130" height="110" viewBox="0 0 100 90" fill="none" stroke="#111111" strokeWidth="2">
+              <path d="M20 50 C20 25, 80 25, 80 50 Z" fill="#E4FF5B" stroke="#111111" />
+              <path d="M10 50 Q50 42 90 50 L95 56 L5 56 Z" fill="#111111" />
+              <rect x="42" y="32" width="16" height="10" fill="#FF2AA1" rx="2" />
+            </svg>
+            <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '4px' }}>SITE SAFETY RIG</span>
+          </div>
+
           {/* MODEL 04: TIME FORECAST MODEL */}
           <div
             onClick={() => navigate('/model/time')}
@@ -433,8 +467,7 @@ export const CommandCenter: React.FC = () => {
               padding: '44px 48px',
               boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)',
               position: 'relative',
-              marginTop: '-20px',
-              zIndex: 2,
+              zIndex: 3,
               cursor: 'pointer'
             }}
           >
@@ -476,6 +509,35 @@ export const CommandCenter: React.FC = () => {
             </div>
           </div>
 
+          {/* Right SVG: SURVEY TRIPOD */}
+          <div className="side-svg-column" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.9 }}>
+            <svg width="125" height="120" viewBox="0 0 100 110" fill="none" stroke="#111111" strokeWidth="1.8">
+              <line x1="50" y1="35" x2="15" y2="105" strokeWidth="2" />
+              <line x1="50" y1="35" x2="50" y2="105" strokeWidth="2" />
+              <line x1="50" y1="35" x2="85" y2="105" strokeWidth="2" />
+              <rect x="30" y="20" width="40" height="15" fill="#7CFFA6" stroke="#111111" />
+              <circle cx="50" cy="27" r="4" fill="#FF2AA1" />
+            </svg>
+            <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '4px' }}>SURVEY TRIPOD</span>
+          </div>
+        </div>
+
+        {/* ROW 05: CARD 05 - RECOMMENDATION AND SPACE OPTIMIZATION MODEL */}
+        <div className="card-row-grid" style={{ display: 'grid', gridTemplateColumns: '160px 1fr 160px', gap: '16px', alignItems: 'center', marginTop: '-20px', zIndex: 2, position: 'relative' }}>
+          {/* Left SVG: SCAFFOLD MATRIX */}
+          <div className="side-svg-column" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.9 }}>
+            <svg width="130" height="135" viewBox="0 0 100 130" fill="none" stroke="#111111" strokeWidth="1.8">
+              <rect x="15" y="10" width="70" height="110" strokeDasharray="3 3" />
+              <line x1="15" y1="40" x2="85" y2="40" strokeWidth="2" />
+              <line x1="15" y1="75" x2="85" y2="75" strokeWidth="2" />
+              <line x1="15" y1="10" x2="85" y2="75" />
+              <line x1="85" y1="10" x2="15" y2="75" />
+              <line x1="15" y1="75" x2="85" y2="120" />
+              <line x1="85" y1="75" x2="15" y2="120" />
+            </svg>
+            <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '4px' }}>SCAFFOLD MATRIX</span>
+          </div>
+
           {/* MODEL 05: SPACE OPTIMIZATION MODEL */}
           <div
             onClick={() => navigate('/model/optimization')}
@@ -487,8 +549,7 @@ export const CommandCenter: React.FC = () => {
               padding: '44px 48px',
               boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)',
               position: 'relative',
-              marginTop: '-20px',
-              zIndex: 1,
+              zIndex: 2,
               cursor: 'pointer'
             }}
           >
@@ -530,6 +591,35 @@ export const CommandCenter: React.FC = () => {
             </div>
           </div>
 
+          {/* Right SVG: LOGISTICS TRUCK */}
+          <div className="side-svg-column" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.9 }}>
+            <svg width="140" height="110" viewBox="0 0 120 90" fill="none" stroke="#111111" strokeWidth="1.8">
+              <rect x="75" y="35" width="35" height="35" fill="#E4FF5B" stroke="#111111" />
+              <rect x="85" y="40" width="18" height="15" fill="#FFFFFF" stroke="#111111" />
+              <path d="M15 30 L65 30 L60 65 L15 65 Z" fill="#4FC3F7" stroke="#111111" />
+              <circle cx="30" cy="70" r="9" fill="#111111" />
+              <circle cx="50" cy="70" r="9" fill="#111111" />
+              <circle cx="95" cy="70" r="9" fill="#111111" />
+            </svg>
+            <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '4px' }}>LOGISTICS TRUCK</span>
+          </div>
+        </div>
+
+        {/* ROW 06: CARD 07 - ASK CONARK AI ASSISTANT */}
+        <div className="card-row-grid" style={{ display: 'grid', gridTemplateColumns: '160px 1fr 160px', gap: '16px', alignItems: 'center', marginTop: '-20px', zIndex: 1, position: 'relative' }}>
+          {/* Left SVG: CONCRETE MIXER */}
+          <div className="side-svg-column" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.9 }}>
+            <svg width="140" height="120" viewBox="0 0 120 100" fill="none" stroke="#111111" strokeWidth="2">
+              <ellipse cx="45" cy="45" rx="30" ry="20" transform="rotate(-20 45 45)" fill="#E4FF5B" stroke="#111111" />
+              <rect x="75" y="45" width="30" height="30" fill="#4FC3F7" stroke="#111111" />
+              <rect x="85" y="50" width="15" height="12" fill="#FFFFFF" stroke="#111111" />
+              <circle cx="30" cy="80" r="8" fill="#111111" />
+              <circle cx="50" cy="80" r="8" fill="#111111" />
+              <circle cx="90" cy="80" r="8" fill="#111111" />
+            </svg>
+            <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '4px' }}>CONCRETE MIXER</span>
+          </div>
+
           {/* FEATURE 07: ASK CONARK AI ASSISTANT */}
           <div
             onClick={() => navigate('/construction-ai')}
@@ -541,7 +631,6 @@ export const CommandCenter: React.FC = () => {
               padding: '44px 48px',
               boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)',
               position: 'relative',
-              marginTop: '-20px',
               zIndex: 1,
               cursor: 'pointer'
             }}
@@ -650,67 +739,16 @@ export const CommandCenter: React.FC = () => {
               </div>
             </div>
           </div>
-        </div>
 
-        {/* EXTREME RIGHT MARGIN COLUMN: 5 LARGE SVGS */}
-        <div className="side-svg-column" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', opacity: 0.9, height: '100%' }}>
-          
-          <div style={{ height: '175px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <svg width="130" height="135" viewBox="0 0 120 150" fill="none" stroke="#111111" strokeWidth="1.8">
-              <rect x="15" y="20" width="90" height="120" strokeDasharray="4 4" fill="#EDECE7" />
-              <line x1="15" y1="60" x2="105" y2="60" strokeWidth="2" />
-              <line x1="15" y1="100" x2="105" y2="100" strokeWidth="2" />
-              <line x1="45" y1="20" x2="45" y2="140" strokeWidth="2" />
-              <line x1="75" y1="20" x2="75" y2="140" strokeWidth="2" />
-              <circle cx="45" cy="60" r="5" fill="#FF2AA1" />
-              <circle cx="75" cy="100" r="5" fill="#7CFFA6" stroke="#111" />
-            </svg>
-            <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '2px' }}>BUILDING SKELETON</span>
-          </div>
-
-          <div style={{ height: '175px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <svg width="130" height="120" viewBox="0 0 110 100" fill="none" stroke="#111111" strokeWidth="1.8">
-              <line x1="55" y1="15" x2="25" y2="85" strokeWidth="2.5" />
-              <line x1="55" y1="15" x2="85" y2="85" strokeWidth="2.5" />
-              <circle cx="55" cy="15" r="7" fill="#111111" />
-              <line x1="35" y1="55" x2="75" y2="55" strokeWidth="1.5" />
-              <path d="M 30 75 A 35 35 0 0 1 80 75" strokeDasharray="3 3" stroke="#FF2AA1" strokeWidth="2" />
-            </svg>
-            <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '2px' }}>DRAFTING TOOL</span>
-          </div>
-
-          <div style={{ height: '175px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <svg width="125" height="120" viewBox="0 0 100 110" fill="none" stroke="#111111" strokeWidth="1.8">
-              <line x1="50" y1="35" x2="15" y2="105" strokeWidth="2" />
-              <line x1="50" y1="35" x2="50" y2="105" strokeWidth="2" />
-              <line x1="50" y1="35" x2="85" y2="105" strokeWidth="2" />
-              <rect x="30" y="20" width="40" height="15" fill="#7CFFA6" stroke="#111111" />
-              <circle cx="50" cy="27" r="4" fill="#FF2AA1" />
-            </svg>
-            <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '2px' }}>SURVEY TRIPOD</span>
-          </div>
-
-          <div style={{ height: '175px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <svg width="140" height="110" viewBox="0 0 120 90" fill="none" stroke="#111111" strokeWidth="1.8">
-              <rect x="75" y="35" width="35" height="35" fill="#E4FF5B" stroke="#111111" />
-              <rect x="85" y="40" width="18" height="15" fill="#FFFFFF" stroke="#111111" />
-              <path d="M15 30 L65 30 L60 65 L15 65 Z" fill="#4FC3F7" stroke="#111111" />
-              <circle cx="30" cy="70" r="9" fill="#111111" />
-              <circle cx="50" cy="70" r="9" fill="#111111" />
-              <circle cx="95" cy="70" r="9" fill="#111111" />
-            </svg>
-            <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '2px' }}>LOGISTICS TRUCK</span>
-          </div>
-
-          <div style={{ height: '175px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+          {/* Right SVG: STEEL I-BEAM RIG */}
+          <div className="side-svg-column" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.9 }}>
             <svg width="130" height="120" viewBox="0 0 100 100" fill="none" stroke="#111111" strokeWidth="2">
               <rect x="15" y="15" width="70" height="14" fill="#111111" />
               <rect x="15" y="71" width="70" height="14" fill="#111111" />
               <rect x="43" y="29" width="14" height="42" fill="#E4FF5B" stroke="#111111" />
             </svg>
-            <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '2px' }}>STEEL I-BEAM RIG</span>
+            <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '4px' }}>STEEL I-BEAM RIG</span>
           </div>
-
         </div>
 
       </div>

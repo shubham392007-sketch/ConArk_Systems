@@ -146,7 +146,7 @@ input, select, textarea {
 
 /* Responsive Media Query Classes */
 @media (max-width: 1024px) {
-  .command-center-grid {
+  .command-center-grid, .card-row-grid {
     grid-template-columns: 1fr !important;
     width: 100% !important;
   }
