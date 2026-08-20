@@ -111,14 +111,41 @@ console.log(data.predictions);`,
     {
       id: 'model-cost',
       category: 'MODELS',
-      title: 'Cost & Time Intelligence Model',
-      shortDesc: 'Forecasts material budget overruns, labor costs, and schedule slippage in days.',
-      overview: 'Splits evaluation into dual regression estimators: Cost Regressor (predicts budget variance in USD) and Schedule Regressor (predicts completion delay in calendar days).',
-      inputs: ['Project Duration (months)', 'Material Inflation Rate (%)', 'Workforce Size', 'Overtime Hours'],
-      processing: 'Multi-target ExtraTreesRegressor with hyperparameter tuning.',
-      outputs: ['Cost Variance ($)', 'Projected Total Budget', 'Schedule Delay (Days)'],
-      limitations: 'Relies on macro-economic inflation input parameters provided by the user.',
-      related: ['model-risk', 'model-opt']
+      title: 'Cost Forecast Intelligence Model',
+      shortDesc: 'Forecasts material budget overruns, labor expenditure, and total cost variance in USD.',
+      overview: 'The Cost Forecast Intelligence Model utilizes XGBRegressor algorithms trained on historical procurement and labor telemetries to predict budget variance ($).',
+      inputs: ['Material Usage (kg)', 'Energy Consumption (kWh)', 'Equipment Utilization Rate (%)', 'Task Progress (%)'],
+      processing: 'Gradient Boosted Decision Trees trained on historical material and labor cost deviations.',
+      outputs: ['Predicted Cost Deviation ($)', 'Cost Variance Status', 'Budget Expenditure Metrics'],
+      codeExample: `// Cost Forecast Model Payload
+{
+  "material_usage": 680.0,
+  "energy_consumption": 340.0,
+  "equipment_utilization_rate": 91.2,
+  "task_progress": 0.42
+}`,
+      limitations: 'Relies on macro-economic inflation and material market price inputs.',
+      related: ['model-time', 'model-risk']
+    },
+    {
+      id: 'model-time',
+      category: 'MODELS',
+      title: 'Time Schedule Forecast Model',
+      shortDesc: 'Predicts schedule slippage, completion timeline deviations, and critical path delay in days.',
+      overview: 'The Time Schedule Forecast Model uses HistGradientBoosting Regressors to estimate project completion delays and milestone timeline variances.',
+      inputs: ['Task Progress (%)', 'Machinery Status', 'Worker Count', 'Equipment Utilization Rate (%)', 'Safety Incidents'],
+      processing: 'Histogram-based Gradient Boosting Regressor for non-linear timeline delay estimation.',
+      outputs: ['Predicted Time Delay (Days)', 'Schedule Deviation Status', 'Milestone Confidence Score'],
+      codeExample: `// Time Forecast Model Payload
+{
+  "task_progress": 0.42,
+  "machinery_status": 1,
+  "worker_count": 45,
+  "equipment_utilization_rate": 91.2,
+  "safety_incidents": 1
+}`,
+      limitations: 'Does not account for unpredictable weather closures or labor union strikes.',
+      related: ['model-cost', 'model-perf']
     },
     {
       id: 'model-space',

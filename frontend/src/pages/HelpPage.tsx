@@ -9,7 +9,7 @@ export const HelpPage: React.FC = () => {
       title: 'Performance Intelligence',
       path: '/model/performance',
       color: '#4FC3F7',
-      does: 'Evaluates structural structural health, energy efficiency, and operational endurance indicators based on site telemetries.',
+      does: 'Evaluates structural health, energy efficiency, and operational endurance indicators based on site telemetries.',
       inputs: 'Building Age, Concrete Grade, Seismic Zone, Ambient Temp, Humidity, Operational Load.',
       produces: 'Performance Index Score (0–100%), Endurance Rating, and Structural Degradation Curve.'
     },
@@ -24,30 +24,21 @@ export const HelpPage: React.FC = () => {
     },
     {
       id: 'cost',
-      title: 'Cost & Time Intelligence',
+      title: 'Cost Forecast Intelligence',
       path: '/model/cost',
-      color: '#7CFFA6',
-      does: 'Forecasts material budget overruns, labor expenditure, and project completion timelines.',
-      inputs: 'Project Duration, Material Inflation Rate, Workforce Size, Overtime Hours, Supply Delays.',
-      produces: 'Cost Variance ($), Projected Total Budget, and Schedule Slippage Estimate (Days).'
-    },
-    {
-      id: 'safety',
-      title: 'Safety & Resource Intelligence',
-      path: '/alerts',
       color: '#E4FF5B',
-      does: 'Monitors real-time alerts, safety protocol non-compliance, and critical resource shortages.',
-      inputs: 'Site Sensor Feeds, Inventory Thresholds, Safety Incidents Log, Weather Warnings.',
-      produces: 'Active Hazard Alerts, Severity Ranking, and Emergency Mitigation Recommendations.'
+      does: 'Forecasts material budget overruns, labor expenditure, and total cost variance under changing site conditions.',
+      inputs: 'Material Usage (kg), Energy Consumption (kWh), Equipment Utilization Rate (%), Task Progress (%).',
+      produces: 'Predicted Cost Deviation ($), Cost Variance Status, and Budget Expenditure Metrics.'
     },
     {
-      id: 'optimization',
-      title: 'Project Optimization',
-      path: '/model/optimization',
-      color: '#FF9E43',
-      does: 'Calculates optimal resource allocation balances across cost, time, and safety trade-offs.',
-      inputs: 'Target Budget Cap, Max Schedule Target, Minimum Safety Rating, Workforce Limits.',
-      produces: 'Optimal Parameter Settings, Pareto Efficiency Score, and Recommended Adjustments.'
+      id: 'time',
+      title: 'Time Forecast Intelligence',
+      path: '/model/time',
+      color: '#7CFFA6',
+      does: 'Predicts schedule slippage, completion timeline deviations, and critical path delay days.',
+      inputs: 'Task Progress (%), Machinery Status, Worker Count, Vibration Level (Hz), Safety Incidents.',
+      produces: 'Predicted Time Delay (Days), Schedule Variance Level, and Timeline Milestone Confidence.'
     },
     {
       id: 'space',
