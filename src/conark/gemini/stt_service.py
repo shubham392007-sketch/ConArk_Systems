@@ -19,9 +19,8 @@ class GeminiSTTService:
 
     CANDIDATE_MODELS = [
         "gemini-flash-latest",
-        "gemini-1.5-flash",
-        "gemini-2.5-flash-lite",
-        "gemini-3.6-flash"
+        "gemini-2.5-flash",
+        "gemini-3.5-flash"
     ]
 
     def __init__(self, api_key: Optional[str] = None):
