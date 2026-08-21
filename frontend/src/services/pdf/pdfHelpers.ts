@@ -322,44 +322,86 @@ export function addCardBox(
   headerColorRGB: [number, number, number] = [17, 17, 17]
 ): number {
   let y = startY;
-  const { marginLeft } = CONARK_PDF_THEME.page;
+  const { marginLeft, height, marginBottom } = CONARK_PDF_THEME.page;
   const contentWidth = CONARK_PDF_THEME.page.contentWidth;
+  const maxY = height - marginBottom - 12;
 
-  const paddedTextLines: string[] = [];
-  lines.forEach(line => {
-    const wrapped = doc.splitTextToSize(line, contentWidth - 12);
-    paddedTextLines.push(...wrapped);
+  // Process lines and preserve paragraph structure
+  const formattedParagraphs: string[][] = [];
+  lines.forEach(rawLine => {
+    if (!rawLine) return;
+    const subParagraphs = rawLine.split(/\r?\n/);
+    subParagraphs.forEach(sub => {
+      if (!sub.trim()) return;
+      const wrapped = doc.splitTextToSize(sub, contentWidth - 14);
+      formattedParagraphs.push(wrapped);
+    });
   });
 
-  const bodyHeight = paddedTextLines.length * 4.8 + 8;
-  const cardTotalHeight = 8 + bodyHeight;
+  if (formattedParagraphs.length === 0) return y;
 
-  y = checkPageBreak(doc, y, cardTotalHeight + 4);
+  // Check initial space required for title + first paragraph
+  y = checkPageBreak(doc, y, 24);
 
-  // Card Outer Box
+  // Draw Initial Card Box Header
   doc.setFillColor(...bgColorRGB);
   doc.setDrawColor(17, 17, 17);
   doc.setLineWidth(0.4);
-  doc.rect(marginLeft, y, contentWidth, cardTotalHeight, 'DF');
+
+  // Estimate initial card height
+  let estimatedHeight = 10;
+  formattedParagraphs.forEach(p => {
+    estimatedHeight += p.length * 4.8 + 2.5;
+  });
+
+  // Draw Card Outer Box Background
+  doc.rect(marginLeft, y, contentWidth, Math.min(estimatedHeight, maxY - y), 'DF');
 
   // Header Strip
   doc.setFillColor(...headerColorRGB);
   doc.rect(marginLeft, y, contentWidth, 7, 'F');
 
+  const textColor = (headerColorRGB[0] < 128 && headerColorRGB[1] < 128) ? 255 : 17;
   doc.setFont(CONARK_PDF_THEME.fonts.display, 'bold');
   doc.setFontSize(8);
-  doc.setTextColor(headerColorRGB[0] === 17 ? 255 : 17, headerColorRGB[0] === 17 ? 255 : 17, headerColorRGB[0] === 17 ? 255 : 17);
+  doc.setTextColor(textColor, textColor, textColor);
   doc.text(title.toUpperCase(), marginLeft + 5, y + 5);
 
-  let textY = y + 12;
+  let textY = y + 12.5;
   doc.setFont(CONARK_PDF_THEME.fonts.body, 'normal');
-  doc.setFontSize(8);
+  doc.setFontSize(8.5);
   doc.setTextColor(17, 17, 17);
 
-  paddedTextLines.forEach(t => {
-    doc.text(t, marginLeft + 5, textY);
-    textY += 4.8;
+  formattedParagraphs.forEach((paragraphLines, pIdx) => {
+    paragraphLines.forEach(lineText => {
+      if (textY + 5 > maxY) {
+        // Break Page and Continue Card on Next Page
+        doc.addPage();
+        drawPageBackground(doc);
+        textY = CONARK_PDF_THEME.page.marginTop + 15;
+
+        // Draw Continuation Header Strip
+        doc.setFillColor(...headerColorRGB);
+        doc.rect(marginLeft, textY - 7, contentWidth, 6, 'F');
+        doc.setFont(CONARK_PDF_THEME.fonts.display, 'bold');
+        doc.setFontSize(7.5);
+        doc.setTextColor(textColor, textColor, textColor);
+        doc.text(`${title.toUpperCase()} (CONTINUED)`, marginLeft + 5, textY - 2.5);
+
+        textY += 4;
+        doc.setFont(CONARK_PDF_THEME.fonts.body, 'normal');
+        doc.setFontSize(8.5);
+        doc.setTextColor(17, 17, 17);
+      }
+
+      doc.text(lineText, marginLeft + 5, textY);
+      textY += 4.8;
+    });
+
+    if (pIdx < formattedParagraphs.length - 1) {
+      textY += 2.5; // Paragraph gap
+    }
   });
 
-  return y + cardTotalHeight + 6;
+  return textY + 6;
 }
