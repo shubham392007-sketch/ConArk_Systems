@@ -224,15 +224,28 @@ export const ModelDetailPage: React.FC = () => {
           ]
         };
       case 'optimization':
+        return {
+          title: 'PROJECT OPTIMIZATION MODEL',
+          algorithm: 'HistGradientBoosting Classifier',
+          version: 'v1.0.0',
+          color: '#C084FC',
+          outputLabel: 'PREDICTED OPTIMIZATION RECOMMENDATION',
+          explanationKey: 'optimization_explanation',
+          topFactors: [
+            { name: 'Task Progress Velocity', pct: 38, val: `${(inputs.task_progress * 100).toFixed(0)}%` },
+            { name: 'Cost Variance Sensitivity', pct: 32, val: `$${(inputs.cost_deviation || 2707.71).toFixed(0)}` },
+            { name: 'Schedule Delay Sensitivity', pct: 30, val: `${(inputs.time_deviation || -4.65).toFixed(1)} Days` }
+          ]
+        };
       case 'space':
       default:
         return {
-          title: 'RECOMMENDATION AND SPACE OPTIMIZATION MODEL',
-          algorithm: 'SciPy SLSQP Constrained Solver + HistGradientBoosting Classifier',
+          title: 'SPACE OPTIMIZATION MODEL',
+          algorithm: 'SciPy SLSQP Constrained Solver',
           version: 'v1.0.0',
           color: '#F5F3E3',
-          outputLabel: 'OPTIMIZATION SUGGESTION & SPATIAL LAYOUT',
-          explanationKey: 'optimization_explanation',
+          outputLabel: 'SITE SPATIAL ALLOCATION & UTILIZATION',
+          explanationKey: 'space_explanation',
           topFactors: [
             { name: 'Available Site Area', pct: 40, val: `${spaceInputs.site_area_sqm} m²` },
             { name: 'Worker Movement Density', pct: 30, val: `${spaceInputs.worker_count} Workers` },

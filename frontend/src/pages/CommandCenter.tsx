@@ -522,8 +522,8 @@ export const CommandCenter: React.FC = () => {
           </div>
         </div>
 
-        {/* ROW 05: CARD 05 - RECOMMENDATION AND SPACE OPTIMIZATION MODEL */}
-        <div className="card-row-grid" style={{ display: 'grid', gridTemplateColumns: '160px 1fr 160px', gap: '16px', alignItems: 'center', marginTop: '-20px', zIndex: 2, position: 'relative' }}>
+        {/* ROW 05: CARD 05 - PROJECT OPTIMIZATION MODEL */}
+        <div className="card-row-grid" style={{ display: 'grid', gridTemplateColumns: '160px 1fr 160px', gap: '16px', alignItems: 'center', marginTop: '-20px', zIndex: 3, position: 'relative' }}>
           {/* Left SVG: SCAFFOLD MATRIX */}
           <div className="side-svg-column" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.9 }}>
             <svg width="130" height="135" viewBox="0 0 100 130" fill="none" stroke="#111111" strokeWidth="1.8">
@@ -538,12 +538,91 @@ export const CommandCenter: React.FC = () => {
             <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '4px' }}>SCAFFOLD MATRIX</span>
           </div>
 
-          {/* MODEL 05: SPACE OPTIMIZATION MODEL */}
+          {/* MODEL 05: PROJECT OPTIMIZATION MODEL */}
           <div
             onClick={() => navigate('/model/optimization')}
             className="card-rotate-neg07 card-hover-lift card-responsive-padding"
             style={{
               backgroundColor: '#F5F3E3',
+              border: '2.5px dashed #111111',
+              borderRadius: '20px',
+              padding: '44px 48px',
+              boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)',
+              position: 'relative',
+              zIndex: 3,
+              cursor: 'pointer'
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px' }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', color: '#111111', fontWeight: 'bold' }}>05</span>
+                  <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', backgroundColor: '#111111', color: '#FFFFFF', padding: '3px 10px', borderRadius: '4px' }}>
+                    MULTICLASS OPTIMIZATION MODEL
+                  </span>
+                  <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', color: '#111' }}>[CLICK FOR DEDICATED PAGE →]</span>
+                </div>
+                <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(32px, 4vw, 48px)', color: '#111111', textTransform: 'uppercase', lineHeight: '1.05', marginTop: '6px' }}>
+                  PROJECT OPTIMIZATION MODEL
+                </h2>
+                <p style={{ fontSize: '14px', color: '#111111', fontFamily: 'Inter, sans-serif', marginTop: '2px' }}>
+                  HistGradientBoosting Classifier · v1.0
+                </p>
+
+                <div style={{ marginTop: '20px', display: 'flex', flexWrap: 'wrap', gap: '10px', fontSize: '12px', fontFamily: 'JetBrains Mono, monospace' }}>
+                  <span style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1.5px solid #111111', padding: '6px 12px', borderRadius: '6px' }}>
+                    INPUT: Cost Deviation (+${costDev.toFixed(0)})
+                  </span>
+                  <span style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1.5px solid #111111', padding: '6px 12px', borderRadius: '6px' }}>
+                    INPUT: Schedule Delay (+{timeDev.toFixed(1)} Days)
+                  </span>
+                </div>
+              </div>
+
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#111111' }}>MODEL OUTPUT</div>
+                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 'clamp(28px, 3.5vw, 42px)', fontWeight: '800', color: '#111111', lineHeight: '1.0', marginTop: '6px' }}>
+                  {optRec}
+                </div>
+                <div style={{ fontSize: '14px', fontWeight: '800', color: '#111111', fontFamily: 'JetBrains Mono, monospace', marginTop: '8px' }}>
+                  OPTIMIZATION: PARETO OPTIMAL
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right SVG: SURVEY TRIPOD */}
+          <div className="side-svg-column" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.9 }}>
+            <svg width="125" height="120" viewBox="0 0 100 110" fill="none" stroke="#111111" strokeWidth="1.8">
+              <circle cx="50" cy="50" r="35" strokeDasharray="4 4" />
+              <circle cx="50" cy="50" r="20" fill="#E4FF5B" stroke="#111" />
+              <path d="M 50 15 L 50 85 M 15 50 L 85 50" strokeWidth="2" />
+            </svg>
+            <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '4px' }}>OPTIMIZATION MATRIX</span>
+          </div>
+        </div>
+
+        {/* ROW 06: CARD 06 - SPACE OPTIMIZATION MODEL */}
+        <div className="card-row-grid" style={{ display: 'grid', gridTemplateColumns: '160px 1fr 160px', gap: '16px', alignItems: 'center', marginTop: '-20px', zIndex: 2, position: 'relative' }}>
+          {/* Left SVG: LOGISTICS TRUCK */}
+          <div className="side-svg-column" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.9 }}>
+            <svg width="140" height="110" viewBox="0 0 120 90" fill="none" stroke="#111111" strokeWidth="1.8">
+              <rect x="75" y="35" width="35" height="35" fill="#E4FF5B" stroke="#111111" />
+              <rect x="85" y="40" width="18" height="15" fill="#FFFFFF" stroke="#111111" />
+              <path d="M15 30 L65 30 L60 65 L15 65 Z" fill="#4FC3F7" stroke="#111111" />
+              <circle cx="30" cy="70" r="9" fill="#111111" />
+              <circle cx="50" cy="70" r="9" fill="#111111" />
+              <circle cx="95" cy="70" r="9" fill="#111111" />
+            </svg>
+            <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '4px' }}>LOGISTICS TRUCK</span>
+          </div>
+
+          {/* MODEL 06: SPACE OPTIMIZATION MODEL */}
+          <div
+            onClick={() => navigate('/space-optimization')}
+            className="card-rotate-pos08 card-hover-lift card-responsive-padding"
+            style={{
+              backgroundColor: '#C084FC',
               border: '2.5px dashed #111111',
               borderRadius: '20px',
               padding: '44px 48px',
@@ -556,17 +635,17 @@ export const CommandCenter: React.FC = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px' }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', color: '#111111', fontWeight: 'bold' }}>05</span>
+                  <span style={{ fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', color: '#111111', fontWeight: 'bold' }}>06</span>
                   <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', backgroundColor: '#111111', color: '#FFFFFF', padding: '3px 10px', borderRadius: '4px' }}>
-                    SCIPY SLSQP + CLASSIFIER
+                    SCIPY SLSQP CONSTRAINED SOLVER
                   </span>
                   <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', color: '#111' }}>[CLICK FOR FULL 2D CANVAS & PAGE →]</span>
                 </div>
                 <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(28px, 3.5vw, 44px)', color: '#111111', textTransform: 'uppercase', lineHeight: '1.05', marginTop: '6px' }}>
-                  RECOMMENDATION AND SPACE OPTIMIZATION MODEL
+                  SPACE OPTIMIZATION MODEL
                 </h2>
                 <p style={{ fontSize: '14px', color: '#111111', fontFamily: 'Inter, sans-serif', marginTop: '2px' }}>
-                  SciPy SLSQP Constrained Solver + HistGradientBoosting Classifier · v1.0
+                  SciPy SLSQP Constrained Solver · v1.0
                 </p>
 
                 <div style={{ marginTop: '20px', display: 'flex', flexWrap: 'wrap', gap: '10px', fontSize: '12px', fontFamily: 'JetBrains Mono, monospace' }}>
@@ -581,27 +660,25 @@ export const CommandCenter: React.FC = () => {
 
               <div style={{ textAlign: 'right' }}>
                 <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#111111' }}>MODEL OUTPUT</div>
-                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: '800', color: '#111111', lineHeight: '1.0', marginTop: '6px' }}>
-                  {spaceUtil.toFixed(1)}% UTILIZATION
+                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 'clamp(42px, 5.5vw, 64px)', fontWeight: '800', color: '#111111', lineHeight: '0.9', marginTop: '6px' }}>
+                  {spaceUtil.toFixed(1)}%
                 </div>
-                <div style={{ fontSize: '14px', fontWeight: '800', color: '#111111', fontFamily: 'JetBrains Mono, monospace', marginTop: '6px' }}>
-                  REC: {optRec}
+                <div style={{ fontSize: '14px', fontWeight: '800', color: '#111111', fontFamily: 'JetBrains Mono, monospace', marginTop: '8px' }}>
+                  SPATIAL UTILIZATION
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Right SVG: LOGISTICS TRUCK */}
+          {/* Right SVG: PLANAR GRID MAPPER */}
           <div className="side-svg-column" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.9 }}>
-            <svg width="140" height="110" viewBox="0 0 120 90" fill="none" stroke="#111111" strokeWidth="1.8">
-              <rect x="75" y="35" width="35" height="35" fill="#E4FF5B" stroke="#111111" />
-              <rect x="85" y="40" width="18" height="15" fill="#FFFFFF" stroke="#111111" />
-              <path d="M15 30 L65 30 L60 65 L15 65 Z" fill="#4FC3F7" stroke="#111111" />
-              <circle cx="30" cy="70" r="9" fill="#111111" />
-              <circle cx="50" cy="70" r="9" fill="#111111" />
-              <circle cx="95" cy="70" r="9" fill="#111111" />
+            <svg width="130" height="120" viewBox="0 0 110 100" fill="none" stroke="#111111" strokeWidth="1.8">
+              <rect x="15" y="15" width="80" height="70" strokeDasharray="3 3" fill="#EDECE7" />
+              <rect x="25" y="25" width="30" height="20" fill="#E4FF5B" stroke="#111" />
+              <rect x="60" y="25" width="25" height="20" fill="#7CFFA6" stroke="#111" />
+              <rect x="25" y="50" width="60" height="25" fill="#4FC3F7" stroke="#111" />
             </svg>
-            <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '4px' }}>LOGISTICS TRUCK</span>
+            <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '4px' }}>PLANAR GRID MAPPER</span>
           </div>
         </div>
 

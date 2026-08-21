@@ -148,6 +148,25 @@ console.log(data.predictions);`,
       related: ['model-cost', 'model-perf']
     },
     {
+      id: 'model-optimization',
+      category: 'MODELS',
+      title: 'Project Optimization Model',
+      shortDesc: 'Multiclass classification model predicting optimal Pareto trade-off recommendations for project execution.',
+      overview: 'The Project Optimization Model uses HistGradientBoosting Classifiers to evaluate joint cost variance, schedule delay, and operational risk probabilities, returning high-impact site action recommendations (e.g. REALLOCATE WORKERS, ACCELERATE SCHEDULE, OPTIMIZE STAGING).',
+      inputs: ['Cost Deviation ($)', 'Schedule Delay (Days)', 'Task Progress (%)', 'Risk Score (%)', 'Equipment Utilization Rate (%)'],
+      processing: 'Histogram-based Gradient Boosting Multiclass Classifier (92.49% validation accuracy).',
+      outputs: ['Optimization Recommendation', 'Trade-off Pareto Level', 'Action Priority Score'],
+      codeExample: `// POST /api/v1/intelligence/analyze
+{
+  "task_progress": 0.42,
+  "cost_deviation": 2707.71,
+  "time_deviation": -4.65,
+  "risk_score": 52
+}`,
+      limitations: 'Assumes continuous site access without emergency site evacuations.',
+      related: ['model-space', 'model-cost', 'model-time']
+    },
+    {
       id: 'model-space',
       category: 'MODELS',
       title: 'Space Optimization Model',

@@ -41,6 +41,15 @@ export const HelpPage: React.FC = () => {
       produces: 'Predicted Time Delay (Days), Schedule Variance Level, and Timeline Milestone Confidence.'
     },
     {
+      id: 'optimization',
+      title: 'Project Optimization Intelligence',
+      path: '/model/optimization',
+      color: '#F5F3E3',
+      does: 'Evaluates multi-variable trade-offs to generate actionable site recommendations and Pareto-optimal decisions.',
+      inputs: 'Cost Variance ($), Schedule Delay (Days), Task Progress (%), Equipment Utilization Rate (%).',
+      produces: 'Optimization Recommendation (Reallocate/Accelerate), Pareto Trade-off Status, and Action Plan.'
+    },
+    {
       id: 'space',
       title: 'Space Optimization',
       path: '/space-optimization',
