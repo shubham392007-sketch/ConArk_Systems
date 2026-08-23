@@ -107,6 +107,15 @@ const MainContent: React.FC = () => {
   );
 };
 
+const ConditionalFooter: React.FC = () => {
+  const { pathname } = useLocation();
+  // Do not show footer on ConArk AI Page
+  if (pathname === '/construction-ai') {
+    return null;
+  }
+  return <Footer />;
+};
+
 export const App: React.FC = () => {
   return (
     <BrowserRouter>
@@ -114,7 +123,7 @@ export const App: React.FC = () => {
       <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#EDECE7' }}>
         <TopNav />
         <MainContent />
-        <Footer />
+        <ConditionalFooter />
       </div>
     </BrowserRouter>
   );
