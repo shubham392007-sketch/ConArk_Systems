@@ -136,7 +136,7 @@ class GeminiService:
                     model_target = intelligence_payload.get("target_model") or "performance"
                     client_wrapper = GeminiClient.for_model(model_target)
                     client = client_wrapper.client
-                    candidate_models = ["gemini-flash-latest", "gemini-2.5-flash", "gemini-3.5-flash"]
+                    candidate_models = ["gemini-2.5-flash", "gemini-3.6-flash", "gemini-flash-latest"]
                     last_exc = None
                     for m_name in candidate_models:
                         try:
@@ -260,7 +260,7 @@ class GeminiService:
                 def _call_gemini():
                     client_wrapper = GeminiClient.for_model("space_optimization")
                     client = client_wrapper.client
-                    candidate_models = ["gemini-flash-latest", "gemini-2.5-flash", "gemini-3.5-flash"]
+                    candidate_models = ["gemini-2.5-flash", "gemini-3.6-flash", "gemini-flash-latest"]
                     last_exc = None
                     for model_name in candidate_models:
                         try:
