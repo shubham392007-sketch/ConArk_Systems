@@ -260,17 +260,27 @@ class GeminiService:
                 def _call_gemini():
                     client_wrapper = GeminiClient.for_model("space_optimization")
                     client = client_wrapper.client
-                    response = client.models.generate_content(
-                        model=client_wrapper.model_name,
-                        contents=prompt,
-                        config=types.GenerateContentConfig(
-                            system_instruction=GEMINI_SPACE_SYSTEM_PROMPT,
-                            response_mime_type="application/json",
-                            response_schema=GeminiSpaceReport,
-                            temperature=0.2,
-                        )
-                    )
-                    return response
+                    candidate_models = ["gemini-flash-latest", "gemini-2.5-flash", "gemini-3.5-flash"]
+                    last_exc = None
+                    for model_name in candidate_models:
+                        try:
+                            response = client.models.generate_content(
+                                model=model_name,
+                                contents=prompt,
+                                config=types.GenerateContentConfig(
+                                    system_instruction=GEMINI_SPACE_SYSTEM_PROMPT,
+                                    response_mime_type="application/json",
+                                    response_schema=GeminiSpaceReport,
+                                    temperature=0.2,
+                                )
+                            )
+                            return response
+                        except Exception as exc:
+                            last_exc = exc
+                            continue
+                    if last_exc:
+                        raise last_exc
+                    raise RuntimeError("No candidate Gemini models succeeded.")
 
                 response = await asyncio.wait_for(loop.run_in_executor(None, _call_gemini), timeout=timeout)
                 report_data = json.loads(response.text)

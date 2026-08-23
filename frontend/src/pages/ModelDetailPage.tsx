@@ -4,6 +4,7 @@ import { ArrowLeft, Sparkles, CheckCircle2, ShieldCheck, Activity, Sliders } fro
 import { analyzeProjectIntelligence, optimizeSpaceLayout } from '../services/api';
 import type { OperationalInputs, SpaceInputs, SpaceOptimizationResponse, ZoneCoordinates } from '../types';
 import { ReportActionBanner } from '../components/pdf/ReportActionBanner';
+import { ModelResultSkeleton } from '../components/ModelResultSkeleton';
 
 export const ModelDetailPage: React.FC = () => {
   const { modelId } = useParams<{ modelId: string }>();
@@ -224,28 +225,15 @@ export const ModelDetailPage: React.FC = () => {
           ]
         };
       case 'optimization':
-        return {
-          title: 'PROJECT OPTIMIZATION MODEL',
-          algorithm: 'HistGradientBoosting Classifier',
-          version: 'v1.0.0',
-          color: '#C084FC',
-          outputLabel: 'PREDICTED OPTIMIZATION RECOMMENDATION',
-          explanationKey: 'optimization_explanation',
-          topFactors: [
-            { name: 'Task Progress Velocity', pct: 38, val: `${(inputs.task_progress * 100).toFixed(0)}%` },
-            { name: 'Cost Variance Sensitivity', pct: 32, val: `$${(inputs.cost_deviation || 2707.71).toFixed(0)}` },
-            { name: 'Schedule Delay Sensitivity', pct: 30, val: `${(inputs.time_deviation || -4.65).toFixed(1)} Days` }
-          ]
-        };
       case 'space':
       default:
         return {
-          title: 'SPACE OPTIMIZATION MODEL',
-          algorithm: 'SciPy SLSQP Constrained Solver',
+          title: 'RECOMMENDATION AND SPACE OPTIMIZATION MODEL',
+          algorithm: 'SciPy SLSQP Constrained Solver + HistGradientBoosting Classifier',
           version: 'v1.0.0',
           color: '#F5F3E3',
-          outputLabel: 'SITE SPATIAL ALLOCATION & UTILIZATION',
-          explanationKey: 'space_explanation',
+          outputLabel: 'OPTIMIZATION SUGGESTION & SPATIAL LAYOUT',
+          explanationKey: 'optimization_explanation',
           topFactors: [
             { name: 'Available Site Area', pct: 40, val: `${spaceInputs.site_area_sqm} m²` },
             { name: 'Worker Movement Density', pct: 30, val: `${spaceInputs.worker_count} Workers` },
@@ -847,8 +835,10 @@ export const ModelDetailPage: React.FC = () => {
         {/* Right Column: Deep Output & 2D Spatial Structure */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%', maxWidth: '100%', overflow: 'hidden' }}>
           
-          {hasPredicted ? (
-            <>
+          {loading ? (
+            <ModelResultSkeleton isSpaceOpt={isSpaceOpt} modelTitle={config.title} />
+          ) : hasPredicted ? (
+            <div className="animate-result-appear" style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%', maxWidth: '100%' }}>
               {/* Dynamic 2D Site Layout Map Canvas (For Space & Optimization Model) */}
               {isSpaceOpt && (
                 <div className="card-responsive-padding" style={{ backgroundColor: '#FFFFFF', border: '2.5px dashed #111111', borderRadius: '20px', padding: '24px', boxShadow: '0 8px 20px rgba(0,0,0,0.06)', width: '100%', maxWidth: '100%', boxSizing: 'border-box', overflow: 'hidden' }}>
@@ -1184,7 +1174,7 @@ export const ModelDetailPage: React.FC = () => {
                   metrics: result?.ml_results || (spaceRes as any)?.ml_results
                 }}
               />
-            </>
+            </div>
           ) : (
             /* Standby State Before User Clicks Predict */
             <div className="card-responsive-padding" style={{

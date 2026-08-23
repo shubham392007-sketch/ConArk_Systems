@@ -3,6 +3,7 @@ import { Sparkles, Sliders } from 'lucide-react';
 import { optimizeSpaceLayout } from '../services/api';
 import type { SpaceOptimizationResponse, SpaceInputs, ZoneCoordinates } from '../types';
 import { ReportActionBanner } from '../components/pdf/ReportActionBanner';
+import { ModelResultSkeleton } from '../components/ModelResultSkeleton';
 
 export const SpaceOptimizationPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -361,15 +362,18 @@ export const SpaceOptimizationPage: React.FC = () => {
         </div>
 
         {/* Right Column: Dynamic 2D Site Layout Map Canvas */}
-        <div className="card-responsive-padding" style={{ backgroundColor: '#FFFFFF', border: '2.5px dashed #111111', borderRadius: '20px', padding: '24px', display: 'flex', flexDirection: 'column', boxShadow: '0 8px 20px rgba(0,0,0,0.06)', width: '100%', maxWidth: '100%', boxSizing: 'border-box', overflow: 'hidden' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
-            <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(18px, 3vw, 26px)', color: '#111111', textTransform: 'uppercase', wordBreak: 'break-word' }}>
-              DYNAMIC 2D SITE LAYOUT MAP ({inputs.site_length_m}m × {inputs.site_width_m}m)
-            </h2>
-            <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', backgroundColor: '#111111', color: '#FFFFFF', padding: '3px 10px', borderRadius: '4px' }}>
-              {hasOptimized ? 'SOLVED VIA SCIPY SLSQP' : 'DEFAULT CONFIGURATION'}
-            </span>
-          </div>
+        {loading ? (
+          <ModelResultSkeleton isSpaceOpt={true} modelTitle="DYNAMIC 2D SITE LAYOUT MAP" />
+        ) : (
+          <div className="card-responsive-padding animate-result-appear" style={{ backgroundColor: '#FFFFFF', border: '2.5px dashed #111111', borderRadius: '20px', padding: '24px', display: 'flex', flexDirection: 'column', boxShadow: '0 8px 20px rgba(0,0,0,0.06)', width: '100%', maxWidth: '100%', boxSizing: 'border-box', overflow: 'hidden' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+              <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(18px, 3vw, 26px)', color: '#111111', textTransform: 'uppercase', wordBreak: 'break-word' }}>
+                DYNAMIC 2D SITE LAYOUT MAP ({inputs.site_length_m}m × {inputs.site_width_m}m)
+              </h2>
+              <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', backgroundColor: '#111111', color: '#FFFFFF', padding: '3px 10px', borderRadius: '4px' }}>
+                {hasOptimized ? 'SOLVED VIA SCIPY SLSQP' : 'DEFAULT CONFIGURATION'}
+              </span>
+            </div>
 
           {/* Metrics Banner */}
           <div className="metrics-banner-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))', gap: '10px', marginBottom: '18px', width: '100%' }}>
@@ -477,16 +481,17 @@ export const SpaceOptimizationPage: React.FC = () => {
             })}
           </div>
 
-          {/* 8-Zone Color Key Legend */}
-          <div style={{ marginTop: '14px', display: 'flex', flexWrap: 'wrap', gap: '8px', padding: '10px 12px', backgroundColor: '#EDECE7', borderRadius: '8px', border: '1px solid #111111', fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', maxWidth: '100%', overflow: 'hidden' }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><span style={{ width: '10px', height: '10px', backgroundColor: '#E4FF5B', border: '1px solid #111', flexShrink: 0 }} /> Material Storage & Loading</span>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><span style={{ width: '10px', height: '10px', backgroundColor: '#7CFFA6', border: '1px solid #111', flexShrink: 0 }} /> Equipment & Staging</span>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><span style={{ width: '10px', height: '10px', backgroundColor: '#4FC3F7', border: '1px solid #111', flexShrink: 0 }} /> Worker Movement</span>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><span style={{ width: '10px', height: '10px', backgroundColor: '#F5F3E3', border: '1px solid #111', flexShrink: 0 }} /> Safety Buffer</span>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><span style={{ width: '10px', height: '10px', backgroundColor: '#FF2AA1', border: '1px solid #111', flexShrink: 0 }} /> Emergency Corridor</span>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><span style={{ width: '10px', height: '10px', backgroundColor: '#E0E0E0', border: '1px solid #111', flexShrink: 0 }} /> Waste Dump</span>
+            {/* 8-Zone Color Key Legend */}
+            <div style={{ marginTop: '14px', display: 'flex', flexWrap: 'wrap', gap: '8px', padding: '10px 12px', backgroundColor: '#EDECE7', borderRadius: '8px', border: '1px solid #111111', fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', maxWidth: '100%', overflow: 'hidden' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><span style={{ width: '10px', height: '10px', backgroundColor: '#E4FF5B', border: '1px solid #111', flexShrink: 0 }} /> Material Storage & Loading</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><span style={{ width: '10px', height: '10px', backgroundColor: '#7CFFA6', border: '1px solid #111', flexShrink: 0 }} /> Equipment & Staging</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><span style={{ width: '10px', height: '10px', backgroundColor: '#4FC3F7', border: '1px solid #111', flexShrink: 0 }} /> Worker Movement</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><span style={{ width: '10px', height: '10px', backgroundColor: '#F5F3E3', border: '1px solid #111', flexShrink: 0 }} /> Safety Buffer</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><span style={{ width: '10px', height: '10px', backgroundColor: '#FF2AA1', border: '1px solid #111', flexShrink: 0 }} /> Emergency Corridor</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><span style={{ width: '10px', height: '10px', backgroundColor: '#E0E0E0', border: '1px solid #111', flexShrink: 0 }} /> Waste Dump</span>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Zone Allocation Matrix Table */}
