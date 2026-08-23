@@ -110,18 +110,21 @@ const MainContent: React.FC = () => {
   return (
     <main className={showGrid ? 'bg-grid-blueprint' : ''} style={{ flex: 1 }}>
       <Routes>
+        {/* Public Landing & Overview Routes */}
         <Route path="/" element={<CommandCenter />} />
-        <Route path="/construction-ai" element={<ConstructionAIPage />} />
-        <Route path="/input" element={<ProjectInput />} />
-        <Route path="/predictions" element={<PredictionsHub />} />
-        <Route path="/space-optimization" element={<SpaceOptimizationPage />} />
-        <Route path="/alerts" element={<AlertCenter />} />
-        <Route path="/ai-insights" element={<AIInsightsPage />} />
-        <Route path="/reports" element={<ReportsPage />} />
-        <Route path="/models" element={<ModelRegistryPage />} />
-        <Route path="/model/:modelId" element={<ModelDetailPage />} />
         <Route path="/brains" element={<TheBrainsPage />} />
         <Route path="/team" element={<TheBrainsPage />} />
+
+        {/* Protected ConArk AI & Intelligence Models Routes (Requires Sign In) */}
+        <Route path="/construction-ai" element={<ProtectedRoute><ConstructionAIPage /></ProtectedRoute>} />
+        <Route path="/models" element={<ProtectedRoute><ModelRegistryPage /></ProtectedRoute>} />
+        <Route path="/model/:modelId" element={<ProtectedRoute><ModelDetailPage /></ProtectedRoute>} />
+        <Route path="/input" element={<ProtectedRoute><ProjectInput /></ProtectedRoute>} />
+        <Route path="/predictions" element={<ProtectedRoute><PredictionsHub /></ProtectedRoute>} />
+        <Route path="/space-optimization" element={<ProtectedRoute><SpaceOptimizationPage /></ProtectedRoute>} />
+        <Route path="/alerts" element={<ProtectedRoute><AlertCenter /></ProtectedRoute>} />
+        <Route path="/ai-insights" element={<ProtectedRoute><AIInsightsPage /></ProtectedRoute>} />
+        <Route path="/reports" element={<ProtectedRoute><ReportsPage /></ProtectedRoute>} />
 
         {/* Supabase Authentication Routes */}
         <Route path="/login" element={<LoginPage />} />
