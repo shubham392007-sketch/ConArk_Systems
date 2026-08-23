@@ -69,15 +69,17 @@ When technical terminology is necessary, explain it."""
 
 
 class OpenRouterService:
+    PRIMARY_MODEL = "google/gemma-4-26b-a4b-it:free"
+    OPENROUTER_FALLBACKS = [
+        "google/gemma-4-26b-a4b-it:free",
+        "google/gemma-4-26b-a4b-it",
+        "openrouter/auto",
+        "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
+    ]
     GEMINI_MODELS = [
         "gemini-2.5-flash",
         "gemini-3.6-flash",
         "gemini-flash-latest"
-    ]
-    FALLBACK_MODELS = [
-        "google/gemma-4-26b-a4b-it:free",
-        "openai/gpt-4o-mini",
-        "openrouter/auto"
     ]
 
     def __init__(
@@ -86,8 +88,8 @@ class OpenRouterService:
         model: Optional[str] = None,
         base_url: Optional[str] = None
     ):
-        self.api_key = api_key or settings.OPENROUTER_API_KEY or os.getenv("OPENROUTER_API_KEY", "")
-        self.primary_model = model or settings.OPENROUTER_MODEL or "gemini-2.5-flash"
+        self.api_key = api_key or settings.OPENROUTER_API_KEY or os.getenv("OPENROUTER_API_KEY", "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")
+        self.primary_model = model or settings.OPENROUTER_MODEL or self.PRIMARY_MODEL
         self.base_url = (base_url or settings.OPENROUTER_BASE_URL or "https://openrouter.ai/api/v1").rstrip("/")
         self.gemini_key = settings.GEMINI_API_KEY or os.getenv("GEMINI_API_KEY", "AQ.Ab8RN6LxiBPLJWhgegU4HK70t77kcAXIvpb0jl64fOS-1zan3Q")
 
@@ -102,11 +104,11 @@ class OpenRouterService:
     def format_messages(
         self,
         user_message: str,
-        history: Optional[List[Dict[str, str]]] = None,
+        history: Optional[List[Dict[str, Any]]] = None,
         project_context: Optional[Dict[str, Any]] = None
-    ) -> List[Dict[str, str]]:
-        """Constructs bounded message history."""
-        formatted: List[Dict[str, str]] = [{"role": "system", "content": SYSTEM_PROMPT}]
+    ) -> List[Dict[str, Any]]:
+        """Constructs bounded message history with reasoning_details preservation."""
+        formatted: List[Dict[str, Any]] = [{"role": "system", "content": SYSTEM_PROMPT}]
 
         # Inject user project context if available
         if project_context and isinstance(project_context, dict) and len(project_context) > 0:
@@ -117,14 +119,17 @@ class OpenRouterService:
             context_str = "\n".join(context_lines)
             formatted.append({"role": "system", "content": context_str})
 
-        # Add recent conversation history (capped to last 8 messages)
+        # Add recent conversation history with preserved reasoning_details
         if history:
             valid_history = history[-8:]
             for msg in valid_history:
                 role = msg.get("role")
-                content = msg.get("content", "").strip()
+                content = msg.get("content", "")
                 if role in ["user", "assistant"] and content:
-                    formatted.append({"role": role, "content": content})
+                    msg_obj: Dict[str, Any] = {"role": role, "content": content}
+                    if role == "assistant" and msg.get("reasoning_details"):
+                        msg_obj["reasoning_details"] = msg.get("reasoning_details")
+                    formatted.append(msg_obj)
 
         # Append current user prompt if not already last in history
         if not history or history[-1].get("content") != user_message:
@@ -135,7 +140,7 @@ class OpenRouterService:
     def _format_gemini_prompt(
         self,
         user_message: str,
-        history: Optional[List[Dict[str, str]]] = None,
+        history: Optional[List[Dict[str, Any]]] = None,
         project_context: Optional[Dict[str, Any]] = None
     ) -> str:
         """Formats a rich single prompt with context and history for Gemini API."""
@@ -160,11 +165,49 @@ class OpenRouterService:
     async def generate_chat_response(
         self,
         message: str,
-        history: Optional[List[Dict[str, str]]] = None,
+        history: Optional[List[Dict[str, Any]]] = None,
         project_context: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
-        """Executes AI chat query using Gemini 2.5 Flash first, with OpenRouter fallback."""
-        # 1. Primary Engine: Google Gemini 2.5 Flash with Universal API Key
+        """Executes AI chat query using OpenRouter Google Gemma 4 26B with reasoning."""
+        # 1. Primary Engine: OpenRouter with google/gemma-4-26b-a4b-it:free & reasoning
+        if self.api_key:
+            messages = self.format_messages(message, history, project_context)
+            models_to_try = [self.primary_model] + [m for m in self.OPENROUTER_FALLBACKS if m != self.primary_model]
+            url = f"{self.base_url}/chat/completions"
+
+            async with httpx.AsyncClient(timeout=45.0) as http_client:
+                for target_model in models_to_try:
+                    payload = {
+                        "model": target_model,
+                        "messages": messages,
+                        "reasoning": {"enabled": True},
+                        "temperature": 0.3,
+                        "max_tokens": 2048
+                    }
+                    try:
+                        response = await http_client.post(url, headers=self._get_headers(), json=payload)
+                        if response.status_code == 200:
+                            data = response.json()
+                            msg_choice = data["choices"][0]["message"]
+                            content = msg_choice.get("content", "")
+                            reasoning_details = msg_choice.get("reasoning_details")
+                            return {
+                                "success": True,
+                                "message": content,
+                                "reasoning_details": reasoning_details,
+                                "model": target_model
+                            }
+                        elif response.status_code == 429:
+                            logger.warning(f"OpenRouter 429 Rate Limit on model {target_model}")
+                            continue
+                        else:
+                            logger.warning(f"OpenRouter {response.status_code} on model {target_model}: {response.text}")
+                            continue
+                    except Exception as e:
+                        logger.warning(f"OpenRouter exception on {target_model}: {e}")
+                        continue
+
+        # 2. Secondary Engine: Google Gemini 2.5 Flash
         if self.gemini_key:
             try:
                 from google import genai
@@ -194,40 +237,12 @@ class OpenRouterService:
                                 "model": f"google/{g_model}"
                             }
                     except Exception as g_err:
-                        logger.warning(f"Gemini chat failed on model {g_model}: {g_err}")
+                        logger.warning(f"Gemini chat fallback failed on model {g_model}: {g_err}")
                         continue
             except Exception as e:
                 logger.error(f"Gemini client initialization error: {e}")
 
-        # 2. Secondary Engine: OpenRouter (if configured)
-        if self.api_key:
-            messages = self.format_messages(message, history, project_context)
-            models_to_try = [self.primary_model] + [m for m in self.FALLBACK_MODELS if m != self.primary_model]
-            url = f"{self.base_url}/chat/completions"
-
-            async with httpx.AsyncClient(timeout=45.0) as http_client:
-                for target_model in models_to_try:
-                    payload = {
-                        "model": target_model,
-                        "messages": messages,
-                        "temperature": 0.3,
-                        "max_tokens": 2048
-                    }
-                    try:
-                        response = await http_client.post(url, headers=self._get_headers(), json=payload)
-                        if response.status_code == 200:
-                            data = response.json()
-                            content = data["choices"][0]["message"]["content"]
-                            return {
-                                "success": True,
-                                "message": content,
-                                "model": target_model
-                            }
-                    except Exception as e:
-                        logger.warning(f"OpenRouter exception on {target_model}: {e}")
-                        continue
-
-        # 3. Deterministic Engineering Expert Fallback
+        # 3. Deterministic Fallback
         return {
             "success": True,
             "message": f"**ConArk Construction Intelligence Response**\n\nRegarding your question: *'{message}'*\n\n1. **Core Principle**: In construction operations, maintain rigorous quality assurance, continuous moisture control, and structural load monitoring.\n2. **Action Item**: Verify field measurements against site engineering specifications before proceeding.\n3. **Safety Notice**: Comply with applicable OSHA and national building code regulations for all on-site activities.",
@@ -237,54 +252,14 @@ class OpenRouterService:
     async def stream_chat_response(
         self,
         message: str,
-        history: Optional[List[Dict[str, str]]] = None,
+        history: Optional[List[Dict[str, Any]]] = None,
         project_context: Optional[Dict[str, Any]] = None
     ) -> AsyncGenerator[str, None]:
-        """Streams construction intelligence tokens via SSE using Gemini 2.5 Flash."""
-        # 1. Primary Engine: Google Gemini 2.5 Flash streaming
-        if self.gemini_key:
-            try:
-                from google import genai
-                from google.genai import types
-                import asyncio
-
-                client = genai.Client(api_key=self.gemini_key)
-                prompt = self._format_gemini_prompt(message, history, project_context)
-
-                for g_model in self.GEMINI_MODELS:
-                    try:
-                        # Synchronous stream iterator executed chunk by chunk
-                        stream_response = client.models.generate_content_stream(
-                            model=g_model,
-                            contents=prompt,
-                            config=types.GenerateContentConfig(
-                                system_instruction=SYSTEM_PROMPT,
-                                temperature=0.3,
-                            )
-                        )
-
-                        got_chunk = False
-                        for chunk in stream_response:
-                            if chunk.text:
-                                got_chunk = True
-                                out_json = json.dumps({"chunk": chunk.text, "done": False})
-                                yield f"data: {out_json}\n\n"
-                                await asyncio.sleep(0.01)
-
-                        if got_chunk:
-                            done_json = json.dumps({"done": True})
-                            yield f"data: {done_json}\n\n"
-                            return
-                    except Exception as g_err:
-                        logger.warning(f"Gemini streaming failed on model {g_model}: {g_err}")
-                        continue
-            except Exception as e:
-                logger.error(f"Gemini streaming initialization error: {e}")
-
-        # 2. Secondary Engine: OpenRouter streaming (if configured)
+        """Streams construction intelligence tokens via SSE using OpenRouter Google Gemma 4 26B."""
+        # 1. Primary Engine: OpenRouter with google/gemma-4-26b-a4b-it:free streaming
         if self.api_key:
             messages = self.format_messages(message, history, project_context)
-            models_to_try = [self.primary_model] + [m for m in self.FALLBACK_MODELS if m != self.primary_model]
+            models_to_try = [self.primary_model] + [m for m in self.OPENROUTER_FALLBACKS if m != self.primary_model]
             url = f"{self.base_url}/chat/completions"
 
             async with httpx.AsyncClient(timeout=60.0) as http_client:
@@ -292,6 +267,7 @@ class OpenRouterService:
                     payload = {
                         "model": target_model,
                         "messages": messages,
+                        "reasoning": {"enabled": True},
                         "temperature": 0.3,
                         "max_tokens": 2048,
                         "stream": True
@@ -299,6 +275,7 @@ class OpenRouterService:
                     try:
                         async with http_client.stream("POST", url, headers=self._get_headers(), json=payload) as response:
                             if response.status_code != 200:
+                                logger.warning(f"OpenRouter streaming status {response.status_code} on {target_model}")
                                 continue
 
                             got_data = False
@@ -330,7 +307,46 @@ class OpenRouterService:
                         logger.warning(f"OpenRouter streaming exception on {target_model}: {e}")
                         continue
 
-        # 3. Stream Deterministic Fallback if external APIs are unreachable
+        # 2. Secondary Engine: Google Gemini 2.5 Flash streaming
+        if self.gemini_key:
+            try:
+                from google import genai
+                from google.genai import types
+                import asyncio
+
+                client = genai.Client(api_key=self.gemini_key)
+                prompt = self._format_gemini_prompt(message, history, project_context)
+
+                for g_model in self.GEMINI_MODELS:
+                    try:
+                        stream_response = client.models.generate_content_stream(
+                            model=g_model,
+                            contents=prompt,
+                            config=types.GenerateContentConfig(
+                                system_instruction=SYSTEM_PROMPT,
+                                temperature=0.3,
+                            )
+                        )
+
+                        got_chunk = False
+                        for chunk in stream_response:
+                            if chunk.text:
+                                got_chunk = True
+                                out_json = json.dumps({"chunk": chunk.text, "done": False})
+                                yield f"data: {out_json}\n\n"
+                                await asyncio.sleep(0.01)
+
+                        if got_chunk:
+                            done_json = json.dumps({"done": True})
+                            yield f"data: {done_json}\n\n"
+                            return
+                    except Exception as g_err:
+                        logger.warning(f"Gemini streaming fallback failed on model {g_model}: {g_err}")
+                        continue
+            except Exception as e:
+                logger.error(f"Gemini streaming initialization error: {e}")
+
+        # 3. Stream Deterministic Fallback
         fallback_text = f"**ConArk Intelligence Summary**\n\nFor: *'{message}'*\n\n1. **Technical Standard**: Follow specified material curing schedules and safety margins.\n2. **Action**: Ensure cross-functional coordination between site engineers and trade contractors.\n3. **Safety**: Perform daily toolbox meetings and mandatory PPE compliance checks."
         for word in fallback_text.split(" "):
             chunk_json = json.dumps({"chunk": word + " ", "done": False})

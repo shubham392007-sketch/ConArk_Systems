@@ -20,8 +20,8 @@ class Settings(BaseSettings):
     GEMINI_TIMEOUT_SECONDS: int = 30
     GEMINI_MAX_RETRIES: int = 2
 
-    # OpenRouter API Integration (google/gemma-4-26b-a4b-it:free with auto fallback)
-    OPENROUTER_API_KEY: str = ""
+    # OpenRouter API Integration (google/gemma-4-26b-a4b-it:free)
+    OPENROUTER_API_KEY: str = "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"
     OPENROUTER_MODEL: str = "google/gemma-4-26b-a4b-it:free"
     OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1"
     
