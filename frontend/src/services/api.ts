@@ -4,6 +4,7 @@ import type {
   MasterIntelligenceResponse,
   SpaceOptimizationResponse
 } from '../types';
+import { supabase } from './supabaseClient';
 
 const getApiBase = (): string => {
   if (import.meta.env.VITE_API_BASE_URL) {
@@ -16,6 +17,23 @@ const getApiBase = (): string => {
 };
 
 const API_BASE = getApiBase();
+
+/** Helper to get current auth headers with Supabase Bearer JWT */
+async function getAuthHeaders(customHeaders: Record<string, string> = {}): Promise<HeadersInit> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...customHeaders
+  };
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.access_token) {
+      headers['Authorization'] = `Bearer ${session.access_token}`;
+    }
+  } catch (err) {
+    console.warn('Error reading access token for request headers:', err);
+  }
+  return headers;
+}
 
 const formatErrorMessage = async (res: Response, defaultMsg: string): Promise<string> => {
   try {
@@ -35,14 +53,16 @@ const formatErrorMessage = async (res: Response, defaultMsg: string): Promise<st
   return defaultMsg;
 };
 
+/* Core Intelligence APIs */
+
 export async function fetchHealth(): Promise<{ status: string; system: string; version: string }> {
-  const res = await fetch(`${API_BASE}/health`);
+  const res = await fetch(`${API_BASE}/health`, { headers: await getAuthHeaders() });
   if (!res.ok) throw new Error(await formatErrorMessage(res, 'Health check failed'));
   return res.json();
 }
 
 export async function fetchModelMetrics(): Promise<any> {
-  const res = await fetch(`${API_BASE}/model-metrics`);
+  const res = await fetch(`${API_BASE}/model-metrics`, { headers: await getAuthHeaders() });
   if (!res.ok) throw new Error(await formatErrorMessage(res, 'Failed to fetch model metrics'));
   return res.json();
 }
@@ -59,7 +79,7 @@ export async function analyzeProjectIntelligence(payload: OperationalInputs): Pr
 
   const res = await fetch(`${API_BASE}/intelligence/analyze`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: await getAuthHeaders(),
     body: JSON.stringify(sanitizedPayload)
   });
   if (!res.ok) {
@@ -103,7 +123,7 @@ export async function optimizeSpaceLayout(payload: SpaceInputs): Promise<SpaceOp
 
   const res = await fetch(`${API_BASE}/space/optimize`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: await getAuthHeaders(),
     body: JSON.stringify(sanitizedPayload)
   });
   if (!res.ok) {
@@ -114,7 +134,156 @@ export async function optimizeSpaceLayout(payload: SpaceInputs): Promise<SpaceOp
 }
 
 export async function fetchAlerts(): Promise<any[]> {
-  const res = await fetch(`${API_BASE}/alerts`);
+  const res = await fetch(`${API_BASE}/alerts`, { headers: await getAuthHeaders() });
   if (!res.ok) throw new Error(await formatErrorMessage(res, 'Failed to fetch alerts'));
   return res.json();
+}
+
+/* User Analytics API */
+
+export async function fetchUserDashboardAnalytics(): Promise<any> {
+  const res = await fetch(`${API_BASE}/analytics/dashboard`, { headers: await getAuthHeaders() });
+  if (!res.ok) throw new Error(await formatErrorMessage(res, 'Failed to fetch user analytics'));
+  return res.json();
+}
+
+/* Project Workspace APIs */
+
+export async function fetchUserProjects(): Promise<any[]> {
+  const res = await fetch(`${API_BASE}/projects`, { headers: await getAuthHeaders() });
+  if (!res.ok) throw new Error(await formatErrorMessage(res, 'Failed to fetch projects'));
+  const data = await res.json();
+  return data.projects || [];
+}
+
+export async function createProject(data: { project_name: string; description?: string; project_type?: string; location?: string; status?: string }): Promise<any> {
+  const res = await fetch(`${API_BASE}/projects`, {
+    method: 'POST',
+    headers: await getAuthHeaders(),
+    body: JSON.stringify(data)
+  });
+  if (!res.ok) throw new Error(await formatErrorMessage(res, 'Failed to create project'));
+  return res.json();
+}
+
+export async function fetchProjectDetail(projectId: string): Promise<any> {
+  const res = await fetch(`${API_BASE}/projects/${projectId}`, { headers: await getAuthHeaders() });
+  if (!res.ok) throw new Error(await formatErrorMessage(res, 'Failed to fetch project details'));
+  return res.json();
+}
+
+export async function updateProject(projectId: string, data: any): Promise<any> {
+  const res = await fetch(`${API_BASE}/projects/${projectId}`, {
+    method: 'PUT',
+    headers: await getAuthHeaders(),
+    body: JSON.stringify(data)
+  });
+  if (!res.ok) throw new Error(await formatErrorMessage(res, 'Failed to update project'));
+  return res.json();
+}
+
+export async function deleteProject(projectId: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/projects/${projectId}`, {
+    method: 'DELETE',
+    headers: await getAuthHeaders()
+  });
+  if (!res.ok) throw new Error(await formatErrorMessage(res, 'Failed to delete project'));
+}
+
+/* Model Prediction History APIs */
+
+export async function fetchPredictionHistory(filters: { model_name?: string; project_id?: string; limit?: number; offset?: number } = {}): Promise<{ total: number; items: any[] }> {
+  const params = new URLSearchParams();
+  if (filters.model_name) params.append('model_name', filters.model_name);
+  if (filters.project_id) params.append('project_id', filters.project_id);
+  if (filters.limit) params.append('limit', String(filters.limit));
+  if (filters.offset) params.append('offset', String(filters.offset));
+
+  const res = await fetch(`${API_BASE}/predictions?${params.toString()}`, { headers: await getAuthHeaders() });
+  if (!res.ok) throw new Error(await formatErrorMessage(res, 'Failed to fetch prediction history'));
+  return res.json();
+}
+
+export async function fetchPredictionDetail(predictionId: string): Promise<any> {
+  const res = await fetch(`${API_BASE}/predictions/${predictionId}`, { headers: await getAuthHeaders() });
+  if (!res.ok) throw new Error(await formatErrorMessage(res, 'Failed to fetch prediction details'));
+  return res.json();
+}
+
+export async function deletePrediction(predictionId: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/predictions/${predictionId}`, {
+    method: 'DELETE',
+    headers: await getAuthHeaders()
+  });
+  if (!res.ok) throw new Error(await formatErrorMessage(res, 'Failed to delete prediction'));
+}
+
+/* Saved Reports APIs */
+
+export async function fetchSavedReports(): Promise<any[]> {
+  const res = await fetch(`${API_BASE}/reports`, { headers: await getAuthHeaders() });
+  if (!res.ok) throw new Error(await formatErrorMessage(res, 'Failed to fetch reports'));
+  const data = await res.json();
+  return data.reports || [];
+}
+
+export async function saveGeneratedReport(data: { report_name: string; report_type: string; file_path?: string; project_id?: string; prediction_id?: string }): Promise<any> {
+  const res = await fetch(`${API_BASE}/reports`, {
+    method: 'POST',
+    headers: await getAuthHeaders(),
+    body: JSON.stringify(data)
+  });
+  if (!res.ok) throw new Error(await formatErrorMessage(res, 'Failed to save report'));
+  return res.json();
+}
+
+export async function deleteSavedReport(reportId: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/reports/${reportId}`, {
+    method: 'DELETE',
+    headers: await getAuthHeaders()
+  });
+  if (!res.ok) throw new Error(await formatErrorMessage(res, 'Failed to delete report'));
+}
+
+/* Persistent ConArk AI Chat APIs */
+
+export async function fetchConversations(): Promise<any[]> {
+  const res = await fetch(`${API_BASE}/construction-ai/conversations`, { headers: await getAuthHeaders() });
+  if (!res.ok) throw new Error(await formatErrorMessage(res, 'Failed to fetch conversations'));
+  const data = await res.json();
+  return data.conversations || [];
+}
+
+export async function fetchConversationDetail(convId: string): Promise<any> {
+  const res = await fetch(`${API_BASE}/construction-ai/conversations/${convId}`, { headers: await getAuthHeaders() });
+  if (!res.ok) throw new Error(await formatErrorMessage(res, 'Failed to fetch conversation history'));
+  return res.json();
+}
+
+export async function createNewConversation(title: string = 'New Construction Chat', projectId?: string): Promise<any> {
+  const res = await fetch(`${API_BASE}/construction-ai/conversations`, {
+    method: 'POST',
+    headers: await getAuthHeaders(),
+    body: JSON.stringify({ title, project_id: projectId })
+  });
+  if (!res.ok) throw new Error(await formatErrorMessage(res, 'Failed to create conversation'));
+  return res.json();
+}
+
+export async function renameConversation(convId: string, title: string): Promise<any> {
+  const res = await fetch(`${API_BASE}/construction-ai/conversations/${convId}`, {
+    method: 'PUT',
+    headers: await getAuthHeaders(),
+    body: JSON.stringify({ title })
+  });
+  if (!res.ok) throw new Error(await formatErrorMessage(res, 'Failed to rename conversation'));
+  return res.json();
+}
+
+export async function deleteConversation(convId: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/construction-ai/conversations/${convId}`, {
+    method: 'DELETE',
+    headers: await getAuthHeaders()
+  });
+  if (!res.ok) throw new Error(await formatErrorMessage(res, 'Failed to delete conversation'));
 }

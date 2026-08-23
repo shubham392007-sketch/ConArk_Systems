@@ -93,8 +93,7 @@ export const Footer: React.FC = () => {
               <Link to="/model/performance" style={{ color: '#CCCCCC', textDecoration: 'none' }}>Performance Intelligence</Link>
               <Link to="/model/risk" style={{ color: '#CCCCCC', textDecoration: 'none' }}>Risk Intelligence</Link>
               <Link to="/model/cost" style={{ color: '#CCCCCC', textDecoration: 'none' }}>Cost Forecast Intelligence</Link>
-              <Link to="/model/time" style={{ color: '#CCCCCC', textDecoration: 'none' }}>Time Schedule Forecast</Link>
-              <Link to="/model/optimization" style={{ color: '#CCCCCC', textDecoration: 'none' }}>Project Optimization</Link>
+              <Link to="/model/time" style={{ color: '#CCCCCC', textDecoration: 'none' }}>Time Schedule Forecast Intelligence</Link>
               <Link to="/space-optimization" style={{ color: '#CCCCCC', textDecoration: 'none' }}>Space Optimization</Link>
               <Link to="/construction-ai" style={{ color: '#FF2AA1', textDecoration: 'none', fontWeight: 'bold' }}>ConArk Intelligence (AI Q&A)</Link>
             </div>

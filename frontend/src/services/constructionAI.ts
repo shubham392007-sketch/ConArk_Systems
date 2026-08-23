@@ -17,6 +17,24 @@ const getApiBase = (): string => {
 
 const API_BASE = getApiBase();
 
+import { supabase } from './supabaseClient';
+
+async function getAuthHeaders(customHeaders: Record<string, string> = {}): Promise<HeadersInit> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...customHeaders
+  };
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.access_token) {
+      headers['Authorization'] = `Bearer ${session.access_token}`;
+    }
+  } catch (err) {
+    console.warn('Error reading access token for AI stream headers:', err);
+  }
+  return headers;
+}
+
 export interface StreamCallbacks {
   onChunk: (chunk: string) => void;
   onDone: () => void;
@@ -31,7 +49,7 @@ export async function sendConstructionAIMessage(
 ): Promise<ConstructionAIResponse> {
   const res = await fetch(`${API_BASE}/construction-ai/chat`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: await getAuthHeaders(),
     body: JSON.stringify({
       message,
       history,
@@ -62,7 +80,7 @@ export async function streamConstructionAIMessage(
   try {
     const res = await fetch(`${API_BASE}/construction-ai/chat/stream`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: await getAuthHeaders(),
       body: JSON.stringify({
         message,
         history,

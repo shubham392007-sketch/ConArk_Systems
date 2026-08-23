@@ -12,7 +12,12 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from conark.config.settings import settings
 from conark.api.dependencies import get_intelligence_engine
-from conark.api.routes import health, prediction, forecasting, recommendation, alerts, intelligence, space_optimization, construction_ai
+from conark.api.routes import (
+    health, prediction, forecasting, recommendation, alerts,
+    intelligence, space_optimization, construction_ai,
+    auth_routes, project_routes, prediction_history_routes,
+    optimization_history_routes, analytics_routes, report_routes
+)
 from conark.utils.logging import get_logger
 
 logger = get_logger("fastapi_main")
@@ -56,6 +61,12 @@ app.include_router(alerts.router, prefix=prefix_v1)
 app.include_router(intelligence.router, prefix=prefix_v1)
 app.include_router(space_optimization.router, prefix=prefix_v1)
 app.include_router(construction_ai.router, prefix=prefix_v1)
+app.include_router(auth_routes.router, prefix=prefix_v1)
+app.include_router(project_routes.router, prefix=prefix_v1)
+app.include_router(prediction_history_routes.router, prefix=prefix_v1)
+app.include_router(optimization_history_routes.router, prefix=prefix_v1)
+app.include_router(analytics_routes.router, prefix=prefix_v1)
+app.include_router(report_routes.router, prefix=prefix_v1)
 
 # Resolve production frontend SPA static directory
 possible_dist_paths = [

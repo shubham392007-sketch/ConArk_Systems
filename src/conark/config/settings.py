@@ -24,6 +24,13 @@ class Settings(BaseSettings):
     OPENROUTER_API_KEY: str = "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"
     OPENROUTER_MODEL: str = "google/gemma-4-26b-a4b-it:free"
     OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1"
+
+    # Supabase PostgreSQL & Auth Integration
+    SUPABASE_URL: str = "https://fgdlibcsnjsbuwddcklb.supabase.co"
+    SUPABASE_ANON_KEY: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZnZGxpYmNzbmpzYnV3ZGRja2xiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0ODk1NzYsImV4cCI6MjEwMzA2NTU3Nn0.q4JCUH5tvd70NESc-8UeJuUL4tKLqV94zPn7sxaGw1o"
+    SUPABASE_SERVICE_ROLE_KEY: str = ""
+    SUPABASE_JWT_SECRET: str = ""
+    DATABASE_URL: str = "postgresql://postgres:Shubham%40392007@db.fgdlibcsnjsbuwddcklb.supabase.co:5432/postgres"
     
     BASE_DIR: Path = Path(__file__).resolve().parent.parent.parent.parent
     MODEL_DIR: Path = BASE_DIR / "models"
