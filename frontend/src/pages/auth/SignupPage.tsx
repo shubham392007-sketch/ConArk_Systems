@@ -218,7 +218,7 @@ export const SignupPage: React.FC = () => {
                   type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  placeholder="e.g. John Doe"
+                  placeholder="Enter your full name"
                   required
                   style={{
                     width: '100%',
@@ -254,7 +254,7 @@ export const SignupPage: React.FC = () => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="engineer@company.com"
+                  placeholder="name@company.com"
                   required
                   style={{
                     width: '100%',
@@ -291,7 +291,7 @@ export const SignupPage: React.FC = () => {
                     type="text"
                     value={organization}
                     onChange={(e) => setOrganization(e.target.value)}
-                    placeholder="Company name"
+                    placeholder="Company or agency name"
                     style={{
                       width: '100%',
                       padding: '12px 10px 12px 32px',
@@ -377,7 +377,7 @@ export const SignupPage: React.FC = () => {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="At least 8 characters"
+                  placeholder="Create a password (min. 8 characters)"
                   required
                   style={{
                     width: '100%',
@@ -430,7 +430,7 @@ export const SignupPage: React.FC = () => {
                   type={showPassword ? 'text' : 'password'}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Re-enter your password"
+                  placeholder="Re-enter password to confirm"
                   required
                   style={{
                     width: '100%',

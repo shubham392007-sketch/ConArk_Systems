@@ -189,7 +189,7 @@ export const SettingsPage: React.FC = () => {
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="At least 8 characters"
+                placeholder="Enter new password (min. 8 characters)"
                 required
                 style={{
                   width: '100%',
@@ -233,7 +233,7 @@ export const SettingsPage: React.FC = () => {
                 type={showPassword ? 'text' : 'password'}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Re-enter password"
+                placeholder="Re-enter new password to confirm"
                 required
                 style={{
                   width: '100%',

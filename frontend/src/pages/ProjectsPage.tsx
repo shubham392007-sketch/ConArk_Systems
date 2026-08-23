@@ -429,7 +429,7 @@ export const ProjectsPage: React.FC = () => {
                   type="text"
                   value={projectName}
                   onChange={(e) => setProjectName(e.target.value)}
-                  placeholder="e.g. Apex Tower Construction"
+                  placeholder="Project or site name"
                   required
                   style={{
                     width: '100%',
@@ -482,7 +482,7 @@ export const ProjectsPage: React.FC = () => {
                   type="text"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  placeholder="e.g. Austin, TX"
+                  placeholder="City, State / Site address"
                   style={{
                     width: '100%',
                     padding: '10px 12px',
@@ -504,7 +504,7 @@ export const ProjectsPage: React.FC = () => {
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Site details, target milestones, and key stakeholders..."
+                  placeholder="Scope of work, key milestones, and site notes..."
                   rows={3}
                   style={{
                     width: '100%',

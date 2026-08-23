@@ -167,7 +167,7 @@ export const ProfilePage: React.FC = () => {
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                placeholder="Your full name"
+                placeholder="Enter your full name"
                 required
                 style={{
                   width: '100%',
@@ -196,7 +196,7 @@ export const ProfilePage: React.FC = () => {
                   type="text"
                   value={organization}
                   onChange={(e) => setOrganization(e.target.value)}
-                  placeholder="Company name"
+                  placeholder="Company or agency name"
                   style={{
                     width: '100%',
                     padding: '12px 12px 12px 38px',

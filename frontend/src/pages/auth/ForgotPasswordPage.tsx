@@ -149,7 +149,7 @@ export const ForgotPasswordPage: React.FC = () => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="engineer@company.com"
+                  placeholder="name@company.com"
                   required
                   style={{
                     width: '100%',

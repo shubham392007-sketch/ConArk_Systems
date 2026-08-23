@@ -138,7 +138,7 @@ export const LoginPage: React.FC = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="engineer@company.com"
+                placeholder="name@company.com"
                 required
                 style={{
                   width: '100%',
@@ -186,7 +186,7 @@ export const LoginPage: React.FC = () => {
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••••••"
+                placeholder="Enter your password"
                 required
                 style={{
                   width: '100%',
