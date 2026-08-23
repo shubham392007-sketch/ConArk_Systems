@@ -554,135 +554,146 @@ Disclaimer: ConArk AI responses provide technical operational guidance. Safety-c
             backgroundColor: '#FFFFFF',
             border: '2.5px solid #111111',
             borderRadius: '16px',
-            padding: '20px',
             boxShadow: '6px 6px 0px #111111',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '20px',
-            maxHeight: 'calc(100vh - 200px)',
-            overflowY: 'auto'
+            maxHeight: 'calc(100vh - 180px)',
+            overflow: 'hidden',
+            boxSizing: 'border-box'
           }}
         >
-          {/* Mobile Close Button Header */}
-          <div className="mobile-drawer-toggle" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1.5px solid #111', paddingBottom: '12px' }}>
-            <span style={{ fontFamily: 'Anton, sans-serif', fontSize: '18px', color: '#111' }}>CONARK AI MENU</span>
-            <button onClick={() => setMobileDrawerOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}>
-              <X size={20} color="#111" />
-            </button>
-          </div>
-
-          {/* + NEW CHAT Button */}
-          <button
-            onClick={() => {
-              startNewChat();
-              setMobileDrawerOpen(false);
-            }}
+          <div
+            className="custom-scrollbar"
             style={{
-              width: '100%',
-              backgroundColor: '#FF2AA1',
-              color: '#FFFFFF',
-              border: '2px solid #111111',
-              borderRadius: '8px',
-              padding: '12px 16px',
-              fontFamily: 'Anton, sans-serif',
-              fontSize: '18px',
-              letterSpacing: '0.04em',
+              padding: '20px 16px',
               display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px',
-              cursor: 'pointer',
-              boxShadow: '3px 3px 0px #111111'
+              flexDirection: 'column',
+              gap: '20px',
+              height: '100%',
+              maxHeight: 'calc(100vh - 180px)',
+              overflowY: 'auto',
+              boxSizing: 'border-box'
             }}
           >
-            <Plus size={20} /> + NEW CHAT
-          </button>
-
-          {/* RECENT CONVERSATIONS */}
-          <div>
-            <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#666666', marginBottom: '10px' }}>
-              RECENT CONVERSATIONS
+            {/* Mobile Close Button Header */}
+            <div className="mobile-drawer-toggle" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1.5px solid #111', paddingBottom: '12px' }}>
+              <span style={{ fontFamily: 'Anton, sans-serif', fontSize: '18px', color: '#111' }}>CONARK AI MENU</span>
+              <button onClick={() => setMobileDrawerOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}>
+                <X size={20} color="#111" />
+              </button>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              {sessions.map(s => {
-                const isActive = s.id === currentSessionId;
-                return (
-                  <div
-                    key={s.id}
-                    onClick={() => {
-                      selectSession(s.id);
-                      setMobileDrawerOpen(false);
-                    }}
-                    style={{
-                      padding: '10px 12px',
-                      borderRadius: '6px',
-                      border: isActive ? '1.5px solid #111111' : '1px solid #EEEEEE',
-                      backgroundColor: isActive ? '#E4FF5B' : '#F9F8F5',
-                      fontFamily: 'Inter, sans-serif',
-                      fontSize: '13px',
-                      fontWeight: isActive ? '700' : '500',
-                      color: '#111111',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      gap: '8px',
-                      transition: 'all 0.15s ease'
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-                      <MessageSquare size={14} color="#111111" />
-                      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.title}</span>
+
+            {/* + NEW CHAT Button */}
+            <button
+              onClick={() => {
+                startNewChat();
+                setMobileDrawerOpen(false);
+              }}
+              style={{
+                width: '100%',
+                backgroundColor: '#FF2AA1',
+                color: '#FFFFFF',
+                border: '2px solid #111111',
+                borderRadius: '8px',
+                padding: '12px 16px',
+                fontFamily: 'Anton, sans-serif',
+                fontSize: '18px',
+                letterSpacing: '0.04em',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                cursor: 'pointer',
+                boxShadow: '3px 3px 0px #111111'
+              }}
+            >
+              <Plus size={20} /> + NEW CHAT
+            </button>
+
+            {/* RECENT CONVERSATIONS */}
+            <div>
+              <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#666666', marginBottom: '10px' }}>
+                RECENT CONVERSATIONS
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                {sessions.map(s => {
+                  const isActive = s.id === currentSessionId;
+                  return (
+                    <div
+                      key={s.id}
+                      onClick={() => {
+                        selectSession(s.id);
+                        setMobileDrawerOpen(false);
+                      }}
+                      style={{
+                        padding: '10px 12px',
+                        borderRadius: '6px',
+                        border: isActive ? '1.5px solid #111111' : '1px solid #EEEEEE',
+                        backgroundColor: isActive ? '#E4FF5B' : '#F9F8F5',
+                        fontFamily: 'Inter, sans-serif',
+                        fontSize: '13px',
+                        fontWeight: isActive ? '700' : '500',
+                        color: '#111111',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: '8px',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+                        <MessageSquare size={14} color="#111111" />
+                        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.title}</span>
+                      </div>
+
+                      {sessions.length > 1 && (
+                        <button
+                          onClick={e => deleteSession(s.id, e)}
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', opacity: 0.6, padding: '2px' }}
+                          title="Delete chat"
+                        >
+                          <Trash2 size={13} color="#111111" />
+                        </button>
+                      )}
                     </div>
-
-                    {sessions.length > 1 && (
-                      <button
-                        onClick={e => deleteSession(s.id, e)}
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', opacity: 0.6, padding: '2px' }}
-                        title="Delete chat"
-                      >
-                        <Trash2 size={13} color="#111111" />
-                      </button>
-                    )}
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
-          </div>
 
-          {/* TOPIC CATEGORIES */}
-          <div>
-            <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#666666', marginBottom: '10px' }}>
-              TOPIC CATEGORIES
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              {TOPIC_CATEGORIES.map(cat => {
-                const isSelected = activeTopic === cat.id;
-                return (
-                  <button
-                    key={cat.id}
-                    onClick={() => setActiveTopic(cat.id)}
-                    style={{
-                      textAlign: 'left',
-                      padding: '8px 12px',
-                      borderRadius: '6px',
-                      border: 'none',
-                      backgroundColor: isSelected ? '#111111' : 'transparent',
-                      color: isSelected ? '#FFFFFF' : '#333333',
-                      fontFamily: 'JetBrains Mono, monospace',
-                      fontSize: '11px',
-                      fontWeight: '800',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between'
-                    }}
-                  >
-                    <span>{cat.label}</span>
-                    {isSelected && <ChevronRight size={14} color="#FF2AA1" />}
-                  </button>
-                );
-              })}
+            {/* TOPIC CATEGORIES */}
+            <div>
+              <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#666666', marginBottom: '10px' }}>
+                TOPIC CATEGORIES
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                {TOPIC_CATEGORIES.map(cat => {
+                  const isSelected = activeTopic === cat.id;
+                  return (
+                    <button
+                      key={cat.id}
+                      onClick={() => setActiveTopic(cat.id)}
+                      style={{
+                        textAlign: 'left',
+                        padding: '8px 12px',
+                        borderRadius: '6px',
+                        border: 'none',
+                        backgroundColor: isSelected ? '#111111' : 'transparent',
+                        color: isSelected ? '#FFFFFF' : '#333333',
+                        fontFamily: 'JetBrains Mono, monospace',
+                        fontSize: '11px',
+                        fontWeight: '800',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between'
+                      }}
+                    >
+                      <span>{cat.label}</span>
+                      {isSelected && <ChevronRight size={14} color="#FF2AA1" />}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
