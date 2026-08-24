@@ -37,8 +37,24 @@ export function saveReportToHistory(item: SavedReportItem): void {
     } else {
       history.unshift(item);
     }
-    // Limit to last 30 reports
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(history.slice(0, 30)));
+    // Keep last 50 reports
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(history.slice(0, 50)));
+  } catch {}
+}
+
+export function deleteSavedReport(reportId: string): SavedReportItem[] {
+  try {
+    const history = getSavedReports().filter(h => h.report_id !== reportId);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+    return history;
+  } catch {
+    return [];
+  }
+}
+
+export function clearSavedReports(): void {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
   } catch {}
 }
 
@@ -166,7 +182,11 @@ export async function generateModelReport(payload: ModelReportPayload): Promise<
     modelName: payload.modelName,
     timestamp: metadata.timestamp,
     predictionSummary: primaryPrediction,
-    status: metadata.status
+    status: metadata.status,
+    filename: filename,
+    project_id: metadata.project_id,
+    project_name: metadata.project_name,
+    payload: payload
   });
 
   return { blob, url, filename, metadata };

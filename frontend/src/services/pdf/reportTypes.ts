@@ -55,4 +55,8 @@ export interface SavedReportItem {
   timestamp: string;
   predictionSummary: string;
   status: string;
+  filename?: string;
+  project_id?: string;
+  project_name?: string;
+  payload?: ModelReportPayload;
 }
