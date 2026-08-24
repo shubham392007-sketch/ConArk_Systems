@@ -231,6 +231,35 @@ input, select, textarea {
   }
 }
 
+.desktop-nav-only {
+  display: flex !important;
+}
+.mobile-nav-only {
+  display: none !important;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@media (max-width: 960px) {
+  .desktop-nav-only {
+    display: none !important;
+  }
+  .mobile-nav-only {
+    display: flex !important;
+  }
+}
+
 @media (max-width: 768px) {
   html, body, #root {
     width: 100% !important;
@@ -238,7 +267,7 @@ input, select, textarea {
     overflow-x: hidden !important;
   }
   .nav-header-padding {
-    padding: 12px 14px !important;
+    padding: 10px 14px !important;
   }
   .nav-tagline-hide {
     display: none !important;
