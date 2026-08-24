@@ -110,7 +110,16 @@ export const PredictionDetailPage: React.FC = () => {
 
         <div style={{ display: 'flex', gap: '10px' }}>
           <button
-            onClick={() => navigate('/ai', { state: { initialPrompt: `Analyze this prediction output: ${JSON.stringify(prediction.prediction_output)}` } })}
+            onClick={() => {
+              const modelLabel = prediction.model_name ? prediction.model_name.replace(/_/g, ' ').toUpperCase() : 'CONSTRUCTION INTELLIGENCE';
+              const prompt = `Analyze and provide engineering recommendations for this ${modelLabel} prediction record:\n\nInput Parameters: ${JSON.stringify(prediction.input_data, null, 2)}\n\nPrediction Output: ${JSON.stringify(prediction.prediction_output, null, 2)}`;
+              navigate('/construction-ai', {
+                state: {
+                  initialPrompt: prompt,
+                  projectContext: prediction.input_data
+                }
+              });
+            }}
             style={{
               backgroundColor: '#E4FF5B',
               color: '#111111',

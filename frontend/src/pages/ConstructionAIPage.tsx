@@ -178,8 +178,19 @@ export const ConstructionAIPage: React.FC = () => {
     }
   }, []);
 
-  // Handle URL context query params (e.g. /construction-ai?context=risk)
+  // Handle URL context query params (e.g. /construction-ai?context=risk) or location state
   useEffect(() => {
+    // 1. Check if navigated with state (e.g. from PredictionDetailPage "ASK CONARK AI")
+    if (location.state && (location.state as any).initialPrompt) {
+      const statePrompt = (location.state as any).initialPrompt;
+      setInputPrompt(statePrompt);
+      if ((location.state as any).projectContext) {
+        setProjectContext((location.state as any).projectContext);
+      }
+      return;
+    }
+
+    // 2. Check URL search params
     const query = new URLSearchParams(location.search);
     const contextType = query.get('context');
 
@@ -215,7 +226,7 @@ export const ConstructionAIPage: React.FC = () => {
         setInputPrompt('Our project performance is rated Good (52% progress) but machinery vibration is elevated at 28.6 mm/s. What operational adjustments are recommended?');
       }
     }
-  }, [location.search, setProjectContext]);
+  }, [location.search, location.state, setProjectContext]);
 
   // Scroll to bottom when messages update
   useEffect(() => {

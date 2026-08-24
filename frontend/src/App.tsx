@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { TopNav } from './components/layout/TopNav';
@@ -105,6 +105,8 @@ const MainContent: React.FC = () => {
 
         {/* Protected ConArk AI & Intelligence Models Routes (Requires Sign In) */}
         <Route path="/construction-ai" element={<ProtectedRoute><ConstructionAIPage /></ProtectedRoute>} />
+        <Route path="/ai" element={<Navigate to="/construction-ai" replace />} />
+        <Route path="/chat" element={<Navigate to="/construction-ai" replace />} />
         <Route path="/models" element={<ProtectedRoute><ModelRegistryPage /></ProtectedRoute>} />
         <Route path="/model/:modelId" element={<ProtectedRoute><ModelDetailPage /></ProtectedRoute>} />
         <Route path="/input" element={<ProtectedRoute><ProjectInput /></ProtectedRoute>} />
