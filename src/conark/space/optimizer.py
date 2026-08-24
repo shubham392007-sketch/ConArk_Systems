@@ -124,9 +124,8 @@ class SpaceOptimizer:
         # 5. Spatial 2D rectangular layout positioning
         site_l = float(input_data.site_length_m) if (input_data.site_length_m and input_data.site_length_m > 0) else 40.0
         site_w = float(input_data.site_width_m) if (input_data.site_width_m and input_data.site_width_m > 0) else 30.0
-
         spatial_layout = self._generate_2d_layout(allocation_dict, site_l, site_w)
-
+        spatial_layout_dicts = [z.model_dump() for z in spatial_layout]
         reasoning = self._generate_reasoning(input_data, demand, allocation_dict)
 
         return {
@@ -135,7 +134,8 @@ class SpaceOptimizer:
             "demand": demand,
             "allocation": allocation_dict,
             "constraints": [c.model_dump() for c in constraint_items],
-            "spatial_layout": [z.model_dump() for z in spatial_layout],
+            "spatial_layout": spatial_layout_dicts,
+            "coordinates": spatial_layout_dicts,
             "reasoning": reasoning
         }
 
@@ -146,61 +146,127 @@ class SpaceOptimizer:
         site_width: float
     ) -> List[ZoneLayout]:
         """
-        Generates structured 3-tier grid layout for 2D spatial map visualization.
-        Packs all 8 operational site zones into non-overlapping proportional rectangles.
+        Generates structured 4-tier grid layout for 2D spatial map visualization.
+        Packs all 8 operational site zones into non-overlapping proportional rectangles
+        whose individual bounding box dimensions strictly reflect the optimized allocation.
         """
         layout = []
 
-        # Tier 1: Main Work Zones (Top Row)
-        # Material Storage & Equipment Area
-        mat_area = allocation.get("material_storage_area_sqm", 320.0)
-        eq_area = allocation.get("equipment_area_sqm", 180.0)
-        t1_total = mat_area + eq_area
-        t1_h = round(site_width * 0.40, 2)
-        
-        mat_w = round(site_length * (mat_area / max(t1_total, 1.0)), 2)
+        mat_area = float(allocation.get("material_storage_area_sqm", 320.0))
+        eq_area = float(allocation.get("equipment_area_sqm", 180.0))
+        wrk_area = float(allocation.get("worker_movement_area_sqm", 150.0))
+        stg_area = float(allocation.get("staging_area_sqm", 100.0))
+        safe_area = float(allocation.get("safety_buffer_area_sqm", 120.0))
+        load_area = float(allocation.get("loading_area_sqm", 80.0))
+        waste_area = float(allocation.get("waste_area_sqm", 40.0))
+        emg_area = float(allocation.get("emergency_access_area_sqm", 110.0))
+
+        total_alloc = max(mat_area + eq_area + wrk_area + stg_area + safe_area + load_area + waste_area + emg_area, 1.0)
+
+        # Proportional row tier heights based on tier area and site length
+        # This ensures width * height == allocated_area_sqm EXACTLY for every zone
+        t1_total = max(mat_area + eq_area, 1.0)
+        t2_total = max(wrk_area + stg_area, 1.0)
+        t3_total = max(safe_area + load_area + waste_area, 1.0)
+        t4_total = max(emg_area, 1.0)
+
+        t1_h = round(t1_total / site_length, 2)
+        t2_h = round(t2_total / site_length, 2)
+        t3_h = round(t3_total / site_length, 2)
+        t4_h = round(t4_total / site_length, 2)
+
+        # Tier 1 (Top Row): Material Storage & Equipment Area
+        mat_w = round(site_length * (mat_area / t1_total), 2)
         eq_w = round(site_length - mat_w, 2)
 
-        layout.append(ZoneLayout(zone="Material Storage", x=0.0, y=0.0, width=mat_w, height=t1_h))
-        layout.append(ZoneLayout(zone="Equipment Area", x=mat_w, y=0.0, width=eq_w, height=t1_h))
+        layout.append(ZoneLayout(
+            zone="Material Storage",
+            zone_name="Material Storage",
+            x=0.0,
+            y=0.0,
+            width=mat_w,
+            height=t1_h,
+            area_sqm=mat_area
+        ))
+        layout.append(ZoneLayout(
+            zone="Equipment Area",
+            zone_name="Equipment Area",
+            x=mat_w,
+            y=0.0,
+            width=eq_w,
+            height=t1_h,
+            area_sqm=eq_area
+        ))
 
-        # Tier 2: Circulation & Staging (Middle Row)
-        # Worker Movement & Staging Area
-        wrk_area = allocation.get("worker_movement_area_sqm", 150.0)
-        stg_area = allocation.get("staging_area_sqm", 100.0)
-        t2_total = wrk_area + stg_area
-        t2_h = round(site_width * 0.35, 2)
+        # Tier 2 (Row 2): Worker Movement & Staging Area
         t2_y = t1_h
-
-        wrk_w = round(site_length * (wrk_area / max(t2_total, 1.0)), 2)
+        wrk_w = round(site_length * (wrk_area / t2_total), 2)
         stg_w = round(site_length - wrk_w, 2)
 
-        layout.append(ZoneLayout(zone="Worker Movement", x=0.0, y=t2_y, width=wrk_w, height=t2_h))
-        layout.append(ZoneLayout(zone="Staging Area", x=wrk_w, y=t2_y, width=stg_w, height=t2_h))
+        layout.append(ZoneLayout(
+            zone="Worker Movement",
+            zone_name="Worker Movement",
+            x=0.0,
+            y=t2_y,
+            width=wrk_w,
+            height=t2_h,
+            area_sqm=wrk_area
+        ))
+        layout.append(ZoneLayout(
+            zone="Staging Area",
+            zone_name="Staging Area",
+            x=wrk_w,
+            y=t2_y,
+            width=stg_w,
+            height=t2_h,
+            area_sqm=stg_area
+        ))
 
-        # Tier 3: Logistics & Safety (Bottom Rows)
-        # Safety Buffer, Loading/Unloading, Waste Dump (Bottom Row 1)
-        safe_area = allocation.get("safety_buffer_area_sqm", 120.0)
-        load_area = allocation.get("loading_area_sqm", 80.0)
-        waste_area = allocation.get("waste_area_sqm", 40.0)
-        t3_total = safe_area + load_area + waste_area
-        t3_h = round(site_width * 0.18, 2)
+        # Tier 3 (Row 3): Safety Buffer, Loading/Unloading, Waste Dump
         t3_y = round(t1_h + t2_h, 2)
-
-        safe_w = round(site_length * (safe_area / max(t3_total, 1.0)), 2)
-        load_w = round(site_length * (load_area / max(t3_total, 1.0)), 2)
+        safe_w = round(site_length * (safe_area / t3_total), 2)
+        load_w = round(site_length * (load_area / t3_total), 2)
         waste_w = round(site_length - safe_w - load_w, 2)
 
-        layout.append(ZoneLayout(zone="Safety Buffer", x=0.0, y=t3_y, width=safe_w, height=t3_h))
-        layout.append(ZoneLayout(zone="Loading / Unloading", x=safe_w, y=t3_y, width=load_w, height=t3_h))
-        layout.append(ZoneLayout(zone="Waste Dump", x=round(safe_w + load_w, 2), y=t3_y, width=waste_w, height=t3_h))
+        layout.append(ZoneLayout(
+            zone="Safety Buffer",
+            zone_name="Safety Buffer",
+            x=0.0,
+            y=t3_y,
+            width=safe_w,
+            height=t3_h,
+            area_sqm=safe_area
+        ))
+        layout.append(ZoneLayout(
+            zone="Loading / Unloading",
+            zone_name="Loading / Unloading",
+            x=safe_w,
+            y=t3_y,
+            width=load_w,
+            height=t3_h,
+            area_sqm=load_area
+        ))
+        layout.append(ZoneLayout(
+            zone="Waste Dump",
+            zone_name="Waste Dump",
+            x=round(safe_w + load_w, 2),
+            y=t3_y,
+            width=waste_w,
+            height=t3_h,
+            area_sqm=waste_area
+        ))
 
-        # Tier 4: Emergency Access Corridor (Full Width Strip at Bottom)
-        t4_h = round(site_width - (t1_h + t2_h + t3_h), 2)
-        t4_h = max(t4_h, round(site_width * 0.07, 2))
-        t4_y = round(site_width - t4_h, 2)
-
-        layout.append(ZoneLayout(zone="Emergency Access Corridor", x=0.0, y=t4_y, width=site_length, height=t4_h))
+        # Tier 4 (Bottom Row): Emergency Access Corridor
+        t4_y = round(t1_h + t2_h + t3_h, 2)
+        layout.append(ZoneLayout(
+            zone="Emergency Access Corridor",
+            zone_name="Emergency Access Corridor",
+            x=0.0,
+            y=t4_y,
+            width=site_length,
+            height=t4_h,
+            area_sqm=emg_area
+        ))
 
         return layout
 

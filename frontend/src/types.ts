@@ -120,11 +120,13 @@ export interface MasterIntelligenceResponse {
 }
 
 export interface ZoneCoordinates {
-  zone_name: string;
+  zone_name?: string;
+  zone?: string;
   x: number;
   y: number;
   width: number;
   height: number;
+  area_sqm?: number;
 }
 
 export interface SpaceOptimizationResponse {

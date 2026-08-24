@@ -85,6 +85,7 @@ class SpaceOptimizationService:
             metrics=metrics,
             constraints=opt_res.get("constraints", []),
             spatial_layout=opt_res.get("spatial_layout", []),
+            coordinates=opt_res.get("spatial_layout", []),
             reasoning=opt_res.get("reasoning", []),
             gemini_report=gemini_wrapper.model_dump()
         )

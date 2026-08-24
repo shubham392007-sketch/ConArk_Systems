@@ -127,8 +127,8 @@ export const SpaceOptimizationPage: React.FC = () => {
   };
 
   // Color mapping for all 8 zones
-  const getZoneColor = (zoneName: string) => {
-    const name = zoneName.toLowerCase();
+  const getZoneColor = (zoneName?: string) => {
+    const name = (zoneName || '').toLowerCase();
     if (name.includes('material')) return '#E4FF5B'; // Chartreuse
     if (name.includes('equipment')) return '#7CFFA6'; // Mint
     if (name.includes('worker')) return '#4FC3F7'; // Blue
@@ -145,25 +145,41 @@ export const SpaceOptimizationPage: React.FC = () => {
     const sW = siteW && siteW > 0 ? siteW : 30;
     const r = (val: number) => parseFloat(val.toFixed(2));
     
-    const t1_h = r(sW * 0.40);
-    const t2_h = r(sW * 0.35);
-    const t3_h = r(sW * 0.18);
+    // Proportional heights derived from default allocations (1100 total sqm)
+    const t1_h = r(sW * (500 / 1100));
+    const t2_h = r(sW * (250 / 1100));
+    const t3_h = r(sW * (240 / 1100));
     const t4_h = r(sW - (t1_h + t2_h + t3_h));
 
+    const mat_w = r(sL * (320 / 500));
+    const eq_w = r(sL - mat_w);
+
+    const wrk_w = r(sL * (150 / 250));
+    const stg_w = r(sL - wrk_w);
+
+    const safe_w = r(sL * (120 / 240));
+    const load_w = r(sL * (80 / 240));
+    const waste_w = r(sL - safe_w - load_w);
+
     return [
-      { zone_name: 'Material Storage', x: 0, y: 0, width: r(sL * 0.57), height: t1_h },
-      { zone_name: 'Equipment Area', x: r(sL * 0.57), y: 0, width: r(sL * 0.43), height: t1_h },
-      { zone_name: 'Worker Movement', x: 0, y: t1_h, width: r(sL * 0.60), height: t2_h },
-      { zone_name: 'Staging Area', x: r(sL * 0.60), y: t1_h, width: r(sL * 0.40), height: t2_h },
-      { zone_name: 'Safety Buffer', x: 0, y: r(t1_h + t2_h), width: r(sL * 0.445), height: t3_h },
-      { zone_name: 'Loading / Unloading', x: r(sL * 0.445), y: r(t1_h + t2_h), width: r(sL * 0.3875), height: t3_h },
-      { zone_name: 'Waste Dump', x: r(sL * 0.8325), y: r(t1_h + t2_h), width: r(sL * 0.1675), height: t3_h },
-      { zone_name: 'Emergency Access Corridor', x: 0, y: r(t1_h + t2_h + t3_h), width: sL, height: t4_h }
+      { zone_name: 'Material Storage', zone: 'Material Storage', x: 0, y: 0, width: mat_w, height: t1_h, area_sqm: 320 },
+      { zone_name: 'Equipment Area', zone: 'Equipment Area', x: mat_w, y: 0, width: eq_w, height: t1_h, area_sqm: 180 },
+      { zone_name: 'Worker Movement', zone: 'Worker Movement', x: 0, y: t1_h, width: wrk_w, height: t2_h, area_sqm: 150 },
+      { zone_name: 'Staging Area', zone: 'Staging Area', x: wrk_w, y: t1_h, width: stg_w, height: t2_h, area_sqm: 100 },
+      { zone_name: 'Safety Buffer', zone: 'Safety Buffer', x: 0, y: r(t1_h + t2_h), width: safe_w, height: t3_h, area_sqm: 120 },
+      { zone_name: 'Loading / Unloading', zone: 'Loading / Unloading', x: safe_w, y: r(t1_h + t2_h), width: load_w, height: t3_h, area_sqm: 80 },
+      { zone_name: 'Waste Dump', zone: 'Waste Dump', x: r(safe_w + load_w), y: r(t1_h + t2_h), width: waste_w, height: t3_h, area_sqm: 40 },
+      { zone_name: 'Emergency Access Corridor', zone: 'Emergency Access Corridor', x: 0, y: r(t1_h + t2_h + t3_h), width: sL, height: t4_h, area_sqm: 110 }
     ];
   };
 
-  const coordinates: ZoneCoordinates[] = res?.coordinates && res.coordinates.length > 0
-    ? res.coordinates
+  const rawCoords = res?.spatial_layout || res?.coordinates;
+  const coordinates: ZoneCoordinates[] = rawCoords && rawCoords.length > 0
+    ? (rawCoords as any[]).map(c => ({
+        ...c,
+        zone_name: c.zone_name || c.zone || 'Zone',
+        area_sqm: c.area_sqm != null ? c.area_sqm : (c.width * c.height)
+      }))
     : getDynamicFallbackCoordinates(inputs.site_length_m, inputs.site_width_m);
   
   const layoutMaxX = inputs.site_length_m && inputs.site_length_m > 0
@@ -422,7 +438,7 @@ export const SpaceOptimizationPage: React.FC = () => {
               const color = getZoneColor(coord.zone_name);
               const isMagenta = color === '#FF2AA1';
               const isVeryNarrow = heightPct < 10;
-              const zoneArea = coord.width * coord.height;
+              const zoneArea = coord.area_sqm != null ? coord.area_sqm : (coord.width * coord.height);
 
               return (
                 <div
@@ -474,7 +490,7 @@ export const SpaceOptimizationPage: React.FC = () => {
                     maxWidth: '100%',
                     display: 'block'
                   }}>
-                    {coord.width.toFixed(1)}m × {coord.height.toFixed(1)}m ({zoneArea.toFixed(0)} m²)
+                    {coord.width.toFixed(1)}m × {coord.height.toFixed(1)}m ({zoneArea.toFixed(1)} m²)
                   </span>
                 </div>
               );

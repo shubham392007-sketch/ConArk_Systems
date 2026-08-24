@@ -36,18 +36,20 @@ export function buildSpaceReport(doc: jsPDF, payload: ModelReportPayload, startY
   y = addSectionTitle(doc, '02', 'OPTIMIZED 2D SPATIAL METRICS', y);
 
   const alloc = outputs.allocation || outputs.space_allocation || {};
-  const sumAlloc = (alloc.material_storage_area_sqm || 320) +
-                   (alloc.equipment_area_sqm || 240) +
-                   (alloc.worker_movement_area_sqm || 315) +
-                   (alloc.safety_buffer_area_sqm || 128) +
-                   (alloc.loading_unloading_area_sqm || 104) +
-                   (alloc.waste_dump_area_sqm || 45) +
-                   (alloc.emergency_access_sqm || 105) +
-                   (alloc.staging_area_sqm || 200);
+  const matArea = alloc.material_storage_area_sqm || 320;
+  const eqArea = alloc.equipment_area_sqm || 180;
+  const wrkArea = alloc.worker_movement_area_sqm || 150;
+  const safeArea = alloc.safety_buffer_area_sqm || 120;
+  const loadArea = alloc.loading_area_sqm || alloc.loading_unloading_area_sqm || 80;
+  const wasteArea = alloc.waste_area_sqm || alloc.waste_dump_area_sqm || 40;
+  const emgArea = alloc.emergency_access_area_sqm || alloc.emergency_access_sqm || 110;
+  const stgArea = alloc.staging_area_sqm || 100;
 
-  const util = outputs.space_utilization_score || ((sumAlloc / areaSqm) * 100);
-  const safetyScore = outputs.safety_compliance_score || 100.0;
-  const effScore = outputs.layout_efficiency_score || 61.6;
+  const sumAlloc = matArea + eqArea + wrkArea + safeArea + loadArea + wasteArea + emgArea + stgArea;
+
+  const util = outputs.metrics?.space_utilization_percentage || outputs.space_utilization_score || ((sumAlloc / areaSqm) * 100);
+  const safetyScore = outputs.metrics?.safety_compliance_score || outputs.safety_compliance_score || 100.0;
+  const effScore = outputs.metrics?.space_efficiency_score || outputs.layout_efficiency_score || 88.4;
 
   const resultRows = [
     { parameter: 'SPACE UTILIZATION RATE', value: `${util.toFixed(1)} %` },
@@ -62,14 +64,14 @@ export function buildSpaceReport(doc: jsPDF, payload: ModelReportPayload, startY
   y = addSectionTitle(doc, '03', '8-ZONE ALLOCATION MATRIX', y);
 
   const zoneRows = [
-    { parameter: 'Material Storage Area', value: `${(alloc.material_storage_area_sqm || 320).toFixed(1)} m²  (${(alloc.material_storage_area_sqm ? (alloc.material_storage_area_sqm/areaSqm*100) : 26.7).toFixed(1)}% site)` },
-    { parameter: 'Equipment Parking Area', value: `${(alloc.equipment_area_sqm || 240).toFixed(1)} m²  (${(alloc.equipment_area_sqm ? (alloc.equipment_area_sqm/areaSqm*100) : 20.0).toFixed(1)}% site)` },
-    { parameter: 'Worker Movement Area', value: `${(alloc.worker_movement_area_sqm || 315).toFixed(1)} m²  (${(alloc.worker_movement_area_sqm ? (alloc.worker_movement_area_sqm/areaSqm*100) : 26.3).toFixed(1)}% site)` },
-    { parameter: 'Safety Buffer Zone', value: `${(alloc.safety_buffer_area_sqm || 128).toFixed(1)} m²  (${(alloc.safety_buffer_area_sqm ? (alloc.safety_buffer_area_sqm/areaSqm*100) : 10.7).toFixed(1)}% site)` },
-    { parameter: 'Loading / Unloading Zone', value: `${(alloc.loading_unloading_area_sqm || 104).toFixed(1)} m²  (${(alloc.loading_unloading_area_sqm ? (alloc.loading_unloading_area_sqm/areaSqm*100) : 8.7).toFixed(1)}% site)` },
-    { parameter: 'Waste Dump Area', value: `${(alloc.waste_dump_area_sqm || 45).toFixed(1)} m²  (${(alloc.waste_dump_area_sqm ? (alloc.waste_dump_area_sqm/areaSqm*100) : 3.8).toFixed(1)}% site)` },
-    { parameter: 'Emergency Access Corridor', value: `${(alloc.emergency_access_sqm || 105).toFixed(1)} m²  (${(alloc.emergency_access_sqm ? (alloc.emergency_access_sqm/areaSqm*100) : 8.8).toFixed(1)}% site)` },
-    { parameter: 'Staging Area', value: `${(alloc.staging_area_sqm || 200).toFixed(1)} m²  (${(alloc.staging_area_sqm ? (alloc.staging_area_sqm/areaSqm*100) : 16.7).toFixed(1)}% site)` }
+    { parameter: 'Material Storage Area', value: `${matArea.toFixed(1)} m²  (${((matArea / areaSqm) * 100).toFixed(1)}% site)` },
+    { parameter: 'Equipment Area', value: `${eqArea.toFixed(1)} m²  (${((eqArea / areaSqm) * 100).toFixed(1)}% site)` },
+    { parameter: 'Worker Movement Area', value: `${wrkArea.toFixed(1)} m²  (${((wrkArea / areaSqm) * 100).toFixed(1)}% site)` },
+    { parameter: 'Safety Buffer Zone', value: `${safeArea.toFixed(1)} m²  (${((safeArea / areaSqm) * 100).toFixed(1)}% site)` },
+    { parameter: 'Loading / Unloading Zone', value: `${loadArea.toFixed(1)} m²  (${((loadArea / areaSqm) * 100).toFixed(1)}% site)` },
+    { parameter: 'Waste Dump Area', value: `${wasteArea.toFixed(1)} m²  (${((wasteArea / areaSqm) * 100).toFixed(1)}% site)` },
+    { parameter: 'Emergency Access Corridor', value: `${emgArea.toFixed(1)} m²  (${((emgArea / areaSqm) * 100).toFixed(1)}% site)` },
+    { parameter: 'Staging Area', value: `${stgArea.toFixed(1)} m²  (${((stgArea / areaSqm) * 100).toFixed(1)}% site)` }
   ];
 
   y = addTwoColumnTable(doc, zoneRows, y);

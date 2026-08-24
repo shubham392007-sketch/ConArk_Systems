@@ -140,10 +140,12 @@ class ConstraintItem(BaseModel):
 class ZoneLayout(BaseModel):
     """Bounding box coordinates for 2D spatial positioning."""
     zone: str = Field(..., description="Zone identifier name")
+    zone_name: Optional[str] = Field(default=None, description="Zone display name")
     x: float = Field(..., description="X coordinate origin in meters")
     y: float = Field(..., description="Y coordinate origin in meters")
     width: float = Field(..., description="Zone width dimension in meters")
     height: float = Field(..., description="Zone height dimension in meters")
+    area_sqm: Optional[float] = Field(default=None, description="Exact allocated area in sqm")
 
 
 class SpaceOptimizationResponse(BaseModel):
@@ -155,5 +157,6 @@ class SpaceOptimizationResponse(BaseModel):
     metrics: Optional[SpaceMetrics] = Field(default=None, description="Space utilization and compliance metrics")
     constraints: List[ConstraintItem] = Field(default=[], description="List of hard constraint evaluations")
     spatial_layout: List[ZoneLayout] = Field(default=[], description="2D rectangular bounding box layout (if site length/width provided)")
+    coordinates: Optional[List[ZoneLayout]] = Field(default=None, description="Direct coordinates alias for frontend compatibility")
     reasoning: List[str] = Field(default=[], description="Deterministic reasoning for zone allocations")
     gemini_report: Optional[Dict[str, Any]] = Field(default=None, description="Gemini 2.5 Flash structured AI explanation report")
