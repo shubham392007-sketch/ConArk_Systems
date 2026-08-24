@@ -159,7 +159,7 @@ export const App: React.FC = () => {
     <BrowserRouter>
       <AuthProvider>
         <ScrollToTop />
-        <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#EDECE7' }}>
+        <div className="app-root-layout" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
           <TopNav />
           <MainContent />
           <ConditionalFooter />

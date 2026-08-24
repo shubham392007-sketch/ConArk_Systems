@@ -27,7 +27,7 @@ html, body, #root {
   overflow-x: hidden;
 }
 
-body {
+body, .app-root-layout {
   background-color: var(--bg-base);
   background-image: 
     /* Bold Major Grid Lines */
