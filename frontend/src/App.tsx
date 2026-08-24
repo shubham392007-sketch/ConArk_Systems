@@ -159,7 +159,9 @@ export const App: React.FC = () => {
     <BrowserRouter>
       <AuthProvider>
         <ScrollToTop />
-        <div className="app-root-layout" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+        {/* Hardware-Accelerated Universal Background Mesh (Mobile & Desktop) */}
+        <div className="app-fixed-mesh-bg" aria-hidden="true" />
+        <div className="app-root-layout" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative', zIndex: 1 }}>
           <TopNav />
           <MainContent />
           <ConditionalFooter />

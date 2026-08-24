@@ -28,6 +28,25 @@ html, body, #root {
 }
 
 body, .app-root-layout {
+  background-color: transparent;
+  color: var(--ink-black);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Hardware-accelerated fixed background mesh layer (Works 100% on iOS, Android & Desktop) */
+.app-fixed-mesh-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
   background-color: var(--bg-base);
   background-image: 
     /* Bold Major Grid Lines */
@@ -40,12 +59,6 @@ body, .app-root-layout {
     radial-gradient(circle, rgba(17, 17, 17, 0.25) 1.2px, transparent 1.2px);
   background-size: 60px 60px, 60px 60px, 15px 15px, 15px 15px, 60px 60px;
   background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px, -1px -1px;
-  background-attachment: fixed;
-  color: var(--ink-black);
-  font-family: var(--font-body);
-  min-height: 100vh;
-  line-height: 1.4;
-  -webkit-font-smoothing: antialiased;
 }
 
 a {
@@ -244,10 +257,10 @@ input, select, textarea {
 }
 
 .desktop-nav-only {
-  display: flex !important;
+  display: flex;
 }
 .mobile-nav-only {
-  display: none !important;
+  display: none;
 }
 
 @keyframes slideInRight {
