@@ -102,121 +102,165 @@ export function addCoverSection(
   keyRecommendation: string
 ): number {
   const { marginLeft } = CONARK_PDF_THEME.page;
-  const contentWidth = CONARK_PDF_THEME.page.contentWidth;
-  let y = CONARK_PDF_THEME.page.marginTop + 10;
+  const contentWidth = CONARK_PDF_THEME.page.contentWidth; // 180mm
+  let y = CONARK_PDF_THEME.page.marginTop + 8;
 
   // Header Pill
   doc.setFillColor(17, 17, 17);
-  doc.rect(marginLeft, y, 42, 6, 'F');
+  doc.rect(marginLeft, y, 38, 5.5, 'F');
   doc.setFont(CONARK_PDF_THEME.fonts.mono, 'bold');
-  doc.setFontSize(7);
+  doc.setFontSize(6.5);
   doc.setTextColor(255, 255, 255);
-  doc.text('OFFICIAL AI REPORT', marginLeft + 3, y + 4.2);
+  doc.text('OFFICIAL AI REPORT', marginLeft + 3, y + 3.8);
 
   doc.setFont(CONARK_PDF_THEME.fonts.mono, 'bold');
-  doc.setFontSize(7);
+  doc.setFontSize(6.5);
   doc.setTextColor(85, 85, 85);
-  doc.text(`STATUS: ${metadata.status}`, marginLeft + 48, y + 4.2);
+  doc.text(`STATUS: ${metadata.status}`, marginLeft + 44, y + 3.8);
 
-  y += 14;
+  y += 10;
 
-  // Main Cover Title Box
+  // Layout: Left Title Area (104mm width) and Right Metadata Area (68mm width)
+  const leftColWidth = 104;
+  const metaX = marginLeft + leftColWidth + 6;
+  const rightColWidth = contentWidth - leftColWidth - 6;
+
+  // Calculate dynamic title wrapping so it NEVER overflows into metadata
+  doc.setFont(CONARK_PDF_THEME.fonts.display, 'bold');
+  const titleStr = modelName.toUpperCase();
+  let titleFontSize = 16;
+  if (titleStr.length > 26) titleFontSize = 13.5;
+  if (titleStr.length > 40) titleFontSize = 11.5;
+  doc.setFontSize(titleFontSize);
+
+  const wrappedTitle = doc.splitTextToSize(titleStr, leftColWidth - 8);
+  const titleLinesCount = wrappedTitle.length;
+  
+  // Calculate dynamic card height to fit both columns cleanly
+  const leftHeight = 14 + (titleLinesCount * (titleFontSize * 0.5)) + 16;
+  const rightHeight = 44;
+  const cardHeight = Math.max(52, leftHeight, rightHeight);
+
+  // Main Cover Card Frame
   doc.setFillColor(255, 255, 255);
   doc.setDrawColor(17, 17, 17);
   doc.setLineWidth(0.6);
-  doc.rect(marginLeft, y, contentWidth, 54, 'DF');
+  doc.rect(marginLeft, y, contentWidth, cardHeight, 'DF');
 
-  // Small Magenta Accent Strip on top edge
-  doc.setFillColor(255, 42, 161); // #FF2AA1
+  // Magenta Top Accent Strip
+  doc.setFillColor(255, 42, 161);
   doc.rect(marginLeft, y, contentWidth, 2.5, 'F');
 
+  // Left Section: Subtitle & Wrapped Title
   doc.setFont(CONARK_PDF_THEME.fonts.display, 'bold');
-  doc.setFontSize(10);
-  doc.setTextColor(85, 85, 85);
-  doc.text('CONARK SYSTEMS · MODEL RESULT REPORT', marginLeft + 8, y + 10);
-
-  doc.setFont(CONARK_PDF_THEME.fonts.display, 'bold');
-  doc.setFontSize(22);
-  doc.setTextColor(17, 17, 17);
-  doc.text(modelName.toUpperCase(), marginLeft + 8, y + 22);
-
-  // Metadata block on right side of title box
-  const metaX = marginLeft + contentWidth - 65;
-  doc.setFont(CONARK_PDF_THEME.fonts.mono, 'bold');
-  doc.setFontSize(6.5);
-  doc.setTextColor(85, 85, 85);
-  doc.text('REPORT ID', metaX, y + 10);
-
   doc.setFontSize(8);
-  doc.setTextColor(17, 17, 17);
-  doc.text(metadata.report_id, metaX, y + 15);
-
-  doc.setFontSize(6.5);
   doc.setTextColor(85, 85, 85);
-  doc.text('GENERATED DATE & TIME', metaX, y + 23);
+  doc.text('CONARK SYSTEMS · MODEL RESULT REPORT', marginLeft + 8, y + 9);
+
+  doc.setFont(CONARK_PDF_THEME.fonts.display, 'bold');
+  doc.setFontSize(titleFontSize);
+  doc.setTextColor(17, 17, 17);
+  doc.text(wrappedTitle, marginLeft + 8, y + 17);
+
+  // Vertical Separator Line between Title and Metadata
+  doc.setDrawColor(210, 210, 210);
+  doc.setLineWidth(0.3);
+  doc.line(metaX - 3, y + 6, metaX - 3, y + cardHeight - 8);
+
+  // Right Section: Metadata
+  doc.setFont(CONARK_PDF_THEME.fonts.mono, 'bold');
+  doc.setFontSize(6);
+  doc.setTextColor(85, 85, 85);
+  doc.text('REPORT ID', metaX, y + 9);
+
+  doc.setFontSize(7);
+  doc.setTextColor(17, 17, 17);
+  const reportIdWrapped = doc.splitTextToSize(metadata.report_id, rightColWidth - 4);
+  doc.text(reportIdWrapped, metaX, y + 13.5);
+
+  doc.setFontSize(6);
+  doc.setTextColor(85, 85, 85);
+  doc.text('GENERATED DATE & TIME', metaX, y + 21);
 
   const { date, time } = formatDateTime(metadata.timestamp);
-  doc.setFontSize(8);
+  doc.setFontSize(7.5);
   doc.setTextColor(17, 17, 17);
-  doc.text(`${date} · ${time}`, metaX, y + 28);
+  doc.text(`${date} · ${time}`, metaX, y + 25.5);
 
-  doc.setFontSize(6.5);
+  doc.setFontSize(6);
   doc.setTextColor(85, 85, 85);
-  doc.text('GEMINI AI EXPLANATION', metaX, y + 36);
-  doc.setFontSize(8);
+  doc.text('GEMINI AI EXPLANATION', metaX, y + 33);
+  doc.setFontSize(7.5);
   doc.setTextColor(21, 128, 61); // Green
-  doc.text(metadata.gemini_enabled ? 'ENABLED & CONTEXTUALIZED' : 'FALLBACK MODE', metaX, y + 41);
+  doc.text(metadata.gemini_enabled ? 'ENABLED & CONTEXTUALIZED' : 'FALLBACK MODE', metaX, y + 37.5);
 
   // Bottom Slogan inside Cover Card
   doc.setDrawColor(17, 17, 17);
   doc.setLineWidth(0.3);
-  doc.line(marginLeft + 8, y + 45, marginLeft + contentWidth - 8, y + 45);
+  doc.line(marginLeft + 8, y + cardHeight - 7, marginLeft + contentWidth - 8, y + cardHeight - 7);
 
   doc.setFont(CONARK_PDF_THEME.fonts.mono, 'bold');
-  doc.setFontSize(7);
+  doc.setFontSize(6.5);
   doc.setTextColor(17, 17, 17);
-  doc.text('ML PREDICTS   ·   OPTIMIZATION DECIDES   ·   GEMINI EXPLAINS', marginLeft + 8, y + 50);
+  doc.text('ML PREDICTS   ·   OPTIMIZATION DECIDES   ·   GEMINI EXPLAINS', marginLeft + 8, y + cardHeight - 2.5);
 
-  y += 62;
+  y += cardHeight + 6;
 
-  // Executive Summary Card Box
+  // Executive Summary Card Box (Dynamic Height & Zero Overlap)
+  const summaryLeftCol = 65;
+  const summaryRightCol = contentWidth - summaryLeftCol - 10;
+
+  doc.setFont(CONARK_PDF_THEME.fonts.display, 'bold');
+  doc.setFontSize(11);
+  const predLines = doc.splitTextToSize(primaryPrediction.toUpperCase(), summaryLeftCol - 6);
+
+  doc.setFont(CONARK_PDF_THEME.fonts.body, 'normal');
+  doc.setFontSize(8);
+  const recLines = doc.splitTextToSize(keyRecommendation || 'Maintain standard operational parameters and monitor real-time telemetry.', summaryRightCol - 6);
+
+  const summaryContentHeight = Math.max(predLines.length * 5 + 14, recLines.length * 4 + 14);
+  const summaryBoxHeight = Math.max(34, summaryContentHeight + 8);
+
   doc.setFillColor(255, 255, 255);
   doc.setDrawColor(17, 17, 17);
   doc.setLineWidth(0.5);
-  doc.rect(marginLeft, y, contentWidth, 38, 'DF');
+  doc.rect(marginLeft, y, contentWidth, summaryBoxHeight, 'DF');
 
   doc.setFillColor(228, 255, 91); // Chartreuse accent header
-  doc.rect(marginLeft, y, contentWidth, 8, 'F');
+  doc.rect(marginLeft, y, contentWidth, 6.5, 'F');
   doc.setDrawColor(17, 17, 17);
-  doc.line(marginLeft, y + 8, marginLeft + contentWidth, y + 8);
+  doc.line(marginLeft, y + 6.5, marginLeft + contentWidth, y + 6.5);
 
   doc.setFont(CONARK_PDF_THEME.fonts.display, 'bold');
-  doc.setFontSize(9);
+  doc.setFontSize(8);
   doc.setTextColor(17, 17, 17);
-  doc.text('EXECUTIVE SUMMARY', marginLeft + 6, y + 5.8);
+  doc.text('EXECUTIVE SUMMARY', marginLeft + 6, y + 4.8);
 
   doc.setFont(CONARK_PDF_THEME.fonts.mono, 'bold');
-  doc.setFontSize(7);
+  doc.setFontSize(6);
   doc.setTextColor(85, 85, 85);
-  doc.text('PRIMARY PREDICTION RESULT', marginLeft + 6, y + 14);
+  doc.text('PRIMARY PREDICTION RESULT', marginLeft + 6, y + 11.5);
 
   doc.setFont(CONARK_PDF_THEME.fonts.display, 'bold');
-  doc.setFontSize(14);
+  doc.setFontSize(10.5);
   doc.setTextColor(17, 17, 17);
-  doc.text(primaryPrediction.toUpperCase(), marginLeft + 6, y + 21);
+  doc.text(predLines, marginLeft + 6, y + 17);
+
+  // Vertical divider inside executive summary
+  doc.setDrawColor(210, 210, 210);
+  doc.line(marginLeft + summaryLeftCol + 2, y + 8, marginLeft + summaryLeftCol + 2, y + summaryBoxHeight - 3);
 
   doc.setFont(CONARK_PDF_THEME.fonts.mono, 'bold');
-  doc.setFontSize(7);
+  doc.setFontSize(6);
   doc.setTextColor(85, 85, 85);
-  doc.text('KEY RECOMMENDATION', marginLeft + 85, y + 14);
+  doc.text('KEY RECOMMENDATION', marginLeft + summaryLeftCol + 6, y + 11.5);
 
-  doc.setFont(CONARK_PDF_THEME.fonts.body, 'bold');
-  doc.setFontSize(8.5);
+  doc.setFont(CONARK_PDF_THEME.fonts.body, 'normal');
+  doc.setFontSize(8);
   doc.setTextColor(17, 17, 17);
-  const recLines = doc.splitTextToSize(keyRecommendation || 'Maintain current operational parameters and monitor telemetry.', contentWidth - 92);
-  doc.text(recLines, marginLeft + 85, y + 19);
+  doc.text(recLines, marginLeft + summaryLeftCol + 6, y + 16.5);
 
-  y += 46;
+  y += summaryBoxHeight + 8;
   return y;
 }
 
@@ -275,7 +319,8 @@ export function addTwoColumnTable(
   let y = startY;
   const { marginLeft } = CONARK_PDF_THEME.page;
   const contentWidth = CONARK_PDF_THEME.page.contentWidth;
-  const col1Width = 95;
+  const col1Width = 90;
+  const col2Width = contentWidth - col1Width;
 
   // Table Header
   y = checkPageBreak(doc, y, 12);
@@ -291,23 +336,33 @@ export function addTwoColumnTable(
   y += 6.5;
 
   rows.forEach((row, i) => {
-    y = checkPageBreak(doc, y, 7.5);
-    const bgColor = i % 2 === 0 ? 255 : 245; // Alternating row color
+    doc.setFont(CONARK_PDF_THEME.fonts.body, 'bold');
+    doc.setFontSize(8);
+    const paramLines = doc.splitTextToSize(row.parameter, col1Width - 8);
+
+    doc.setFont(CONARK_PDF_THEME.fonts.mono, 'bold');
+    doc.setFontSize(8);
+    const valLines = doc.splitTextToSize(row.value, col2Width - 8);
+
+    const rowHeight = Math.max(7, Math.max(paramLines.length, valLines.length) * 4.2 + 3);
+    y = checkPageBreak(doc, y, rowHeight);
+
+    const bgColor = i % 2 === 0 ? 255 : 246; // Alternating row color
     doc.setFillColor(bgColor, bgColor, i % 2 === 0 ? 255 : 238);
     doc.setDrawColor(220, 220, 220);
-    doc.rect(marginLeft, y, contentWidth, 7, 'DF');
+    doc.rect(marginLeft, y, contentWidth, rowHeight, 'DF');
 
     doc.setFont(CONARK_PDF_THEME.fonts.body, 'bold');
     doc.setFontSize(8);
     doc.setTextColor(17, 17, 17);
-    doc.text(row.parameter, marginLeft + 4, y + 4.8);
+    doc.text(paramLines, marginLeft + 4, y + 4.6);
 
     doc.setFont(CONARK_PDF_THEME.fonts.mono, 'bold');
     doc.setFontSize(8);
     doc.setTextColor(17, 17, 17);
-    doc.text(row.value, marginLeft + col1Width + 4, y + 4.8);
+    doc.text(valLines, marginLeft + col1Width + 4, y + 4.6);
 
-    y += 7;
+    y += rowHeight;
   });
 
   return y + 6;
