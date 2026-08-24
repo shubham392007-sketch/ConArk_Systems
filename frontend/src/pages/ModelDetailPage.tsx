@@ -21,20 +21,40 @@ export const ModelDetailPage: React.FC = () => {
   const [selectedProjectId, setSelectedProjectId] = useState<string>('');
 
   useEffect(() => {
+    // 1. Instant hydration from local cache
+    try {
+      const cached = localStorage.getItem('conark_cached_projects');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setProjects(parsed);
+          const saved = localStorage.getItem('conark_active_project_id');
+          if (saved && parsed.some(p => p.id === saved)) {
+            setSelectedProjectId(saved);
+          } else {
+            setSelectedProjectId(parsed[0].id);
+          }
+        }
+      }
+    } catch {}
+
+    // 2. Fetch fresh user projects
     fetchUserProjects()
       .then(projs => {
         if (projs && projs.length > 0) {
           setProjects(projs);
+          localStorage.setItem('conark_cached_projects', JSON.stringify(projs));
           const saved = localStorage.getItem('conark_active_project_id');
           if (saved && projs.some(p => p.id === saved)) {
             setSelectedProjectId(saved);
           } else {
             setSelectedProjectId(projs[0].id);
+            localStorage.setItem('conark_active_project_id', projs[0].id);
           }
         }
       })
       .catch(() => {});
-  }, []);
+  }, [modelId]);
 
   // Canonical Operational Telemetry Inputs
   const [inputs, setInputs] = useState<OperationalInputs>({
@@ -881,10 +901,10 @@ export const ModelDetailPage: React.FC = () => {
                   color: '#111111'
                 }}
               >
-                {projects.length === 0 && <option value="">📁 Default Workspace (ConArk Systems)</option>}
+                {projects.length === 0 && <option value="">Default Workspace (ConArk Systems)</option>}
                 {projects.map(p => (
                   <option key={p.id} value={p.id}>
-                    📁 {p.project_name} {p.location ? `(${p.location})` : ''}
+                    {p.project_name} {p.location ? `(${p.location})` : ''}
                   </option>
                 ))}
               </select>

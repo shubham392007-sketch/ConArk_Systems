@@ -29,11 +29,21 @@ export const ProjectsPage: React.FC = () => {
   const [modalError, setModalError] = useState<string | null>(null);
 
   const loadProjects = async () => {
-    setLoading(true);
-    setError(null);
+    try {
+      const cached = localStorage.getItem('conark_cached_projects');
+      if (cached) {
+        setProjects(JSON.parse(cached));
+        setLoading(false);
+      }
+    } catch {}
+
     try {
       const data = await fetchUserProjects();
-      setProjects(data || []);
+      setProjects(data);
+      localStorage.setItem('conark_cached_projects', JSON.stringify(data));
+      if (data.length > 0 && !localStorage.getItem('conark_active_project_id')) {
+        localStorage.setItem('conark_active_project_id', data[0].id);
+      }
     } catch (err: any) {
       setError(err.message || 'Failed to load projects.');
     } finally {
@@ -61,7 +71,10 @@ export const ProjectsPage: React.FC = () => {
         location: location.trim(),
         description: description.trim()
       });
-      setProjects([newProj, ...projects]);
+      const updated = [newProj, ...projects];
+      setProjects(updated);
+      localStorage.setItem('conark_active_project_id', newProj.id);
+      localStorage.setItem('conark_cached_projects', JSON.stringify(updated));
       setShowCreateModal(false);
       setProjectName('');
       setLocation('');

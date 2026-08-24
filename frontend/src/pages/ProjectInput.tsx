@@ -1,11 +1,48 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { analyzeProjectIntelligence } from '../services/api';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { FolderKanban } from 'lucide-react';
+import { analyzeProjectIntelligence, fetchUserProjects } from '../services/api';
 import type { OperationalInputs } from '../types';
 
 export const ProjectInput: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [projects, setProjects] = useState<any[]>([]);
+  const [selectedProjectId, setSelectedProjectId] = useState<string>('');
+
+  useEffect(() => {
+    try {
+      const cached = localStorage.getItem('conark_cached_projects');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setProjects(parsed);
+          const saved = localStorage.getItem('conark_active_project_id');
+          if (saved && parsed.some(p => p.id === saved)) {
+            setSelectedProjectId(saved);
+          } else {
+            setSelectedProjectId(parsed[0].id);
+          }
+        }
+      }
+    } catch {}
+
+    fetchUserProjects()
+      .then(projs => {
+        if (projs && projs.length > 0) {
+          setProjects(projs);
+          localStorage.setItem('conark_cached_projects', JSON.stringify(projs));
+          const saved = localStorage.getItem('conark_active_project_id');
+          if (saved && projs.some(p => p.id === saved)) {
+            setSelectedProjectId(saved);
+          } else {
+            setSelectedProjectId(projs[0].id);
+            localStorage.setItem('conark_active_project_id', projs[0].id);
+          }
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const [rawInputs, setRawInputs] = useState<Record<string, string>>({
     timestamp: new Date().toISOString().slice(0, 19),
@@ -42,7 +79,8 @@ export const ProjectInput: React.FC = () => {
         task_progress: parseFloat(rawInputs.task_progress) || 0,
         safety_incidents: parseInt(rawInputs.safety_incidents, 10) || 0,
         equipment_utilization_rate: parseFloat(rawInputs.equipment_utilization_rate) || 0,
-        material_shortage_alert: parseInt(rawInputs.material_shortage_alert, 10) || 0
+        material_shortage_alert: parseInt(rawInputs.material_shortage_alert, 10) || 0,
+        project_id: selectedProjectId || undefined
       };
 
       await analyzeProjectIntelligence(payload);
@@ -66,6 +104,51 @@ export const ProjectInput: React.FC = () => {
       </div>
 
       <form onSubmit={handleSubmit}>
+        {/* Target Workspace Selector Card */}
+        <div style={{
+          backgroundColor: '#FFFFFF',
+          border: '2px solid #111111',
+          borderRadius: '12px',
+          padding: '16px 20px',
+          boxShadow: '4px 4px 0px #111111',
+          marginBottom: '20px',
+          maxWidth: '500px'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <label style={{ fontSize: '12px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#111111', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <FolderKanban size={15} color="#111111" /> TARGET WORKSPACE
+            </label>
+            <Link to="/projects" style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', color: '#666', textDecoration: 'underline' }}>
+              Manage Workspaces →
+            </Link>
+          </div>
+          <select
+            value={selectedProjectId}
+            onChange={e => {
+              setSelectedProjectId(e.target.value);
+              localStorage.setItem('conark_active_project_id', e.target.value);
+            }}
+            style={{
+              width: '100%',
+              fontSize: '14px',
+              fontFamily: 'JetBrains Mono, monospace',
+              fontWeight: 'bold',
+              padding: '8px 12px',
+              border: '1.5px solid #111111',
+              borderRadius: '6px',
+              backgroundColor: '#F9F8F5',
+              color: '#111111'
+            }}
+          >
+            {projects.length === 0 && <option value="">Default Workspace (ConArk Systems)</option>}
+            {projects.map(p => (
+              <option key={p.id} value={p.id}>
+                {p.project_name} {p.location ? `(${p.location})` : ''}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px', marginBottom: '32px' }}>
           
           {/* Timestamp */}
