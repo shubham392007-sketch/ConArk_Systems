@@ -11,6 +11,7 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import { fetchPredictionDetail, deletePrediction } from '../services/api';
+import { PredictionDetailSkeleton } from '../components/Skeletons';
 
 export const PredictionDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -40,22 +41,7 @@ export const PredictionDetailPage: React.FC = () => {
   };
 
   if (loading) {
-    return (
-      <div style={{ maxWidth: '1000px', margin: '60px auto', textAlign: 'center' }}>
-        <div style={{
-          width: '44px',
-          height: '44px',
-          border: '4px solid #111111',
-          borderTopColor: '#FF2AA1',
-          borderRadius: '50%',
-          animation: 'spin 0.8s linear infinite',
-          margin: '0 auto 16px'
-        }} />
-        <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '13px', fontWeight: '800' }}>
-          LOADING PREDICTION TELEMETRY...
-        </div>
-      </div>
-    );
+    return <PredictionDetailSkeleton />;
   }
 
   if (error || !prediction) {

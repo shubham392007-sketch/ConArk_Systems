@@ -44,31 +44,79 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
+  // Immediate profile builder from metadata or local cache
+  const getInitialProfile = (currentUser: User): UserProfile => {
+    try {
+      const cached = localStorage.getItem(`conark_profile_${currentUser.id}`);
+      if (cached) {
+        return JSON.parse(cached);
+      }
+    } catch {}
+
+    const metaName = currentUser.user_metadata?.full_name;
+    const emailName = currentUser.email ? currentUser.email.split('@')[0] : 'User';
+    return {
+      id: currentUser.id,
+      email: currentUser.email || '',
+      full_name: metaName || emailName,
+      organization: currentUser.user_metadata?.organization || '',
+      role: currentUser.user_metadata?.role || 'Site Engineer',
+      avatar_url: currentUser.user_metadata?.avatar_url || '',
+      created_at: currentUser.created_at
+    };
+  };
+
   // Fetch or construct profile
   const fetchProfile = async (currentUser: User) => {
+    // 1. Immediately hydrate state without waiting for network (0ms)
+    const initial = getInitialProfile(currentUser);
+    setProfile(initial);
+
+    // 2. Try fetching from fast local backend first
     try {
-      const { data, error } = await supabase
+      const sessionData = await supabase.auth.getSession();
+      const token = sessionData.data.session?.access_token;
+      if (token) {
+        const res = await fetch('/api/v1/auth/me', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const freshData = await res.json();
+          if (freshData && freshData.id) {
+            setProfile(freshData as UserProfile);
+            try {
+              localStorage.setItem(`conark_profile_${currentUser.id}`, JSON.stringify(freshData));
+            } catch {}
+            return;
+          }
+        }
+      }
+    } catch (backendErr) {
+      // Ignore and proceed to Supabase REST
+    }
+
+    // 3. Fallback to Supabase REST with a 2.5-second timeout to prevent connection drop hangs
+    try {
+      const queryPromise = supabase
         .from('profiles')
         .select('*')
         .eq('id', currentUser.id)
-        .single();
+        .maybeSingle();
+
+      const timeoutPromise = new Promise<{ data: null; error: any }>((resolve) =>
+        setTimeout(() => resolve({ data: null, error: new Error('Profile fetch timeout') }), 2500)
+      );
+
+      const { data, error } = await Promise.race([queryPromise, timeoutPromise]);
 
       if (data && !error) {
         setProfile(data as UserProfile);
-      } else {
-        // Fallback to user metadata
-        setProfile({
-          id: currentUser.id,
-          email: currentUser.email || '',
-          full_name: currentUser.user_metadata?.full_name || '',
-          organization: currentUser.user_metadata?.organization || '',
-          role: currentUser.user_metadata?.role || 'Site Engineer',
-          avatar_url: currentUser.user_metadata?.avatar_url || '',
-          created_at: currentUser.created_at
-        });
+        try {
+          localStorage.setItem(`conark_profile_${currentUser.id}`, JSON.stringify(data));
+        } catch {}
       }
     } catch (err) {
-      console.warn('Error fetching profile:', err);
+      console.warn('Silent fallback for profile:', err);
     }
   };
 

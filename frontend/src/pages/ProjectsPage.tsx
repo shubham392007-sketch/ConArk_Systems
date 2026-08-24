@@ -11,6 +11,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { fetchUserProjects, createProject, deleteProject } from '../services/api';
+import { ProjectsListSkeleton } from '../components/Skeletons';
 
 export const ProjectsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -156,29 +157,7 @@ export const ProjectsPage: React.FC = () => {
       </div>
 
       {/* Loading */}
-      {loading && (
-        <div style={{
-          textAlign: 'center',
-          padding: '60px 20px',
-          backgroundColor: '#FFFFFF',
-          border: '2.5px solid #111111',
-          borderRadius: '16px',
-          boxShadow: '6px 6px 0px #111111'
-        }}>
-          <div style={{
-            width: '40px',
-            height: '40px',
-            border: '4px solid #111111',
-            borderTopColor: '#FF2AA1',
-            borderRadius: '50%',
-            animation: 'spin 0.8s linear infinite',
-            margin: '0 auto 16px'
-          }} />
-          <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '13px', fontWeight: '800' }}>
-            LOADING WORKSPACES...
-          </div>
-        </div>
-      )}
+      {loading && <ProjectsListSkeleton />}
 
       {/* Error */}
       {error && !loading && (

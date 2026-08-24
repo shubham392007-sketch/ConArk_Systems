@@ -13,35 +13,46 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   if (loading) {
     return (
       <div style={{
-        minHeight: '80vh',
+        minHeight: '75vh',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: '16px'
+        padding: '24px'
       }}>
         <div style={{
-          width: '48px',
-          height: '48px',
-          border: '4px solid #111111',
-          borderTopColor: '#FF2AA1',
-          borderRadius: '50%',
-          animation: 'spin 0.8s linear infinite'
-        }} />
-        <div style={{
-          fontFamily: 'JetBrains Mono, monospace',
-          fontSize: '14px',
-          fontWeight: '700',
-          color: '#111111',
-          letterSpacing: '0.04em'
+          backgroundColor: '#FFFFFF',
+          border: '2.5px solid #111111',
+          borderRadius: '16px',
+          padding: '32px 40px',
+          boxShadow: '8px 8px 0px #111111',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '16px',
+          maxWidth: '420px',
+          width: '100%',
+          textAlign: 'center'
         }}>
-          AUTHENTICATING CONARK SESSION...
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div className="streaming-pulse-dot" style={{ backgroundColor: '#FF2AA1', width: '10px', height: '10px' }} />
+            <span style={{ fontFamily: 'Anton, sans-serif', fontSize: '20px', color: '#111111', letterSpacing: '0.04em' }}>
+              CONARK SYSTEMS
+            </span>
+          </div>
+
+          <div className="skeleton-shimmer" style={{ width: '100%', height: '8px', borderRadius: '4px' }} />
+
+          <div style={{
+            fontFamily: 'JetBrains Mono, monospace',
+            fontSize: '12px',
+            fontWeight: '800',
+            color: '#555555',
+            letterSpacing: '0.05em'
+          }}>
+            VERIFYING ENCRYPTED SESSION...
+          </div>
         </div>
-        <style>{`
-          @keyframes spin {
-            to { transform: rotate(360deg); }
-          }
-        `}</style>
       </div>
     );
   }
