@@ -95,20 +95,8 @@ const ScrollToTop: React.FC = () => {
 };
 
 const MainContent: React.FC = () => {
-  const location = useLocation();
-  const path = location.pathname;
-
-  // Light blueprint grid is active ONLY on Model / Operational pages, NOT on Home or Auth or Legal pages
-  const isExcludedPage = path === '/' || path === '/brains' || path === '/team' ||
-                         path === '/login' || path === '/signup' || path === '/forgot-password' ||
-                         path === '/reset-password' || path === '/verify-email' || path === '/auth/callback' ||
-                         path === '/help' || path === '/faq' || path === '/privacy' ||
-                         path === '/terms' || path === '/disclaimer' || path === '/docs' ||
-                         path === '/security' || path === '/profile' || path === '/settings';
-  const showGrid = !isExcludedPage;
-
   return (
-    <main className={showGrid ? 'bg-grid-blueprint' : ''} style={{ flex: 1 }}>
+    <main style={{ flex: 1 }}>
       <Routes>
         {/* Public Landing & Overview Routes */}
         <Route path="/" element={<CommandCenter />} />

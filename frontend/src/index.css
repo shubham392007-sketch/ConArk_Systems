@@ -29,6 +29,14 @@ html, body, #root {
 
 body {
   background-color: var(--bg-base);
+  background-image: 
+    linear-gradient(to right, rgba(17, 17, 17, 0.09) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(17, 17, 17, 0.09) 1px, transparent 1px),
+    linear-gradient(to right, rgba(17, 17, 17, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(17, 17, 17, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px, 60px 60px, 15px 15px, 15px 15px;
+  background-position: -1px -1px;
+  background-attachment: fixed;
   color: var(--ink-black);
   font-family: var(--font-body);
   min-height: 100vh;
