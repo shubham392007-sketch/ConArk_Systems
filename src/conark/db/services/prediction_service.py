@@ -109,10 +109,20 @@ class PredictionService:
 
     @staticmethod
     def delete_prediction(prediction_id: str, user_id: str) -> bool:
-        """Deletes a prediction record owned by user."""
+        """Deletes a single prediction record owned by user."""
         with get_db_cursor() as cur:
             cur.execute(
                 "DELETE FROM public.model_predictions WHERE id = %s AND user_id = %s",
                 (prediction_id, user_id)
             )
             return cur.rowcount > 0
+
+    @staticmethod
+    def delete_all_predictions(user_id: str) -> int:
+        """Deletes all prediction records owned by user."""
+        with get_db_cursor() as cur:
+            cur.execute(
+                "DELETE FROM public.model_predictions WHERE user_id = %s",
+                (user_id,)
+            )
+            return cur.rowcount

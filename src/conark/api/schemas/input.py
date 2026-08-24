@@ -25,6 +25,8 @@ class InferenceInput(BaseModel):
     cost_deviation: Optional[float] = Field(default=0.0, description="Cost deviation in USD")
     time_deviation: Optional[float] = Field(default=0.0, description="Schedule time deviation in days")
     simulation_deviation: Optional[float] = Field(default=0.0, description="Simulation accuracy deviation in %")
+    target_model: Optional[str] = Field(default="all_models", description="Specific target model name or all_models")
+    project_id: Optional[str] = Field(default=None, description="Associated project workspace ID")
 
     @field_validator("humidity", "equipment_utilization_rate")
     def validate_percent_range(cls, v: float, info) -> float:

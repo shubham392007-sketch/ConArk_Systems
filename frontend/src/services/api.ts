@@ -218,6 +218,14 @@ export async function deletePrediction(predictionId: string): Promise<void> {
   if (!res.ok) throw new Error(await formatErrorMessage(res, 'Failed to delete prediction'));
 }
 
+export async function deleteAllPredictions(): Promise<void> {
+  const res = await fetch(`${API_BASE}/predictions`, {
+    method: 'DELETE',
+    headers: await getAuthHeaders()
+  });
+  if (!res.ok) throw new Error(await formatErrorMessage(res, 'Failed to clear prediction history'));
+}
+
 /* Saved Reports APIs */
 
 export async function fetchSavedReports(): Promise<any[]> {

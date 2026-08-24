@@ -29,7 +29,8 @@ export const TopNav: React.FC = () => {
     navigate('/', { replace: true });
   };
 
-  const displayName = profile?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Engineer';
+  const fullName = profile?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Engineer';
+  const firstName = fullName.trim().split(/\s+/)[0] || 'Engineer';
   const roleName = profile?.role || user?.user_metadata?.role || 'Site Engineer';
 
   return (
@@ -221,9 +222,9 @@ export const TopNav: React.FC = () => {
                     color: '#FFF',
                     fontWeight: 'bold'
                   }}>
-                    {displayName[0]?.toUpperCase() || 'U'}
+                    {firstName[0]?.toUpperCase() || 'U'}
                   </div>
-                  <span>{displayName.slice(0, 12)}</span>
+                  <span>{firstName}</span>
                   <ChevronDown size={14} />
                 </button>
 
@@ -243,7 +244,7 @@ export const TopNav: React.FC = () => {
                   }}>
                     <div style={{ padding: '12px 14px', backgroundColor: '#F9F8F5', borderBottom: '1.5px solid #111111' }}>
                       <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '13px', fontWeight: '700', color: '#111111' }}>
-                        {displayName}
+                        {fullName}
                       </div>
                       <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '10px', color: '#666', marginTop: '2px' }}>
                         {roleName}

@@ -45,6 +45,15 @@ async def get_prediction_detail(
     return prediction
 
 
+@router.delete("")
+async def delete_all_user_predictions(
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """Deletes all prediction records owned by the authenticated user."""
+    count = PredictionService.delete_all_predictions(current_user["id"])
+    return {"message": f"Successfully deleted {count} prediction records.", "count": count}
+
+
 @router.delete("/{prediction_id}")
 async def delete_user_prediction(
     prediction_id: str,

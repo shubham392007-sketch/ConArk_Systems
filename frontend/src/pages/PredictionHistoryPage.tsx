@@ -8,9 +8,16 @@ import {
   Eye,
   Calendar,
   Layers,
-  TrendingUp
+  TrendingUp,
+  RefreshCw,
+  AlertTriangle,
+  Clock,
+  DollarSign,
+  Activity,
+  ShieldAlert,
+  ArrowRight
 } from 'lucide-react';
-import { fetchPredictionHistory, deletePrediction } from '../services/api';
+import { fetchPredictionHistory, deletePrediction, deleteAllPredictions } from '../services/api';
 
 export const PredictionHistoryPage: React.FC = () => {
   const navigate = useNavigate();
@@ -23,6 +30,8 @@ export const PredictionHistoryPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [sortBy, setSortBy] = useState<string>('newest');
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [showClearAllModal, setShowClearAllModal] = useState(false);
+  const [clearing, setClearing] = useState(false);
 
   const loadHistory = async () => {
     setLoading(true);
@@ -47,10 +56,23 @@ export const PredictionHistoryPage: React.FC = () => {
   const handleDelete = async (id: string) => {
     try {
       await deletePrediction(id);
-      setPredictions(predictions.filter(p => p.id !== id));
+      setPredictions(prev => prev.filter(p => p.id !== id));
       setDeleteConfirmId(null);
     } catch (err: any) {
       alert('Error deleting prediction: ' + err.message);
+    }
+  };
+
+  const handleClearAll = async () => {
+    setClearing(true);
+    try {
+      await deleteAllPredictions();
+      setPredictions([]);
+      setShowClearAllModal(false);
+    } catch (err: any) {
+      alert('Error clearing prediction history: ' + err.message);
+    } finally {
+      setClearing(false);
     }
   };
 
@@ -61,7 +83,8 @@ export const PredictionHistoryPage: React.FC = () => {
       const q = searchQuery.toLowerCase();
       const model = (p.model_name || '').toLowerCase();
       const project = (p.project_name || '').toLowerCase();
-      return model.includes(q) || project.includes(q);
+      const pType = (p.prediction_type || '').toLowerCase();
+      return model.includes(q) || project.includes(q) || pType.includes(q);
     })
     .sort((a, b) => {
       if (sortBy === 'newest') return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
@@ -69,23 +92,190 @@ export const PredictionHistoryPage: React.FC = () => {
       return 0;
     });
 
-  const getModelBadgeColor = (modelName: string) => {
+  const getModelBadgeInfo = (modelName: string) => {
     switch (modelName.toLowerCase()) {
       case 'risk_intelligence':
       case 'risk':
-        return '#FF3366';
+        return { label: 'OPERATIONAL RISK MODEL', bg: '#FF3366', color: '#FFFFFF' };
       case 'performance_intelligence':
       case 'performance':
-        return '#00CC66';
+        return { label: 'PERFORMANCE MODEL', bg: '#00CC66', color: '#FFFFFF' };
       case 'cost_prediction':
       case 'cost':
-        return '#FFAA00';
+        return { label: 'COST FORECAST MODEL', bg: '#FFAA00', color: '#111111' };
       case 'time_prediction':
       case 'time':
-        return '#3366FF';
+        return { label: 'TIME FORECAST MODEL', bg: '#3366FF', color: '#FFFFFF' };
+      case 'space_layout':
+      case 'space_optimization':
+      case 'optimization':
+        return { label: 'SPACE OPTIMIZATION', bg: '#E4FF5B', color: '#111111' };
       default:
-        return '#FF2AA1';
+        return { label: 'MULTIVARIATE INTELLIGENCE', bg: '#111111', color: '#E4FF5B' };
     }
+  };
+
+  const renderMetricSnippets = (pred: any) => {
+    const out = pred.prediction_output || {};
+    const model = (pred.model_name || '').toLowerCase();
+
+    // 1. Multivariate Intelligence (all models)
+    if (out.performance || out.risk || out.cost_forecast || out.time_forecast) {
+      return (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '10px' }}>
+          {out.performance && (
+            <div style={{
+              backgroundColor: '#F3F4F6',
+              border: '1.5px solid #111111',
+              borderRadius: '6px',
+              padding: '4px 8px',
+              fontFamily: 'JetBrains Mono, monospace',
+              fontSize: '11px',
+              fontWeight: '700',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px'
+            }}>
+              <Activity size={12} color="#00CC66" />
+              <span>PERF: <strong style={{ color: '#008844' }}>{out.performance.prediction || 'N/A'}</strong></span>
+            </div>
+          )}
+          {out.risk && (
+            <div style={{
+              backgroundColor: '#F3F4F6',
+              border: '1.5px solid #111111',
+              borderRadius: '6px',
+              padding: '4px 8px',
+              fontFamily: 'JetBrains Mono, monospace',
+              fontSize: '11px',
+              fontWeight: '700',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px'
+            }}>
+              <ShieldAlert size={12} color="#FF3366" />
+              <span>RISK: <strong style={{ color: '#CC0033' }}>{out.risk.risk_score != null ? `${out.risk.risk_score}%` : out.risk.risk_level || 'N/A'}</strong></span>
+            </div>
+          )}
+          {out.cost_forecast && (
+            <div style={{
+              backgroundColor: '#F3F4F6',
+              border: '1.5px solid #111111',
+              borderRadius: '6px',
+              padding: '4px 8px',
+              fontFamily: 'JetBrains Mono, monospace',
+              fontSize: '11px',
+              fontWeight: '700',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px'
+            }}>
+              <DollarSign size={12} color="#FFAA00" />
+              <span>COST: <strong>{out.cost_forecast.predicted_cost_deviation != null ? `${out.cost_forecast.predicted_cost_deviation >= 0 ? '+' : ''}$${Math.round(out.cost_forecast.predicted_cost_deviation).toLocaleString()}` : out.cost_forecast.status || 'N/A'}</strong></span>
+            </div>
+          )}
+          {out.time_forecast && (
+            <div style={{
+              backgroundColor: '#F3F4F6',
+              border: '1.5px solid #111111',
+              borderRadius: '6px',
+              padding: '4px 8px',
+              fontFamily: 'JetBrains Mono, monospace',
+              fontSize: '11px',
+              fontWeight: '700',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px'
+            }}>
+              <Clock size={12} color="#3366FF" />
+              <span>TIME: <strong>{out.time_forecast.predicted_time_deviation != null ? `${out.time_forecast.predicted_time_deviation >= 0 ? '+' : ''}${out.time_forecast.predicted_time_deviation.toFixed(1)}d` : out.time_forecast.schedule_status || 'N/A'}</strong></span>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // 2. Single Performance Model
+    if (model.includes('performance') || out.prediction) {
+      return (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '10px' }}>
+          <div style={{
+            backgroundColor: '#EEFFEE',
+            border: '1.5px solid #00CC66',
+            borderRadius: '6px',
+            padding: '4px 10px',
+            fontFamily: 'JetBrains Mono, monospace',
+            fontSize: '11px',
+            fontWeight: '700',
+            color: '#008844'
+          }}>
+            OUTPUT: {out.prediction || 'GOOD'} ({pred.confidence_score ? `${pred.confidence_score}%` : 'High Confidence'})
+          </div>
+        </div>
+      );
+    }
+
+    // 3. Single Risk Model
+    if (model.includes('risk') || out.risk_score != null) {
+      return (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '10px' }}>
+          <div style={{
+            backgroundColor: '#FFEEEE',
+            border: '1.5px solid #FF3366',
+            borderRadius: '6px',
+            padding: '4px 10px',
+            fontFamily: 'JetBrains Mono, monospace',
+            fontSize: '11px',
+            fontWeight: '700',
+            color: '#CC0033'
+          }}>
+            RISK SCORE: {out.risk_score != null ? `${out.risk_score}%` : `${pred.confidence_score || 0}%`} ({out.risk_level || 'EVALUATED'})
+          </div>
+        </div>
+      );
+    }
+
+    // 4. Single Cost Model
+    if (model.includes('cost') || out.predicted_cost_deviation != null) {
+      return (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '10px' }}>
+          <div style={{
+            backgroundColor: '#FFF8EE',
+            border: '1.5px solid #FFAA00',
+            borderRadius: '6px',
+            padding: '4px 10px',
+            fontFamily: 'JetBrains Mono, monospace',
+            fontSize: '11px',
+            fontWeight: '700',
+            color: '#996600'
+          }}>
+            COST DEVIATION: {out.predicted_cost_deviation != null ? `${out.predicted_cost_deviation >= 0 ? '+' : ''}$${Math.round(out.predicted_cost_deviation).toLocaleString()}` : 'Forecast Complete'}
+          </div>
+        </div>
+      );
+    }
+
+    // 5. Single Time Model
+    if (model.includes('time') || out.predicted_time_deviation != null) {
+      return (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '10px' }}>
+          <div style={{
+            backgroundColor: '#EEF4FF',
+            border: '1.5px solid #3366FF',
+            borderRadius: '6px',
+            padding: '4px 10px',
+            fontFamily: 'JetBrains Mono, monospace',
+            fontSize: '11px',
+            fontWeight: '700',
+            color: '#1144CC'
+          }}>
+            SCHEDULE VARIANCE: {out.predicted_time_deviation != null ? `${out.predicted_time_deviation >= 0 ? '+' : ''}${out.predicted_time_deviation.toFixed(1)} Days` : 'Forecast Complete'}
+          </div>
+        </div>
+      );
+    }
+
+    return null;
   };
 
   return (
@@ -140,25 +330,72 @@ export const PredictionHistoryPage: React.FC = () => {
           </p>
         </div>
 
-        <Link
-          to="/models"
-          style={{
-            backgroundColor: '#FF2AA1',
-            color: '#FFFFFF',
-            border: '2px solid #111111',
-            borderRadius: '8px',
-            padding: '12px 20px',
-            fontFamily: 'Anton, sans-serif',
-            fontSize: '16px',
-            textDecoration: 'none',
-            boxShadow: '4px 4px 0px #111111',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px'
-          }}
-        >
-          RUN NEW PREDICTION <TrendingUp size={18} />
-        </Link>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+          <button
+            onClick={loadHistory}
+            disabled={loading}
+            style={{
+              backgroundColor: '#FFFFFF',
+              color: '#111111',
+              border: '2px solid #111111',
+              borderRadius: '8px',
+              padding: '12px 16px',
+              fontFamily: 'JetBrains Mono, monospace',
+              fontSize: '12px',
+              fontWeight: '800',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              boxShadow: '3px 3px 0px #111111'
+            }}
+          >
+            <RefreshCw size={14} className={loading ? 'animate-spin' : ''} /> REFRESH
+          </button>
+
+          {predictions.length > 0 && (
+            <button
+              onClick={() => setShowClearAllModal(true)}
+              style={{
+                backgroundColor: '#FFEEEE',
+                color: '#CC0033',
+                border: '2px solid #FF3366',
+                borderRadius: '8px',
+                padding: '12px 16px',
+                fontFamily: 'JetBrains Mono, monospace',
+                fontSize: '12px',
+                fontWeight: '800',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                boxShadow: '3px 3px 0px #CC0033'
+              }}
+            >
+              <Trash2 size={14} /> CLEAR ALL
+            </button>
+          )}
+
+          <Link
+            to="/models"
+            style={{
+              backgroundColor: '#FF2AA1',
+              color: '#FFFFFF',
+              border: '2px solid #111111',
+              borderRadius: '8px',
+              padding: '12px 20px',
+              fontFamily: 'Anton, sans-serif',
+              fontSize: '16px',
+              textDecoration: 'none',
+              boxShadow: '4px 4px 0px #111111',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}
+          >
+            RUN NEW PREDICTION <TrendingUp size={18} />
+          </Link>
+        </div>
       </div>
 
       {/* Filter and Search Bar */}
@@ -215,11 +452,12 @@ export const PredictionHistoryPage: React.FC = () => {
             }}
           >
             <option value="ALL">ALL MODELS</option>
-            <option value="risk_intelligence">Risk Intelligence</option>
-            <option value="performance_intelligence">Performance Intelligence</option>
-            <option value="cost_prediction">Cost Prediction</option>
-            <option value="time_prediction">Time Prediction</option>
             <option value="all_models">Multivariate Intelligence</option>
+            <option value="performance_intelligence">Performance Model</option>
+            <option value="risk_intelligence">Operational Risk Model</option>
+            <option value="cost_prediction">Cost Forecast Model</option>
+            <option value="time_prediction">Time Forecast Model</option>
+            <option value="space_layout">Space Optimization</option>
           </select>
         </div>
 
@@ -266,7 +504,7 @@ export const PredictionHistoryPage: React.FC = () => {
             margin: '0 auto 16px'
           }} />
           <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '13px', fontWeight: '800' }}>
-            FETCHING PERSISTENT PREDICTIONS...
+            FETCHING PERSISTENT PREDICTIONS FROM DATABASE...
           </div>
         </div>
       )}
@@ -280,9 +518,30 @@ export const PredictionHistoryPage: React.FC = () => {
           padding: '20px',
           boxShadow: '6px 6px 0px #111111',
           color: '#CC0033',
-          fontFamily: 'Inter, sans-serif'
+          fontFamily: 'Inter, sans-serif',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
         }}>
-          <strong>Error loading history:</strong> {error}
+          <div>
+            <strong>Error loading history:</strong> {error}
+          </div>
+          <button
+            onClick={loadHistory}
+            style={{
+              backgroundColor: '#CC0033',
+              color: '#FFFFFF',
+              border: 'none',
+              padding: '6px 12px',
+              borderRadius: '6px',
+              fontFamily: 'JetBrains Mono, monospace',
+              fontSize: '11px',
+              fontWeight: '700',
+              cursor: 'pointer'
+            }}
+          >
+            RETRY
+          </button>
         </div>
       )}
 
@@ -300,8 +559,8 @@ export const PredictionHistoryPage: React.FC = () => {
           <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '28px', color: '#111111', margin: '0 0 8px' }}>
             NO PREDICTIONS FOUND
           </h2>
-          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '14px', color: '#666666', maxWidth: '400px', margin: '0 auto 24px' }}>
-            Run your first ConArk model to start building your persistent project intelligence history.
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '14px', color: '#666666', maxWidth: '440px', margin: '0 auto 24px', lineHeight: '1.5' }}>
+            Run your first ConArk ML model or multivariate analysis. Every run is automatically archived to your account history with full telemetry, SHAP factor breakdown, and Gemini explanations.
           </p>
           <Link
             to="/models"
@@ -310,21 +569,24 @@ export const PredictionHistoryPage: React.FC = () => {
               color: '#111111',
               border: '2px solid #111111',
               borderRadius: '8px',
-              padding: '10px 20px',
+              padding: '12px 24px',
               fontFamily: 'Anton, sans-serif',
               fontSize: '16px',
               textDecoration: 'none',
-              boxShadow: '3px 3px 0px #111111'
+              boxShadow: '4px 4px 0px #111111',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px'
             }}
           >
-            EXPLORE ML MODELS
+            EXPLORE ML MODELS <ArrowRight size={16} />
           </Link>
         </div>
       )}
 
       {/* Predictions Grid */}
       {!loading && !error && filteredPredictions.length > 0 && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {filteredPredictions.map((pred) => {
             const dateFormatted = new Date(pred.created_at).toLocaleDateString('en-US', {
               month: 'short',
@@ -334,7 +596,7 @@ export const PredictionHistoryPage: React.FC = () => {
               minute: '2-digit'
             });
 
-            const badgeColor = getModelBadgeColor(pred.model_name || '');
+            const badge = getModelBadgeInfo(pred.model_name || '');
 
             return (
               <div
@@ -349,16 +611,15 @@ export const PredictionHistoryPage: React.FC = () => {
                   alignItems: 'center',
                   justifyContent: 'space-between',
                   flexWrap: 'wrap',
-                  gap: '16px',
-                  transition: 'transform 0.1s ease'
+                  gap: '16px'
                 }}
               >
                 {/* Left Info */}
-                <div style={{ flex: '1 1 300px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                <div style={{ flex: '1 1 340px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px', flexWrap: 'wrap' }}>
                     <span style={{
-                      backgroundColor: badgeColor,
-                      color: '#FFFFFF',
+                      backgroundColor: badge.bg,
+                      color: badge.color,
                       border: '1.5px solid #111111',
                       borderRadius: '4px',
                       padding: '2px 8px',
@@ -366,7 +627,7 @@ export const PredictionHistoryPage: React.FC = () => {
                       fontSize: '10px',
                       fontWeight: '800'
                     }}>
-                      {(pred.model_name || 'MODEL').toUpperCase().replace('_', ' ')}
+                      {badge.label}
                     </span>
                     <span style={{
                       fontFamily: 'JetBrains Mono, monospace',
@@ -379,7 +640,7 @@ export const PredictionHistoryPage: React.FC = () => {
 
                   <h3 style={{
                     fontFamily: 'Anton, sans-serif',
-                    fontSize: '20px',
+                    fontSize: '22px',
                     color: '#111111',
                     margin: '0 0 6px 0',
                     letterSpacing: '0.02em'
@@ -391,15 +652,18 @@ export const PredictionHistoryPage: React.FC = () => {
                     <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                       <Calendar size={14} /> {dateFormatted}
                     </span>
-                    {pred.confidence_score && (
+                    {pred.confidence_score != null && (
                       <span style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: '700', color: '#111111' }}>
-                        CONFIDENCE / HEALTH: {pred.confidence_score}%
+                        HEALTH SCORE: {pred.confidence_score}%
                       </span>
                     )}
                   </div>
+
+                  {/* Output Metric Badges */}
+                  {renderMetricSnippets(pred)}
                 </div>
 
-                {/* Actions */}
+                {/* Right Actions */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <button
                     onClick={() => navigate(`/predictions/${pred.id}`)}
@@ -408,14 +672,15 @@ export const PredictionHistoryPage: React.FC = () => {
                       color: '#FFFFFF',
                       border: '2px solid #111111',
                       borderRadius: '6px',
-                      padding: '8px 14px',
+                      padding: '9px 16px',
                       fontFamily: 'JetBrains Mono, monospace',
                       fontSize: '12px',
                       fontWeight: '800',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '6px'
+                      gap: '6px',
+                      boxShadow: '2px 2px 0px #111111'
                     }}
                   >
                     <Eye size={14} /> VIEW DETAILS
@@ -430,13 +695,14 @@ export const PredictionHistoryPage: React.FC = () => {
                           color: '#FFFFFF',
                           border: '2px solid #111111',
                           borderRadius: '6px',
-                          padding: '8px 10px',
+                          padding: '9px 12px',
                           fontSize: '11px',
+                          fontFamily: 'JetBrains Mono, monospace',
                           fontWeight: '800',
                           cursor: 'pointer'
                         }}
                       >
-                        CONFIRM DELETE
+                        CONFIRM
                       </button>
                       <button
                         onClick={() => setDeleteConfirmId(null)}
@@ -445,8 +711,9 @@ export const PredictionHistoryPage: React.FC = () => {
                           color: '#111111',
                           border: '2px solid #111111',
                           borderRadius: '6px',
-                          padding: '8px 10px',
+                          padding: '9px 12px',
                           fontSize: '11px',
+                          fontFamily: 'JetBrains Mono, monospace',
                           cursor: 'pointer'
                         }}
                       >
@@ -460,19 +727,114 @@ export const PredictionHistoryPage: React.FC = () => {
                         backgroundColor: '#FFFFFF',
                         border: '2px solid #111111',
                         borderRadius: '6px',
-                        padding: '8px',
+                        padding: '9px 12px',
                         cursor: 'pointer',
-                        color: '#666666'
+                        color: '#CC0033',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        fontSize: '12px',
+                        fontFamily: 'JetBrains Mono, monospace',
+                        fontWeight: '700'
                       }}
-                      title="Delete prediction"
+                      title="Delete this record"
                     >
-                      <Trash2 size={16} />
+                      <Trash2 size={15} /> DELETE
                     </button>
                   )}
                 </div>
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Clear All Confirmation Modal */}
+      {showClearAllModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.55)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          padding: '16px'
+        }}>
+          <div style={{
+            backgroundColor: '#FFFFFF',
+            border: '2.5px solid #111111',
+            borderRadius: '16px',
+            padding: '28px',
+            maxWidth: '440px',
+            width: '100%',
+            boxShadow: '8px 8px 0px #111111'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+              <div style={{
+                backgroundColor: '#FFEEEE',
+                border: '2px solid #FF3366',
+                borderRadius: '50%',
+                width: '40px',
+                height: '40px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <AlertTriangle size={20} color="#FF3366" />
+              </div>
+              <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: '22px', margin: 0 }}>
+                CLEAR ALL HISTORY?
+              </h2>
+            </div>
+
+            <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '13px', color: '#555555', lineHeight: '1.5', margin: '0 0 20px' }}>
+              Are you sure you want to delete all <strong>{predictions.length}</strong> archived model prediction records from your database? This action is permanent and cannot be undone.
+            </p>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+              <button
+                type="button"
+                onClick={() => setShowClearAllModal(false)}
+                disabled={clearing}
+                style={{
+                  backgroundColor: '#FFFFFF',
+                  color: '#111111',
+                  border: '2px solid #111111',
+                  borderRadius: '6px',
+                  padding: '10px 16px',
+                  fontFamily: 'JetBrains Mono, monospace',
+                  fontSize: '12px',
+                  fontWeight: '700',
+                  cursor: 'pointer'
+                }}
+              >
+                CANCEL
+              </button>
+              <button
+                type="button"
+                onClick={handleClearAll}
+                disabled={clearing}
+                style={{
+                  backgroundColor: '#FF3366',
+                  color: '#FFFFFF',
+                  border: '2px solid #111111',
+                  borderRadius: '6px',
+                  padding: '10px 18px',
+                  fontFamily: 'JetBrains Mono, monospace',
+                  fontSize: '12px',
+                  fontWeight: '800',
+                  cursor: 'pointer',
+                  boxShadow: '3px 3px 0px #111111'
+                }}
+              >
+                {clearing ? 'CLEARING...' : 'YES, CLEAR ALL'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

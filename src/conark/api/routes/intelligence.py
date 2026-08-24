@@ -59,11 +59,12 @@ async def analyze_construction_site(
                     input_data=payload.model_dump(),
                     prediction_output=intelligence_result["ml_results"],
                     explanation=explanation_text,
-                    confidence_score=intelligence_result.get("health", {}).get("overall_score")
+                    confidence_score=intelligence_result.get("health", {}).get("overall_score"),
+                    project_id=payload.project_id
                 )
-                logger.info(f"Persisted intelligence prediction for user {current_user['id']}")
+                logger.info(f"Persisted intelligence prediction for user {current_user['id']} (model: {target_model})")
             except Exception as save_err:
-                logger.warning(f"Could not persist prediction to Supabase: {save_err}")
+                logger.error(f"Could not persist prediction to Supabase: {save_err}", exc_info=True)
 
         response = MasterIntelligenceResponse(
             request_id=request_id,

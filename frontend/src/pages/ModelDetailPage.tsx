@@ -262,7 +262,8 @@ export const ModelDetailPage: React.FC = () => {
         equipment_utilization_rate: parseFloat(rawInputs.equipment_utilization_rate) || 0,
         material_shortage_alert: parseInt(rawInputs.material_shortage_alert, 10) || 0,
         cost_deviation: parseFloat(rawInputs.cost_deviation) || 0,
-        time_deviation: parseFloat(rawInputs.time_deviation) || 0
+        time_deviation: parseFloat(rawInputs.time_deviation) || 0,
+        target_model: modelId || 'all_models'
       };
 
       const finalSpaceInputs: SpaceInputs = {

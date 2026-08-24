@@ -14,6 +14,8 @@ export interface OperationalInputs {
   cost_deviation?: number;
   time_deviation?: number;
   simulation_deviation?: number;
+  target_model?: string;
+  project_id?: string;
 }
 
 export interface SpaceInputs {
