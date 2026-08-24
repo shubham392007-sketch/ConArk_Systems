@@ -54,11 +54,11 @@ class OptimizationService:
                 SELECT opt.*, p.project_name
                 FROM public.optimization_results opt
                 LEFT JOIN public.projects p ON opt.project_id = p.id
-                WHERE opt.user_id = %s
+                WHERE opt.user_id::text = %s
                 ORDER BY opt.created_at DESC
                 LIMIT %s OFFSET %s
                 """,
-                (user_id, limit, offset)
+                (str(user_id).strip(), limit, offset)
             )
             rows = cur.fetchall()
             return [dict(r) for r in rows]
@@ -72,9 +72,9 @@ class OptimizationService:
                 SELECT opt.*, p.project_name
                 FROM public.optimization_results opt
                 LEFT JOIN public.projects p ON opt.project_id = p.id
-                WHERE opt.id = %s AND opt.user_id = %s
+                WHERE opt.id::text = %s AND opt.user_id::text = %s
                 """,
-                (opt_id, user_id)
+                (str(opt_id).strip(), str(user_id).strip())
             )
             row = cur.fetchone()
             return dict(row) if row else None
@@ -84,7 +84,7 @@ class OptimizationService:
         """Deletes an optimization record."""
         with get_db_cursor() as cur:
             cur.execute(
-                "DELETE FROM public.optimization_results WHERE id = %s AND user_id = %s",
-                (opt_id, user_id)
+                "DELETE FROM public.optimization_results WHERE id::text = %s AND user_id::text = %s",
+                (str(opt_id).strip(), str(user_id).strip())
             )
             return cur.rowcount > 0
