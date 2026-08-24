@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Sparkles, CheckCircle2, ShieldCheck, Activity, Sliders } from 'lucide-react';
-import { analyzeProjectIntelligence, optimizeSpaceLayout } from '../services/api';
+import { ArrowLeft, Sparkles, CheckCircle2, ShieldCheck, Activity, Sliders, FolderKanban } from 'lucide-react';
+import { analyzeProjectIntelligence, optimizeSpaceLayout, fetchUserProjects } from '../services/api';
 import type { OperationalInputs, SpaceInputs, SpaceOptimizationResponse, ZoneCoordinates } from '../types';
 import { ReportActionBanner } from '../components/pdf/ReportActionBanner';
 import { ModelResultSkeleton } from '../components/ModelResultSkeleton';
@@ -15,6 +15,26 @@ export const ModelDetailPage: React.FC = () => {
   const [hasPredicted, setHasPredicted] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [spaceRes, setSpaceRes] = useState<SpaceOptimizationResponse | null>(null);
+
+  // Project Workspace State
+  const [projects, setProjects] = useState<any[]>([]);
+  const [selectedProjectId, setSelectedProjectId] = useState<string>('');
+
+  useEffect(() => {
+    fetchUserProjects()
+      .then(projs => {
+        if (projs && projs.length > 0) {
+          setProjects(projs);
+          const saved = localStorage.getItem('conark_active_project_id');
+          if (saved && projs.some(p => p.id === saved)) {
+            setSelectedProjectId(saved);
+          } else {
+            setSelectedProjectId(projs[0].id);
+          }
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   // Canonical Operational Telemetry Inputs
   const [inputs, setInputs] = useState<OperationalInputs>({
@@ -263,7 +283,8 @@ export const ModelDetailPage: React.FC = () => {
         material_shortage_alert: parseInt(rawInputs.material_shortage_alert, 10) || 0,
         cost_deviation: parseFloat(rawInputs.cost_deviation) || 0,
         time_deviation: parseFloat(rawInputs.time_deviation) || 0,
-        target_model: modelId || 'all_models'
+        target_model: modelId || 'all_models',
+        project_id: selectedProjectId || undefined
       };
 
       const finalSpaceInputs: SpaceInputs = {
@@ -272,7 +293,8 @@ export const ModelDetailPage: React.FC = () => {
         site_length_m: parseFloat(rawSpaceInputs.site_length_m) || spaceInputs.site_length_m || 40,
         site_width_m: parseFloat(rawSpaceInputs.site_width_m) || spaceInputs.site_width_m || 30,
         worker_count: parseInt(rawSpaceInputs.worker_count, 10) || spaceInputs.worker_count || 65,
-        machinery_count: parseInt(rawSpaceInputs.machinery_count, 10) || spaceInputs.machinery_count || 8
+        machinery_count: parseInt(rawSpaceInputs.machinery_count, 10) || spaceInputs.machinery_count || 8,
+        project_id: selectedProjectId || undefined
       };
 
       if (isSpaceOpt) {
@@ -825,6 +847,49 @@ export const ModelDetailPage: React.FC = () => {
           </p>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            {/* Target Workspace Selector */}
+            <div style={{
+              backgroundColor: '#FAFAFA',
+              border: '2px solid #111111',
+              borderRadius: '10px',
+              padding: '12px 14px',
+              boxShadow: '3px 3px 0px #111111'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                <label style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#111111', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <FolderKanban size={13} color="#111111" /> TARGET WORKSPACE
+                </label>
+                <Link to="/projects" style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', color: '#666', textDecoration: 'underline' }}>
+                  Manage Workspaces →
+                </Link>
+              </div>
+              <select
+                value={selectedProjectId}
+                onChange={e => {
+                  setSelectedProjectId(e.target.value);
+                  localStorage.setItem('conark_active_project_id', e.target.value);
+                }}
+                style={{
+                  width: '100%',
+                  fontSize: '13px',
+                  fontFamily: 'JetBrains Mono, monospace',
+                  fontWeight: 'bold',
+                  padding: '8px 10px',
+                  border: '1.5px solid #111111',
+                  borderRadius: '6px',
+                  backgroundColor: '#FFFFFF',
+                  color: '#111111'
+                }}
+              >
+                {projects.length === 0 && <option value="">📁 Default Workspace (ConArk Systems)</option>}
+                {projects.map(p => (
+                  <option key={p.id} value={p.id}>
+                    📁 {p.project_name} {p.location ? `(${p.location})` : ''}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             {renderModelInputs()}
 
             {/* PREDICT BUTTON — MANUAL TRIGGER */}

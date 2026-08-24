@@ -22,8 +22,41 @@ class PredictionService:
         processing_time_ms: Optional[int] = None,
         project_id: Optional[str] = None
     ) -> Dict[str, Any]:
-        """Saves a model prediction with input JSONB, output JSONB, explanation, and telemetry."""
+        """Saves a model prediction with input JSONB, output JSONB, explanation, and workspace association."""
+        clean_project_id = None
+        if project_id and isinstance(project_id, str) and len(project_id.strip()) > 0:
+            try:
+                import uuid
+                clean_project_id = str(uuid.UUID(project_id.strip()))
+            except Exception:
+                clean_project_id = None
+
         with get_db_cursor() as cur:
+            # If no project_id provided, associate with user's primary/default project workspace
+            if not clean_project_id:
+                cur.execute(
+                    "SELECT id FROM public.projects WHERE user_id = %s ORDER BY created_at ASC LIMIT 1",
+                    (user_id,)
+                )
+                proj_row = cur.fetchone()
+                if proj_row:
+                    clean_project_id = str(proj_row["id"])
+                else:
+                    try:
+                        cur.execute(
+                            """
+                            INSERT INTO public.projects (user_id, project_name, description, project_type, status)
+                            VALUES (%s, %s, %s, %s, %s)
+                            RETURNING id
+                            """,
+                            (user_id, "ConArk Systems", "Primary construction intelligence workspace", "Commercial Infrastructure", "active")
+                        )
+                        new_proj = cur.fetchone()
+                        if new_proj:
+                            clean_project_id = str(new_proj["id"])
+                    except Exception as p_err:
+                        logger.warning(f"Could not auto-create default workspace: {p_err}")
+
             cur.execute(
                 """
                 INSERT INTO public.model_predictions (
@@ -35,7 +68,7 @@ class PredictionService:
                 """,
                 (
                     user_id,
-                    project_id,
+                    clean_project_id,
                     model_name,
                     model_version,
                     prediction_type,

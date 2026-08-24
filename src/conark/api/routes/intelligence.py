@@ -50,7 +50,15 @@ async def analyze_construction_site(
         if current_user and current_user.get("id"):
             try:
                 target_model = payload.target_model or "all_models"
-                explanation_text = gemini_wrapper.executive_summary if gemini_wrapper else None
+                explanation_text = None
+                if gemini_wrapper:
+                    if hasattr(gemini_wrapper, "report") and gemini_wrapper.report and hasattr(gemini_wrapper.report, "executive_summary"):
+                        explanation_text = gemini_wrapper.report.executive_summary
+                    elif hasattr(gemini_wrapper, "executive_summary"):
+                        explanation_text = gemini_wrapper.executive_summary
+                    elif isinstance(gemini_wrapper, dict):
+                        explanation_text = gemini_wrapper.get("report", {}).get("executive_summary") or gemini_wrapper.get("executive_summary")
+
                 PredictionService.save_prediction(
                     user_id=current_user["id"],
                     model_name=target_model,

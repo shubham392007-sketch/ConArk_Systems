@@ -41,6 +41,7 @@ export interface SpaceInputs {
   task_progress: number;
   risk_score: number;
   material_shortage_alert: number;
+  project_id?: string;
 }
 
 export interface MasterIntelligenceResponse {

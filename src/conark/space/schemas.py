@@ -69,6 +69,7 @@ class SpaceOptimizationInput(BaseModel):
     working_hours_per_day: Optional[float] = Field(default=8.0, description="Daily working hours")
     loading_zone_available: Optional[bool] = Field(default=True, description="Dedicated loading zone availability")
     existing_layout_efficiency: Optional[float] = Field(default=75.0, description="Perceived existing layout efficiency score")
+    project_id: Optional[str] = Field(default=None, description="Associated project workspace ID")
 
     @field_validator("construction_stage", mode="before")
     def validate_construction_stage(cls, v: Any) -> Any:
