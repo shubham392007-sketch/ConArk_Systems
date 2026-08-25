@@ -46,11 +46,18 @@ async def get_prediction_detail(
 
 
 @router.delete("")
+@router.delete("/")
 async def delete_all_user_predictions(
+    project_id: Optional[str] = Query(None, description="Optional project ID to filter by"),
+    model_name: Optional[str] = Query(None, description="Optional model name to filter by"),
     current_user: Dict[str, Any] = Depends(get_current_user)
 ):
-    """Deletes all prediction records owned by the authenticated user."""
-    count = PredictionService.delete_all_predictions(current_user["id"])
+    """Deletes all prediction records owned by the authenticated user with optional project or model filters."""
+    count = PredictionService.delete_all_predictions(
+        user_id=current_user["id"],
+        project_id=project_id,
+        model_name=model_name
+    )
     return {"message": f"Successfully deleted {count} prediction records.", "count": count}
 
 

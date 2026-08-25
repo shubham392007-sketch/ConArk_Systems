@@ -218,8 +218,13 @@ export async function deletePrediction(predictionId: string): Promise<void> {
   if (!res.ok) throw new Error(await formatErrorMessage(res, 'Failed to delete prediction'));
 }
 
-export async function deleteAllPredictions(): Promise<void> {
-  const res = await fetch(`${API_BASE}/predictions`, {
+export async function deleteAllPredictions(params?: { project_id?: string; model_name?: string }): Promise<void> {
+  const query = new URLSearchParams();
+  if (params?.project_id && params.project_id !== 'ALL') query.append('project_id', params.project_id);
+  if (params?.model_name && params.model_name !== 'ALL') query.append('model_name', params.model_name);
+
+  const url = `${API_BASE}/predictions${query.toString() ? `?${query.toString()}` : ''}`;
+  const res = await fetch(url, {
     method: 'DELETE',
     headers: await getAuthHeaders()
   });

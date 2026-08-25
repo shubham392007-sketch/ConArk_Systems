@@ -174,19 +174,37 @@ class PredictionService:
             return deleted
 
     @staticmethod
-    def delete_all_predictions(user_id: str) -> int:
-        """Deletes all prediction records owned by user."""
+    def delete_all_predictions(
+        user_id: str,
+        project_id: Optional[str] = None,
+        model_name: Optional[str] = None
+    ) -> int:
+        """Deletes all prediction records owned by user with optional workspace or model filters."""
         with get_db_cursor() as cur:
-            cur.execute(
-                "DELETE FROM public.model_predictions WHERE user_id::text = %s",
-                (str(user_id).strip(),)
-            )
+            # Model predictions query
+            mp_query = "DELETE FROM public.model_predictions WHERE user_id::text = %s"
+            mp_params: List[Any] = [str(user_id).strip()]
+
+            if project_id and project_id != "ALL":
+                mp_query += " AND project_id::text = %s"
+                mp_params.append(str(project_id).strip())
+
+            if model_name and model_name != "ALL":
+                mp_query += " AND model_name = %s"
+                mp_params.append(model_name)
+
+            cur.execute(mp_query, tuple(mp_params))
             count = cur.rowcount
 
-            cur.execute(
-                "DELETE FROM public.optimization_results WHERE user_id::text = %s",
-                (str(user_id).strip(),)
-            )
+            # Optimization results query
+            opt_query = "DELETE FROM public.optimization_results WHERE user_id::text = %s"
+            opt_params: List[Any] = [str(user_id).strip()]
+
+            if project_id and project_id != "ALL":
+                opt_query += " AND (project_id::text = %s OR project_id IS NULL)"
+                opt_params.append(str(project_id).strip())
+
+            cur.execute(opt_query, tuple(opt_params))
             count += cur.rowcount
 
             return count

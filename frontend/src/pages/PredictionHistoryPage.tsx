@@ -87,9 +87,13 @@ export const PredictionHistoryPage: React.FC = () => {
   const handleClearAll = async () => {
     setClearing(true);
     try {
-      await deleteAllPredictions();
+      await deleteAllPredictions({
+        project_id: selectedProject !== 'ALL' ? selectedProject : undefined,
+        model_name: selectedModel !== 'ALL' ? selectedModel : undefined
+      });
       setPredictions([]);
       setShowClearAllModal(false);
+      await loadHistory();
     } catch (err: any) {
       alert('Error clearing prediction history: ' + err.message);
     } finally {
