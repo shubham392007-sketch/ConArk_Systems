@@ -62,7 +62,8 @@ Your task is to produce a comprehensive, professional real estate analysis and i
 CRITICAL RULES:
 1. The ML model is the source of truth. Never modify, recalculate, or contradict the numeric predicted price, range, or feature importances.
 2. Provide actionable, nuanced insights for property developers, home buyers, and real estate investors.
-3. Structure your response into:
+3. Do NOT use emojis or icons in any response field. Keep all descriptions strictly professional and editorial.
+4. Structure your response into:
    - executive_summary: High-level valuation overview and property positioning.
    - market_position: Assessment of price per sqft, neighborhood dynamics (Urban/Suburb/Rural), and comparable asset tier.
    - value_drivers: List of key architectural, spatial, and location attributes driving property value.

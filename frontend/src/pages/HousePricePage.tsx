@@ -379,38 +379,6 @@ export const HousePricePage: React.FC = () => {
             <ModelResultSkeleton modelTitle="HOUSE PRICE PREDICTION MODEL" />
           ) : hasPredicted && res ? (
             <div className="animate-result-appear" style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%', maxWidth: '100%' }}>
-              
-              {/* PDF Action Banner */}
-              <ReportActionBanner
-                payload={{
-                  modelType: 'house_price',
-                  modelName: 'House Price Prediction Model',
-                  inputs: {
-                    square_feet: parseFloat(rawInputs.square_feet) || 2100,
-                    bedrooms: parseInt(rawInputs.bedrooms, 10) || 4,
-                    bathrooms: parseFloat(rawInputs.bathrooms) || 3,
-                    neighborhood: rawInputs.neighborhood,
-                    year_built: parseInt(rawInputs.year_built, 10) || 2018
-                  },
-                  outputs: {
-                    predicted_price: res.predicted_price,
-                    confidence: res.confidence,
-                    price_per_sqft: res.price_per_sqft,
-                    price_range: res.price_range,
-                    feature_importance: res.feature_importance,
-                    gemini_report: res.gemini_report
-                  },
-                  geminiExplanation: res.gemini_report || res.gemini_explanation,
-                  metadata: {
-                    model_version: 'v1.0.0',
-                    project_id: selectedProjectId || undefined,
-                    project_name: projects.find(p => p.id === selectedProjectId)?.name || 'ConArk Residential',
-                    status: 'COMPLETED',
-                    gemini_enabled: true
-                  }
-                }}
-              />
-
               {/* Hero Valuation Box */}
               <div style={{
                 backgroundColor: '#F8D8C9',
@@ -657,7 +625,7 @@ export const HousePricePage: React.FC = () => {
                         padding: '14px'
                       }}>
                         <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '11px', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '4px' }}>
-                          💡 BUYER STRATEGY
+                          BUYER STRATEGY
                         </div>
                         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '12px', lineHeight: '1.5', margin: 0, color: '#333333' }}>
                           {res.gemini_report.buyer_recommendation}
@@ -673,7 +641,7 @@ export const HousePricePage: React.FC = () => {
                         padding: '14px'
                       }}>
                         <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '11px', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '4px' }}>
-                          🏷️ SELLER STRATEGY
+                          SELLER STRATEGY
                         </div>
                         <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '12px', lineHeight: '1.5', margin: 0, color: '#333333' }}>
                           {res.gemini_report.seller_recommendation}
@@ -692,7 +660,7 @@ export const HousePricePage: React.FC = () => {
                       padding: '14px'
                     }}>
                       <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '11px', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '4px' }}>
-                        📈 CAPITAL APPRECIATION & INVESTMENT OUTLOOK
+                        CAPITAL APPRECIATION & INVESTMENT OUTLOOK
                       </div>
                       <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '13px', lineHeight: '1.5', margin: 0, color: '#111111' }}>
                         {res.gemini_report.investment_outlook}
@@ -701,6 +669,37 @@ export const HousePricePage: React.FC = () => {
                   )}
                 </div>
               )}
+
+              {/* Official ConArk Intelligence PDF Report Action Banner (Placed At End) */}
+              <ReportActionBanner
+                payload={{
+                  modelType: 'house_price',
+                  modelName: 'House Price Prediction Model',
+                  inputs: {
+                    square_feet: parseFloat(rawInputs.square_feet) || 2100,
+                    bedrooms: parseInt(rawInputs.bedrooms, 10) || 4,
+                    bathrooms: parseFloat(rawInputs.bathrooms) || 3,
+                    neighborhood: rawInputs.neighborhood,
+                    year_built: parseInt(rawInputs.year_built, 10) || 2018
+                  },
+                  outputs: {
+                    predicted_price: res.predicted_price,
+                    confidence: res.confidence,
+                    price_per_sqft: res.price_per_sqft,
+                    price_range: res.price_range,
+                    feature_importance: res.feature_importance,
+                    gemini_report: res.gemini_report
+                  },
+                  geminiExplanation: res.gemini_report || res.gemini_explanation,
+                  metadata: {
+                    model_version: 'v1.0.0',
+                    project_id: selectedProjectId || undefined,
+                    project_name: projects.find(p => p.id === selectedProjectId)?.name || 'ConArk Residential',
+                    status: 'COMPLETED',
+                    gemini_enabled: true
+                  }
+                }}
+              />
             </div>
           ) : (
             /* Standby State Before User Clicks Predict */
