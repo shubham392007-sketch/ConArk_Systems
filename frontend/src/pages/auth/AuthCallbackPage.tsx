@@ -11,7 +11,7 @@ export const AuthCallbackPage: React.FC = () => {
         console.error('Auth callback error:', error);
         navigate('/login?error=' + encodeURIComponent(error.message), { replace: true });
       } else if (session) {
-        navigate('/dashboard', { replace: true });
+        navigate('/', { replace: true });
       } else {
         navigate('/login', { replace: true });
       }

@@ -100,6 +100,7 @@ const MainContent: React.FC = () => {
       <Routes>
         {/* Public Landing & Overview Routes */}
         <Route path="/" element={<CommandCenter />} />
+        <Route path="/dashboard" element={<Navigate to="/" replace />} />
         <Route path="/brains" element={<TheBrainsPage />} />
         <Route path="/team" element={<TheBrainsPage />} />
 

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useMemo } from 'react';
 import type { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase } from '../services/supabaseClient';
+import { fetchUserProjects } from '../services/api';
 
 export interface UserProfile {
   id: string;
@@ -37,6 +38,22 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+// Sync projects across devices on auth
+const syncUserProjects = async () => {
+  try {
+    const projects = await fetchUserProjects();
+    if (Array.isArray(projects) && projects.length > 0) {
+      localStorage.setItem('conark_cached_projects', JSON.stringify(projects));
+      const currentActive = localStorage.getItem('conark_active_project_id');
+      if (!currentActive || !projects.some((p: any) => p.id === currentActive)) {
+        localStorage.setItem('conark_active_project_id', projects[0].id);
+      }
+    }
+  } catch (err) {
+    console.warn('Silent fallback for syncing user projects:', err);
+  }
+};
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -101,7 +118,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .from('profiles')
         .select('*')
         .eq('id', currentUser.id)
-        .maybeSingle();
+        .single();
 
       const timeoutPromise = new Promise<{ data: null; error: any }>((resolve) =>
         setTimeout(() => resolve({ data: null, error: new Error('Profile fetch timeout') }), 2500)
@@ -127,6 +144,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(session?.user ?? null);
       if (session?.user) {
         fetchProfile(session.user);
+        syncUserProjects();
       }
       setLoading(false);
     });
@@ -137,6 +155,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(newSession?.user ?? null);
       if (newSession?.user) {
         await fetchProfile(newSession.user);
+        syncUserProjects();
       } else {
         setProfile(null);
       }
@@ -190,6 +209,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(null);
       setSession(null);
       setProfile(null);
+      try {
+        localStorage.removeItem('conark_cached_projects');
+        localStorage.removeItem('conark_active_project_id');
+      } catch {}
     } finally {
       setLoading(false);
     }

@@ -12,6 +12,7 @@ class ProjectService:
     @staticmethod
     def list_projects(user_id: str) -> List[Dict[str, Any]]:
         """Lists all projects owned by the authenticated user with prediction and optimization counts."""
+        u_id_str = str(user_id).strip()
         with get_db_cursor() as cur:
             cur.execute(
                 """
@@ -20,12 +21,34 @@ class ProjectService:
                        (SELECT COUNT(*) FROM public.optimization_results opt WHERE opt.project_id = p.id) as optimization_count,
                        (SELECT COUNT(*) FROM public.saved_reports rep WHERE rep.project_id = p.id) as report_count
                 FROM public.projects p
-                WHERE p.user_id = %s
+                WHERE p.user_id::text = %s
                 ORDER BY p.created_at DESC
                 """,
-                (user_id,)
+                (u_id_str,)
             )
             rows = cur.fetchall()
+
+            # If user has no project yet (e.g. freshly signed up on mobile/desktop), auto-create default workspace
+            if not rows:
+                try:
+                    cur.execute(
+                        """
+                        INSERT INTO public.projects (user_id, project_name, description, project_type, location, status)
+                        VALUES (%s, %s, %s, %s, %s, %s)
+                        RETURNING *
+                        """,
+                        (u_id_str, "ConArk Systems", "Primary construction intelligence workspace", "Commercial Infrastructure", "Main Site", "Active")
+                    )
+                    new_p = cur.fetchone()
+                    if new_p:
+                        d = dict(new_p)
+                        d["prediction_count"] = 0
+                        d["optimization_count"] = 0
+                        d["report_count"] = 0
+                        return [d]
+                except Exception as e:
+                    logger.warning(f"Could not auto-create initial project: {e}")
+
             return [dict(r) for r in rows]
 
     @staticmethod
@@ -39,9 +62,9 @@ class ProjectService:
                        (SELECT COUNT(*) FROM public.optimization_results opt WHERE opt.project_id = p.id) as optimization_count,
                        (SELECT COUNT(*) FROM public.saved_reports rep WHERE rep.project_id = p.id) as report_count
                 FROM public.projects p
-                WHERE p.id = %s AND p.user_id = %s
+                WHERE p.id::text = %s AND p.user_id::text = %s
                 """,
-                (project_id, user_id)
+                (str(project_id).strip(), str(user_id).strip())
             )
             row = cur.fetchone()
             return dict(row) if row else None
@@ -62,7 +85,7 @@ class ProjectService:
                 VALUES (%s, %s, %s, %s, %s, %s)
                 RETURNING *
                 """,
-                (user_id, project_name, description, project_type, location, status)
+                (str(user_id).strip(), project_name, description, project_type, location, status)
             )
             row = cur.fetchone()
             return dict(row)
@@ -86,10 +109,10 @@ class ProjectService:
                     location = COALESCE(%s, location),
                     status = COALESCE(%s, status),
                     updated_at = NOW()
-                WHERE id = %s AND user_id = %s
+                WHERE id::text = %s AND user_id::text = %s
                 RETURNING *
                 """,
-                (project_name, description, project_type, location, status, project_id, user_id)
+                (project_name, description, project_type, location, status, str(project_id).strip(), str(user_id).strip())
             )
             row = cur.fetchone()
             return dict(row) if row else None
@@ -99,7 +122,7 @@ class ProjectService:
         """Deletes a project owned by the user."""
         with get_db_cursor() as cur:
             cur.execute(
-                "DELETE FROM public.projects WHERE id = %s AND user_id = %s",
-                (project_id, user_id)
+                "DELETE FROM public.projects WHERE id::text = %s AND user_id::text = %s",
+                (str(project_id).strip(), str(user_id).strip())
             )
             return cur.rowcount > 0

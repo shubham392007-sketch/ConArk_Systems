@@ -76,7 +76,7 @@ export const SignupPage: React.FC = () => {
       setErrorMsg(error.message);
     } else if (session) {
       // Auto-authenticated
-      navigate('/dashboard', { replace: true });
+      navigate('/', { replace: true });
     } else {
       // Email confirmation sent
       setSuccessMsg('Account created successfully! Please check your email to verify your account.');

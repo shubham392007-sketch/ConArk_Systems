@@ -7,7 +7,8 @@ export const LoginPage: React.FC = () => {
   const { signIn } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = (location.state as any)?.from?.pathname || '/dashboard';
+  const rawFrom = (location.state as any)?.from?.pathname;
+  const from = (rawFrom && rawFrom !== '/dashboard') ? rawFrom : '/';
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

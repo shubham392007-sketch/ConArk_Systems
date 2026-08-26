@@ -37,7 +37,7 @@ export const ResetPasswordPage: React.FC = () => {
     } else {
       setSuccessMsg('Your password has been successfully updated.');
       setTimeout(() => {
-        navigate('/dashboard', { replace: true });
+        navigate('/', { replace: true });
       }, 2000);
     }
   };
