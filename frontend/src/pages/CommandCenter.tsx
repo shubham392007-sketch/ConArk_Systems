@@ -78,7 +78,6 @@ export const CommandCenter: React.FC = () => {
   const timeDev = data?.ml_results.time_forecast.predicted_time_deviation_days ?? 4.8;
   const timeStatus = data?.ml_results.time_forecast.schedule_status ?? 'DELAYED';
 
-  const optRec = data?.ml_results.optimization.recommendation ?? 'REALLOCATE WORKERS & STAGING';
   const spaceUtil = spaceData?.metrics?.space_utilization_percentage ?? 91.7;
 
   const geminiText = data?.gemini_report.report?.executive_summary || "Review worker allocation and material staging area before the next construction cycle.";
@@ -522,7 +521,7 @@ export const CommandCenter: React.FC = () => {
           </div>
         </div>
 
-        {/* ROW 05: CARD 05 - RECOMMENDATION AND SPACE OPTIMIZATION MODEL */}
+        {/* ROW 05: CARD 05 - SPACE OPTIMIZATION MODEL */}
         <div className="card-row-grid" style={{ display: 'grid', gridTemplateColumns: '160px 1fr 160px', gap: '16px', alignItems: 'center', marginTop: '-20px', zIndex: 2, position: 'relative' }}>
           {/* Left SVG: SCAFFOLD MATRIX */}
           <div className="side-svg-column" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.9 }}>
@@ -560,13 +559,13 @@ export const CommandCenter: React.FC = () => {
                   <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', backgroundColor: '#111111', color: '#FFFFFF', padding: '3px 10px', borderRadius: '4px' }}>
                     SCIPY SLSQP + CLASSIFIER
                   </span>
-                  <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', color: '#111' }}>[CLICK FOR FULL 2D CANVAS & PAGE →]</span>
+                  <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', color: '#111' }}>[CLICK FOR DEDICATED PAGE →]</span>
                 </div>
-                <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(28px, 3.5vw, 44px)', color: '#111111', textTransform: 'uppercase', lineHeight: '1.05', marginTop: '6px' }}>
-                  RECOMMENDATION AND SPACE OPTIMIZATION MODEL
+                <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(32px, 4vw, 48px)', color: '#111111', textTransform: 'uppercase', lineHeight: '1.05', marginTop: '6px' }}>
+                  SPACE OPTIMIZATION MODEL
                 </h2>
                 <p style={{ fontSize: '14px', color: '#111111', fontFamily: 'Inter, sans-serif', marginTop: '2px' }}>
-                  SciPy SLSQP Constrained Solver + HistGradientBoosting Classifier · v1.0
+                  SciPy SLSQP Constrained Solver · v1.0
                 </p>
 
                 <div style={{ marginTop: '20px', display: 'flex', flexWrap: 'wrap', gap: '10px', fontSize: '12px', fontFamily: 'JetBrains Mono, monospace' }}>
@@ -581,11 +580,11 @@ export const CommandCenter: React.FC = () => {
 
               <div style={{ textAlign: 'right' }}>
                 <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#111111' }}>MODEL OUTPUT</div>
-                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: '800', color: '#111111', lineHeight: '1.0', marginTop: '6px' }}>
-                  {spaceUtil.toFixed(1)}% UTILIZATION
+                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 'clamp(42px, 5.5vw, 64px)', fontWeight: '800', color: '#111111', lineHeight: '0.9', marginTop: '6px' }}>
+                  {spaceUtil.toFixed(1)}%
                 </div>
-                <div style={{ fontSize: '14px', fontWeight: '800', color: '#111111', fontFamily: 'JetBrains Mono, monospace', marginTop: '6px' }}>
-                  REC: {optRec}
+                <div style={{ fontSize: '14px', fontWeight: '800', color: '#111111', fontFamily: 'JetBrains Mono, monospace', marginTop: '8px' }}>
+                  STATUS: OPTIMAL LAYOUT
                 </div>
               </div>
             </div>
@@ -642,35 +641,32 @@ export const CommandCenter: React.FC = () => {
                   <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', backgroundColor: '#111111', color: '#FFFFFF', padding: '3px 10px', borderRadius: '4px' }}>
                     XGBOOST REGRESSION
                   </span>
-                  <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', color: '#111' }}>[CLICK FOR FULL VALUATION & PAGE →]</span>
+                  <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', color: '#111' }}>[CLICK FOR DEDICATED PAGE →]</span>
                 </div>
-                <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(28px, 3.5vw, 44px)', color: '#111111', textTransform: 'uppercase', lineHeight: '1.05', marginTop: '6px' }}>
-                  HOUSE PRICE PREDICTION MODEL
+                <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(32px, 4vw, 48px)', color: '#111111', textTransform: 'uppercase', lineHeight: '1.05', marginTop: '6px' }}>
+                  HOUSE PRICE FORECAST MODEL
                 </h2>
                 <p style={{ fontSize: '14px', color: '#111111', fontFamily: 'Inter, sans-serif', marginTop: '2px' }}>
-                  XGBoost Regressor + Feature Importance · v1.0
+                  XGBoost Regressor · v1.0
                 </p>
 
                 <div style={{ marginTop: '20px', display: 'flex', flexWrap: 'wrap', gap: '10px', fontSize: '12px', fontFamily: 'JetBrains Mono, monospace' }}>
                   <span style={{ backgroundColor: 'rgba(255,255,255,0.85)', border: '1.5px solid #111111', padding: '6px 12px', borderRadius: '6px' }}>
-                    INPUT: 2100 ft²
+                    INPUT: Area (2100 ft²)
                   </span>
                   <span style={{ backgroundColor: 'rgba(255,255,255,0.85)', border: '1.5px solid #111111', padding: '6px 12px', borderRadius: '6px' }}>
-                    INPUT: 4 BED
-                  </span>
-                  <span style={{ backgroundColor: 'rgba(255,255,255,0.85)', border: '1.5px solid #111111', padding: '6px 12px', borderRadius: '6px' }}>
-                    INPUT: URBAN
+                    INPUT: 4 Bed, 3 Bath (Urban)
                   </span>
                 </div>
               </div>
 
               <div style={{ textAlign: 'right' }}>
                 <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#111111' }}>MODEL OUTPUT</div>
-                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: '800', color: '#111111', lineHeight: '1.0', marginTop: '6px' }}>
-                  $342,650 ESTIMATED VALUE
+                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 'clamp(42px, 5.5vw, 64px)', fontWeight: '800', color: '#111111', lineHeight: '0.9', marginTop: '6px' }}>
+                  $342,650
                 </div>
-                <div style={{ fontSize: '14px', fontWeight: '800', color: '#111111', fontFamily: 'JetBrains Mono, monospace', marginTop: '6px' }}>
-                  REC: Strong resale potential in Urban neighborhood
+                <div style={{ fontSize: '14px', fontWeight: '800', color: '#111111', fontFamily: 'JetBrains Mono, monospace', marginTop: '8px' }}>
+                  STATUS: ESTIMATED VALUE
                 </div>
               </div>
             </div>
