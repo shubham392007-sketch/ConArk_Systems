@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
+  ArrowLeft,
   Sparkles,
   Sliders,
   Home,
@@ -210,127 +211,73 @@ export const HousePricePage: React.FC = () => {
   };
 
   return (
-    <div style={{ backgroundColor: '#F8F6F0', minHeight: '100vh', paddingBottom: '80px', color: '#111111' }}>
-      {/* Top Breadcrumb & Status Bar */}
-      <div style={{ borderBottom: '2px solid #111111', backgroundColor: '#FFFFFF', padding: '14px 24px' }}>
-        <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <Link
-              to="/"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                fontFamily: 'JetBrains Mono, monospace',
-                fontSize: '12px',
-                fontWeight: 'bold',
-                color: '#111111',
-                textDecoration: 'none',
-                padding: '6px 12px',
-                backgroundColor: '#F8F6F0',
-                border: '1.5px solid #111111',
-                borderRadius: '6px'
-              }}
-            >
-              ← COMMAND CENTER
-            </Link>
-            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', color: '#666666' }}>/</span>
-            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', fontWeight: 'bold', color: '#111111' }}>
-              06 HOUSE PRICE PREDICTION
-            </span>
-          </div>
+    <div style={{ maxWidth: '1650px', margin: '0 auto', padding: '20px 16px 48px 16px', boxSizing: 'border-box' }}>
+      {/* Back Navigation Link & Workspace Selector */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+        <Link
+          to="/"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontFamily: 'Anton, sans-serif',
+            fontSize: '18px',
+            color: '#111111',
+            textDecoration: 'none'
+          }}
+        >
+          <ArrowLeft size={20} /> BACK TO COMMAND CENTER
+        </Link>
 
-          {/* Project Workspace Selector */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <FolderKanban size={16} color="#666666" />
-            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '11px', color: '#666666', textTransform: 'uppercase' }}>
-              WORKSPACE:
-            </span>
-            <select
-              value={selectedProjectId}
-              onChange={(e) => {
-                setSelectedProjectId(e.target.value);
-                localStorage.setItem('conark_active_project_id', e.target.value);
-              }}
-              style={{
-                fontFamily: 'JetBrains Mono, monospace',
-                fontSize: '12px',
-                fontWeight: 'bold',
-                padding: '4px 8px',
-                border: '1.5px solid #111111',
-                borderRadius: '6px',
-                backgroundColor: '#FFF5F0',
-                color: '#111111',
-                cursor: 'pointer'
-              }}
-            >
-              {projects.length > 0 ? (
-                projects.map(p => (
-                  <option key={p.id} value={p.id}>
-                    {p.name} ({p.status || 'Active'})
-                  </option>
-                ))
-              ) : (
-                <option value="">Default Workspace (ConArk Systems)</option>
-              )}
-            </select>
-          </div>
+        {/* Project Workspace Selector */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <FolderKanban size={16} color="#666666" />
+          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '11px', color: '#666666', textTransform: 'uppercase' }}>
+            WORKSPACE:
+          </span>
+          <select
+            value={selectedProjectId}
+            onChange={(e) => {
+              setSelectedProjectId(e.target.value);
+              localStorage.setItem('conark_active_project_id', e.target.value);
+            }}
+            style={{
+              fontFamily: 'JetBrains Mono, monospace',
+              fontSize: '12px',
+              fontWeight: 'bold',
+              padding: '4px 8px',
+              border: '1.5px solid #111111',
+              borderRadius: '6px',
+              backgroundColor: '#FFFFFF',
+              color: '#111111',
+              cursor: 'pointer'
+            }}
+          >
+            {projects.length > 0 ? (
+              projects.map(p => (
+                <option key={p.id} value={p.id}>
+                  {p.name} ({p.status || 'Active'})
+                </option>
+              ))
+            ) : (
+              <option value="">Default Workspace (ConArk Systems)</option>
+            )}
+          </select>
         </div>
       </div>
 
-      {/* Main Page Container */}
-      <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '32px 24px' }}>
-        {/* Editorial Header */}
-        <div style={{ marginBottom: '32px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-            <span style={{
-              backgroundColor: '#F8D8C9',
-              border: '1.5px solid #111111',
-              padding: '3px 10px',
-              fontFamily: 'JetBrains Mono, monospace',
-              fontSize: '11px',
-              fontWeight: 'bold',
-              borderRadius: '4px',
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px'
-            }}>
-              06 • XGBOOST REGRESSION MODEL
-            </span>
-            <span style={{
-              backgroundColor: '#E8F5E9',
-              border: '1.5px solid #2E7D32',
-              color: '#2E7D32',
-              padding: '3px 8px',
-              fontFamily: 'JetBrains Mono, monospace',
-              fontSize: '11px',
-              fontWeight: 'bold',
-              borderRadius: '4px'
-            }}>
-              ● ACTIVE (R² 0.997)
-            </span>
-          </div>
-
-          <h1 style={{
-            fontFamily: 'Anton, sans-serif',
-            fontSize: 'clamp(28px, 4vw, 44px)',
-            letterSpacing: '0.5px',
-            textTransform: 'uppercase',
-            margin: '0 0 8px 0',
-            lineHeight: '1.1'
-          }}>
-            HOUSE PRICE PREDICTION INTELLIGENCE
-          </h1>
-          <p style={{
-            fontFamily: 'Inter, sans-serif',
-            fontSize: '15px',
-            color: '#444444',
-            maxWidth: '900px',
-            margin: 0,
-            lineHeight: '1.5'
-          }}>
-            Deterministic machine learning real estate valuation engine combining supervised XGBoost Regressor with multi-factor geospatial and dimensional feature importance analysis.
-          </p>
+      {/* Main Model Header */}
+      <div style={{ marginBottom: '28px', borderBottom: '2.5px dashed #111111', paddingBottom: '20px' }}>
+        <div style={{ fontSize: '12px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#666666' }}>
+          CONARK PREDICTIVE ENGINE · v1.0.0
         </div>
+        <h1 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(28px, 5vw, 52px)', color: '#111111', textTransform: 'uppercase', marginTop: '4px', lineHeight: '1.05' }}>
+          HOUSE PRICE PREDICTION MODEL
+        </h1>
+        <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '15px', color: '#555555', marginTop: '4px' }}>
+          Algorithm: XGBoost Regressor (Fallback: Random Forest Regressor)
+        </p>
+      </div>
 
         {/* Preset Archetype Cards */}
         <div style={{ marginBottom: '28px' }}>
@@ -1049,6 +996,5 @@ export const HousePricePage: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
   );
 };

@@ -264,6 +264,22 @@ export const ModelDetailPage: React.FC = () => {
             { name: 'Machinery Status', pct: 15, val: inputs.machinery_status === 1 ? 'ACTIVE' : 'IDLE' }
           ]
         };
+      case 'house-price':
+      case 'house_price':
+      case 'house':
+        return {
+          title: 'HOUSE PRICE PREDICTION MODEL',
+          algorithm: 'XGBoost Regressor (Fallback: Random Forest Regressor)',
+          version: 'v1.0.0',
+          color: '#F8D8C9',
+          outputLabel: 'PREDICTED RESIDENTIAL VALUE ($)',
+          explanationKey: 'house_price_explanation',
+          topFactors: [
+            { name: 'Square Footage', pct: 47, val: '2,100 ft²' },
+            { name: 'Bedrooms', pct: 27, val: '4 Bed' },
+            { name: 'Neighborhood Location', pct: 24, val: 'Urban' }
+          ]
+        };
       case 'optimization':
       case 'space':
       default:
