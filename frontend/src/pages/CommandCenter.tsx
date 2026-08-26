@@ -274,7 +274,7 @@ export const CommandCenter: React.FC = () => {
         </div>
 
         {/* ROW 02: CARD 02 - OPERATIONAL RISK MODEL */}
-        <div className="card-row-grid" style={{ display: 'grid', gridTemplateColumns: '160px 1fr 160px', gap: '16px', alignItems: 'center', marginTop: '-20px', zIndex: 5, position: 'relative' }}>
+        <div className="card-row-grid" style={{ display: 'grid', gridTemplateColumns: '160px 1fr 160px', gap: '16px', alignItems: 'center', marginTop: '-32px', zIndex: 5, position: 'relative' }}>
           {/* Left SVG: EXCAVATOR UNIT */}
           <div className="side-svg-column" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.9 }}>
             <svg width="140" height="120" viewBox="0 0 120 100" fill="none" stroke="#111111" strokeWidth="2">
@@ -357,7 +357,7 @@ export const CommandCenter: React.FC = () => {
         </div>
 
         {/* ROW 03: CARD 03 - COST FORECAST MODEL */}
-        <div className="card-row-grid" style={{ display: 'grid', gridTemplateColumns: '160px 1fr 160px', gap: '16px', alignItems: 'center', marginTop: '-20px', zIndex: 4, position: 'relative' }}>
+        <div className="card-row-grid" style={{ display: 'grid', gridTemplateColumns: '160px 1fr 160px', gap: '16px', alignItems: 'center', marginTop: '-32px', zIndex: 4, position: 'relative' }}>
           {/* Left SVG: BULLDOZER UNIT */}
           <div className="side-svg-column" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.9 }}>
             <svg width="140" height="120" viewBox="0 0 120 100" fill="none" stroke="#111111" strokeWidth="2">
@@ -444,7 +444,7 @@ export const CommandCenter: React.FC = () => {
         </div>
 
         {/* ROW 04: CARD 04 - TIME FORECAST MODEL */}
-        <div className="card-row-grid" style={{ display: 'grid', gridTemplateColumns: '160px 1fr 160px', gap: '16px', alignItems: 'center', marginTop: '-20px', zIndex: 3, position: 'relative' }}>
+        <div className="card-row-grid" style={{ display: 'grid', gridTemplateColumns: '160px 1fr 160px', gap: '16px', alignItems: 'center', marginTop: '-32px', zIndex: 3, position: 'relative' }}>
           {/* Left SVG: SITE SAFETY RIG */}
           <div className="side-svg-column" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.9 }}>
             <svg width="130" height="110" viewBox="0 0 100 90" fill="none" stroke="#111111" strokeWidth="2">
@@ -522,7 +522,7 @@ export const CommandCenter: React.FC = () => {
         </div>
 
         {/* ROW 05: CARD 05 - SPACE OPTIMIZATION MODEL */}
-        <div className="card-row-grid" style={{ display: 'grid', gridTemplateColumns: '160px 1fr 160px', gap: '16px', alignItems: 'center', marginTop: '-20px', zIndex: 2, position: 'relative' }}>
+        <div className="card-row-grid" style={{ display: 'grid', gridTemplateColumns: '160px 1fr 160px', gap: '16px', alignItems: 'center', marginTop: '-32px', zIndex: 2, position: 'relative' }}>
           {/* Left SVG: SCAFFOLD MATRIX */}
           <div className="side-svg-column" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.9 }}>
             <svg width="130" height="135" viewBox="0 0 100 130" fill="none" stroke="#111111" strokeWidth="1.8">
@@ -605,7 +605,7 @@ export const CommandCenter: React.FC = () => {
         </div>
 
         {/* ROW 06: CARD 06 - HOUSE PRICE PREDICTION MODEL */}
-        <div className="card-row-grid" style={{ display: 'grid', gridTemplateColumns: '160px 1fr 160px', gap: '16px', alignItems: 'center', marginTop: '-20px', zIndex: 2, position: 'relative' }}>
+        <div className="card-row-grid" style={{ display: 'grid', gridTemplateColumns: '160px 1fr 160px', gap: '16px', alignItems: 'center', marginTop: '-32px', zIndex: 1, position: 'relative' }}>
           {/* Left SVG: RESIDENTIAL BLUEPRINT */}
           <div className="side-svg-column" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.9 }}>
             <svg width="130" height="125" viewBox="0 0 110 100" fill="none" stroke="#111111" strokeWidth="1.8">
