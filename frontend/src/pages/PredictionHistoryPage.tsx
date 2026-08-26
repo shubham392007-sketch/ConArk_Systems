@@ -16,7 +16,8 @@ import {
   Activity,
   ShieldAlert,
   ArrowRight,
-  FolderKanban
+  FolderKanban,
+  Home
 } from 'lucide-react';
 import { fetchPredictionHistory, deletePrediction, deleteAllPredictions, fetchUserProjects } from '../services/api';
 import { HistoryListSkeleton } from '../components/Skeletons';
@@ -135,6 +136,9 @@ export const PredictionHistoryPage: React.FC = () => {
       case 'space_optimization':
       case 'optimization':
         return { label: 'SPACE OPTIMIZATION', bg: '#E4FF5B', color: '#111111' };
+      case 'house_price_prediction':
+      case 'house_price':
+        return { label: 'HOUSE PRICE PREDICTION', bg: '#F8D8C9', color: '#111111' };
       default:
         return { label: 'MULTIVARIATE INTELLIGENCE', bg: '#111111', color: '#E4FF5B' };
     }
@@ -317,6 +321,57 @@ export const PredictionHistoryPage: React.FC = () => {
             color: '#111111'
           }}>
             UTILIZATION: <strong>{Number(util).toFixed(1)}%</strong> | SAFETY SCORE: <strong>{safety}%</strong> | 8 ZONES MAPPED
+          </div>
+        </div>
+      );
+    }
+
+    // 7. House Price Prediction Model
+    if (model.includes('house_price') || out.predicted_price != null) {
+      const price = out.predicted_price || 342650;
+      const conf = pred.confidence_score || out.confidence || 95.6;
+      const ppsqft = out.price_per_sqft || (out.inputs?.square_feet ? Math.round(price / out.inputs.square_feet) : 163);
+      return (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '10px' }}>
+          <div style={{
+            backgroundColor: '#F8D8C9',
+            border: '1.5px solid #111111',
+            borderRadius: '6px',
+            padding: '4px 10px',
+            fontFamily: 'JetBrains Mono, monospace',
+            fontSize: '11px',
+            fontWeight: '700',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px',
+            color: '#111111'
+          }}>
+            <Home size={12} color="#111111" />
+            <span>EST VALUE: <strong>${Number(price).toLocaleString()}</strong></span>
+          </div>
+          <div style={{
+            backgroundColor: '#F3F4F6',
+            border: '1.5px solid #111111',
+            borderRadius: '6px',
+            padding: '4px 10px',
+            fontFamily: 'JetBrains Mono, monospace',
+            fontSize: '11px',
+            fontWeight: '700',
+            color: '#111111'
+          }}>
+            <span>CONF: <strong>{conf}%</strong></span>
+          </div>
+          <div style={{
+            backgroundColor: '#F3F4F6',
+            border: '1.5px solid #111111',
+            borderRadius: '6px',
+            padding: '4px 10px',
+            fontFamily: 'JetBrains Mono, monospace',
+            fontSize: '11px',
+            fontWeight: '700',
+            color: '#111111'
+          }}>
+            <span>${ppsqft}/ft²</span>
           </div>
         </div>
       );
@@ -539,6 +594,7 @@ export const PredictionHistoryPage: React.FC = () => {
             <option value="time_prediction">Time Forecast Model</option>
             <option value="space_optimizer">Space Optimization</option>
             <option value="space_layout">Space Layout</option>
+            <option value="house_price_prediction">House Price Prediction Model</option>
           </select>
         </div>
 

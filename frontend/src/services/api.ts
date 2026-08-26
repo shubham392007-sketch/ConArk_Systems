@@ -2,7 +2,9 @@ import type {
   OperationalInputs,
   SpaceInputs,
   MasterIntelligenceResponse,
-  SpaceOptimizationResponse
+  SpaceOptimizationResponse,
+  HousePriceInputs,
+  HousePricePredictionResponse
 } from '../types';
 import { supabase } from './supabaseClient';
 
@@ -136,6 +138,29 @@ export async function optimizeSpaceLayout(payload: SpaceInputs): Promise<SpaceOp
 export async function fetchAlerts(): Promise<any[]> {
   const res = await fetch(`${API_BASE}/alerts`, { headers: await getAuthHeaders() });
   if (!res.ok) throw new Error(await formatErrorMessage(res, 'Failed to fetch alerts'));
+  return res.json();
+}
+
+export async function predictHousePrice(payload: HousePriceInputs): Promise<HousePricePredictionResponse> {
+  const sanitized = {
+    square_feet: Number(payload.square_feet),
+    bedrooms: Number(payload.bedrooms),
+    bathrooms: Number(payload.bathrooms),
+    neighborhood: String(payload.neighborhood),
+    year_built: Number(payload.year_built),
+    project_id: payload.project_id || undefined
+  };
+
+  const res = await fetch(`${API_BASE}/models/house-price/predict`, {
+    method: 'POST',
+    headers: await getAuthHeaders(),
+    body: JSON.stringify(sanitized)
+  });
+
+  if (!res.ok) {
+    const errorText = await formatErrorMessage(res, 'House price prediction failed');
+    throw new Error(errorText);
+  }
   return res.json();
 }
 

@@ -207,3 +207,41 @@ export interface ConstructionAIResponse {
   model: string;
   error_code?: string;
 }
+
+export interface HousePriceInputs {
+  square_feet: number;
+  bedrooms: number;
+  bathrooms: number;
+  neighborhood: 'Urban' | 'Suburb' | 'Rural' | string;
+  year_built: number;
+  project_id?: string;
+}
+
+export interface HousePricePredictionResponse {
+  predicted_price: number;
+  currency: string;
+  confidence: number;
+  price_per_sqft: number;
+  price_range: {
+    low: number;
+    high: number;
+  };
+  feature_importance: Array<{
+    feature: string;
+    importance: number;
+    percentage: number;
+  }>;
+  gemini_explanation: string;
+  recommendation: string;
+  gemini_report?: {
+    executive_summary?: string;
+    market_position?: string;
+    value_drivers?: string[];
+    buyer_recommendation?: string;
+    seller_recommendation?: string;
+    investment_outlook?: string;
+    price_justification?: string;
+  };
+  prediction_id?: string;
+  created_at?: string;
+}

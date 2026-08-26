@@ -12,8 +12,20 @@ from google.genai import types
 
 from conark.config.settings import settings
 from conark.gemini.client import GeminiClient
-from conark.gemini.prompts import GEMINI_SYSTEM_PROMPT, format_gemini_input_prompt
-from conark.gemini.schemas import GeminiConstructionReport, GeminiReportWrapper
+from conark.gemini.prompts import (
+    GEMINI_SYSTEM_PROMPT,
+    format_gemini_input_prompt,
+    GEMINI_SPACE_SYSTEM_PROMPT,
+    format_gemini_space_prompt,
+    GEMINI_HOUSE_PRICE_SYSTEM_PROMPT,
+    format_gemini_house_price_prompt
+)
+from conark.gemini.schemas import (
+    GeminiConstructionReport,
+    GeminiSpaceReport,
+    GeminiHousePriceReport,
+    GeminiReportWrapper
+)
 from conark.utils.logging import get_logger
 
 logger = get_logger("gemini_service")
@@ -301,3 +313,109 @@ class GeminiService:
                 await asyncio.sleep(2 ** attempt)
 
         return self.generate_fallback_space_report(space_payload, reason="Gemini API request rate limit reached or timed out.")
+
+    def generate_fallback_house_price_report(
+        self,
+        house_payload: Dict[str, Any],
+        reason: str = "AI explanation temporarily unavailable."
+    ) -> GeminiReportWrapper:
+        """Generates deterministic structured property valuation report when Gemini is offline."""
+        inputs = house_payload.get("inputs", {})
+        sqft = float(inputs.get("square_feet", 2100))
+        beds = int(inputs.get("bedrooms", 4))
+        baths = float(inputs.get("bathrooms", 3))
+        neigh = str(inputs.get("neighborhood", "Urban")).strip().capitalize()
+        year = int(inputs.get("year_built", 2018))
+        
+        price = float(house_payload.get("predicted_price", 342650))
+        low = float(house_payload.get("price_range", {}).get("low", int(price * 0.948)))
+        high = float(house_payload.get("price_range", {}).get("high", int(price * 1.052)))
+        ppsqft = round(price / max(1.0, sqft), 2)
+        
+        report = GeminiHousePriceReport(
+            executive_summary=f"Algorithmic market valuation of ${price:,.0f} for a {sqft:,.0f} sq.ft. {neigh} residence ({beds} bed, {baths} bath, built {year}).",
+            market_position=f"Valued at ${ppsqft}/sq.ft. within the {neigh} residential sector. The property exhibits strong liquidity in the ${low:,.0f} – ${high:,.0f} target price corridor.",
+            value_drivers=[
+                f"{sqft:,.0f} sq.ft. living area provides competitive functional square footage.",
+                f"{neigh} location provides prime commuting and infrastructure accessibility.",
+                f"{year} construction year ensures modern building code compliance and lower initial maintenance.",
+                f"{beds} bedrooms and {baths} bathrooms provide a versatile family floor plan."
+            ],
+            buyer_recommendation=f"Fair acquisition target sits between ${low:,.0f} and ${price:,.0f}. Structural and HVAC evaluations are recommended to verify construction vintage standards.",
+            seller_recommendation=f"List at ${price:,.0f} with a competitive negotiation buffer up to ${high:,.0f}. Highlight the {neigh} location and {sqft:,.0f} sq.ft. layout during open house staging.",
+            investment_outlook=f"Projected 5.4% – 7.2% annualized asset appreciation with solid rental demand in the {neigh} corridor.",
+            price_justification=f"The valuation of ${price:,.0f} is grounded in regression feature weights: Living area contributes the primary asset baseline, supplemented by the {neigh} location premium and {year} construction vintage."
+        )
+        return GeminiReportWrapper(
+            status="unavailable",
+            message=reason,
+            house_price_report=report
+        )
+
+    async def generate_house_price_report(self, house_payload: Dict[str, Any]) -> GeminiReportWrapper:
+        """Calls Gemini 2.5 Flash with structured property valuation schema and fallback caching."""
+        cache_key = "hp_" + self._compute_hash(house_payload)
+        if cache_key in self._cache:
+            logger.info("Serving cached House Price Report from memory.")
+            return GeminiReportWrapper(
+                status="success",
+                message="Retrieved from in-memory cache",
+                house_price_report=self._cache[cache_key]
+            )
+
+        if not settings.GEMINI_API_KEY:
+            return self.generate_fallback_house_price_report(house_payload, reason="GEMINI_API_KEY is not configured.")
+
+        prompt = format_gemini_house_price_prompt(house_payload)
+        max_retries = settings.GEMINI_MAX_RETRIES
+        timeout = settings.GEMINI_TIMEOUT_SECONDS
+
+        for attempt in range(1, max_retries + 1):
+            try:
+                logger.info(f"Calling Gemini 2.5 Flash for House Price Report (Attempt {attempt}/{max_retries})...")
+                loop = asyncio.get_event_loop()
+                def _call_gemini():
+                    client_wrapper = GeminiClient.for_model("house_price")
+                    client = client_wrapper.client
+                    candidate_models = ["gemini-2.5-flash", "gemini-3.6-flash", "gemini-flash-latest"]
+                    last_exc = None
+                    for model_name in candidate_models:
+                        try:
+                            response = client.models.generate_content(
+                                model=model_name,
+                                contents=prompt,
+                                config=types.GenerateContentConfig(
+                                    system_instruction=GEMINI_HOUSE_PRICE_SYSTEM_PROMPT,
+                                    response_mime_type="application/json",
+                                    response_schema=GeminiHousePriceReport,
+                                    temperature=0.2,
+                                )
+                            )
+                            return response
+                        except Exception as exc:
+                            last_exc = exc
+                            continue
+                    if last_exc:
+                        raise last_exc
+                    raise RuntimeError("No candidate Gemini models succeeded.")
+
+                response = await asyncio.wait_for(loop.run_in_executor(None, _call_gemini), timeout=timeout)
+                report_data = json.loads(response.text)
+                hp_report = GeminiHousePriceReport(**report_data)
+                
+                self._cache[cache_key] = hp_report
+                logger.info("Successfully received structured house price report from Gemini 2.5 Flash.")
+                
+                return GeminiReportWrapper(
+                    status="success",
+                    message="Generated via Gemini 2.5 Flash",
+                    house_price_report=hp_report
+                )
+            except Exception as e:
+                logger.error(f"Gemini House Price API call failed (Attempt {attempt}): {str(e)}")
+            
+            if attempt < max_retries:
+                await asyncio.sleep(2 ** attempt)
+
+        return self.generate_fallback_house_price_report(house_payload, reason="Gemini API request rate limit reached or timed out.")
+

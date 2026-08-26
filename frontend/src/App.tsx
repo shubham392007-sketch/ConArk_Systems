@@ -17,6 +17,7 @@ import { ModelRegistryPage } from './pages/ModelRegistryPage';
 import { ModelDetailPage } from './pages/ModelDetailPage';
 import { TheBrainsPage } from './pages/TheBrainsPage';
 import { ConstructionAIPage } from './pages/ConstructionAIPage';
+import { HousePricePage } from './pages/HousePricePage';
 
 // Auth Pages
 import { LoginPage } from './pages/auth/LoginPage';
@@ -62,6 +63,9 @@ const ScrollToTop: React.FC = () => {
       '/ai-insights': 'AI Insights | ConArk Systems',
       '/reports': 'Executive Reports | ConArk Systems',
       '/models': 'Model Registry | ConArk Systems',
+      '/models/house-price': 'House Price Prediction | ConArk Systems',
+      '/model/house-price': 'House Price Prediction | ConArk Systems',
+      '/model/house_price': 'House Price Prediction | ConArk Systems',
       '/brains': 'The Brains | ConArk Systems',
       '/team': 'The Brains | ConArk Systems',
       '/login': 'Sign In | ConArk Systems',
@@ -109,6 +113,9 @@ const MainContent: React.FC = () => {
         <Route path="/ai" element={<Navigate to="/construction-ai" replace />} />
         <Route path="/chat" element={<Navigate to="/construction-ai" replace />} />
         <Route path="/models" element={<ProtectedRoute><ModelRegistryPage /></ProtectedRoute>} />
+        <Route path="/models/house-price" element={<ProtectedRoute><HousePricePage /></ProtectedRoute>} />
+        <Route path="/model/house-price" element={<ProtectedRoute><HousePricePage /></ProtectedRoute>} />
+        <Route path="/model/house_price" element={<ProtectedRoute><HousePricePage /></ProtectedRoute>} />
         <Route path="/model/:modelId" element={<ProtectedRoute><ModelDetailPage /></ProtectedRoute>} />
         <Route path="/input" element={<ProtectedRoute><ProjectInput /></ProtectedRoute>} />
         <Route path="/predictions" element={<ProtectedRoute><PredictionsHub /></ProtectedRoute>} />

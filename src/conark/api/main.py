@@ -16,7 +16,8 @@ from conark.api.routes import (
     health, prediction, forecasting, recommendation, alerts,
     intelligence, space_optimization, construction_ai,
     auth_routes, project_routes, prediction_history_routes,
-    optimization_history_routes, analytics_routes, report_routes
+    optimization_history_routes, analytics_routes, report_routes,
+    house_price_routes
 )
 from conark.utils.logging import get_logger
 
@@ -28,6 +29,8 @@ async def lifespan(app: FastAPI):
     """Preloads ML models once on application startup."""
     logger.info("Initializing ConArk Systems FastAPI Lifespan...")
     engine = get_intelligence_engine()
+    # Preload House Price XGBoost Regression Model
+    house_price_routes.get_house_price_model()
     logger.info("ConArk Systems initialization complete. Ready for API requests.")
     yield
     logger.info("Shutting down ConArk Systems FastAPI application.")
@@ -35,7 +38,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title=settings.APP_NAME,
-    description="Complete Construction AI Intelligence Platform powered by 5 ML Models, Space Optimization Engine, OpenRouter Construction Assistant, Alert Engine, and Gemini 2.5 Flash.",
+    description="Complete Construction AI Intelligence Platform powered by 6 ML Models, Space Optimization Engine, OpenRouter Construction Assistant, Alert Engine, and Gemini 2.5 Flash.",
     version="1.0.0",
     lifespan=lifespan,
     docs_url="/docs",
@@ -60,6 +63,8 @@ app.include_router(recommendation.router, prefix=prefix_v1)
 app.include_router(alerts.router, prefix=prefix_v1)
 app.include_router(intelligence.router, prefix=prefix_v1)
 app.include_router(space_optimization.router, prefix=prefix_v1)
+app.include_router(house_price_routes.router, prefix=prefix_v1)
+app.include_router(house_price_routes.router, prefix="/api")
 app.include_router(construction_ai.router, prefix=prefix_v1)
 app.include_router(auth_routes.router, prefix=prefix_v1)
 app.include_router(project_routes.router, prefix=prefix_v1)

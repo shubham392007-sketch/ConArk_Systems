@@ -17,6 +17,7 @@ from conark.training.train_risk import train_risk_model
 from conark.training.train_cost import train_cost_model
 from conark.training.train_time import train_time_model
 from conark.training.train_optimization import train_optimization_model
+from conark.training.train_house_price import train_house_price_pipeline
 from conark.utils.logging import get_logger
 
 logger = get_logger("train_all")
@@ -69,8 +70,13 @@ def run_training_pipeline():
     logger.info("--- Training Model 5: Optimization Recommendation ---")
     _, opt_meta = train_optimization_model(train_df, val_df)
     all_metrics["optimization"] = opt_meta
+
+    # 10. Train House Price Prediction Model
+    logger.info("--- Training Model 6: House Price Prediction (XGBoost) ---")
+    _, _, house_meta = train_house_price_pipeline()
+    all_metrics["house_price"] = house_meta
     
-    # 10. Save Combined Metrics Summary
+    # 11. Save Combined Metrics Summary
     metrics_path = settings.REPORTS_DIR / "metrics" / "training_metrics.json"
     with open(metrics_path, "w", encoding="utf-8") as f:
         json.dump({

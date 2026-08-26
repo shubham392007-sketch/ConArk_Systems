@@ -16,6 +16,7 @@ import { buildCostTimeReport } from './models/costTimeReport';
 import { buildSafetyMaterialReport } from './models/safetyMaterialReport';
 import { buildOptimizationReport } from './models/optimizationReport';
 import { buildSpaceReport } from './models/spaceReport';
+import { buildHousePriceReport } from './models/housePriceReport';
 
 const STORAGE_KEY = 'conark_report_history';
 
@@ -95,6 +96,9 @@ export async function generateModelReport(payload: ModelReportPayload): Promise<
   } else if (payload.modelType === 'space_optimization') {
     const util = payload.outputs.space_utilization_score || 8.8;
     primaryPrediction = `SPACE UTILIZATION: ${util.toFixed(1)}% (100% SAFETY COMPLIANT)`;
+  } else if (payload.modelType === 'house_price') {
+    const price = payload.outputs.predicted_price || 342650;
+    primaryPrediction = `ESTIMATED VALUE: $${Number(price).toLocaleString()} (${payload.outputs.confidence || 95.6}% CONFIDENCE)`;
   }
 
   // Key Recommendation
@@ -128,13 +132,16 @@ export async function generateModelReport(payload: ModelReportPayload): Promise<
     case 'space_optimization':
       y = buildSpaceReport(doc, payload, y);
       break;
+    case 'house_price':
+      y = buildHousePriceReport(doc, payload, y);
+      break;
     default:
       y = buildPerformanceReport(doc, payload, y);
       break;
   }
 
   // 5. Model Transparency & Disclaimer Section (Final Section)
-  const lastSectionNum = payload.modelType === 'space_optimization' ? '05' : '04';
+  const lastSectionNum = (payload.modelType === 'space_optimization' || payload.modelType === 'house_price') ? '05' : '04';
   y = addSectionTitle(doc, lastSectionNum, 'MODEL TRANSPARENCY & AI NOTICE', y);
 
   const transpRows = [

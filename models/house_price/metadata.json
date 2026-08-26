@@ -1,0 +1,26 @@
+{
+  "model_name": "house_price_prediction_model",
+  "model_type": "XGBRegressor",
+  "version": "1.0.0",
+  "training_date": "2026-08-26 10:14:09",
+  "features": [
+    "square_feet",
+    "bedrooms",
+    "bathrooms",
+    "neighborhood_encoded",
+    "year_built"
+  ],
+  "metrics": {
+    "rmse": 4765.12,
+    "mae": 3580.63,
+    "r2_score": 0.9975
+  },
+  "feature_importances": {
+    "square_feet": 0.4732,
+    "bedrooms": 0.2712,
+    "bathrooms": 0.0084,
+    "neighborhood_encoded": 0.2414,
+    "year_built": 0.0057
+  },
+  "status": "PRODUCTION"
+}

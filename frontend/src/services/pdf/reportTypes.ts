@@ -4,7 +4,8 @@ export type ModelType =
   | 'cost_time'
   | 'safety_material'
   | 'optimization'
-  | 'space_optimization';
+  | 'space_optimization'
+  | 'house_price';
 
 export interface ReportMetadata {
   report_id: string;
@@ -34,6 +35,13 @@ export interface StructuredGeminiAnalysis {
   space_analysis?: string;
   layout_explanation?: string;
   operational_impact?: string;
+  executive_summary?: string;
+  market_position?: string;
+  value_drivers?: string[];
+  buyer_recommendation?: string;
+  seller_recommendation?: string;
+  investment_outlook?: string;
+  price_justification?: string;
 }
 
 export interface ModelReportPayload {

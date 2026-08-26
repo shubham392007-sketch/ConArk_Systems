@@ -15,7 +15,8 @@ export const ModelRegistryPage: React.FC = () => {
     { name: 'Risk Model', type: 'LinearRegression Model', version: 'v1.0', date: '2026-08-14', metric: 'R²: 0.9037', status: 'PRODUCTION' },
     { name: 'Cost Forecast Model', type: 'XGBRegressor Model', version: 'v1.0', date: '2026-08-14', metric: 'R²: 0.9082', status: 'PRODUCTION' },
     { name: 'Time Forecast Model', type: 'HistGradientBoosting Regressor', version: 'v1.0', date: '2026-08-14', metric: 'R²: 0.8631', status: 'PRODUCTION' },
-    { name: 'Optimization Model', type: 'HistGradientBoosting Classifier', version: 'v1.0', date: '2026-08-14', metric: 'Accuracy: 92.49%', status: 'PRODUCTION' }
+    { name: 'Optimization Model', type: 'HistGradientBoosting Classifier', version: 'v1.0', date: '2026-08-14', metric: 'Accuracy: 92.49%', status: 'PRODUCTION' },
+    { name: 'House Price Prediction Model', type: 'XGBRegressor (Fallback: RF)', version: 'v1.0', date: '2026-08-26', metric: 'R²: 0.9975', status: 'PRODUCTION' }
   ];
 
   return (

@@ -605,7 +605,91 @@ export const CommandCenter: React.FC = () => {
           </div>
         </div>
 
-        {/* ROW 06: CARD 07 - ASK CONARK AI ASSISTANT */}
+        {/* ROW 06: CARD 06 - HOUSE PRICE PREDICTION MODEL */}
+        <div className="card-row-grid" style={{ display: 'grid', gridTemplateColumns: '160px 1fr 160px', gap: '16px', alignItems: 'center', marginTop: '-20px', zIndex: 2, position: 'relative' }}>
+          {/* Left SVG: RESIDENTIAL BLUEPRINT */}
+          <div className="side-svg-column" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.9 }}>
+            <svg width="130" height="125" viewBox="0 0 110 100" fill="none" stroke="#111111" strokeWidth="1.8">
+              <path d="M15 50 L55 15 L95 50 L95 90 L15 90 Z" fill="#F8D8C9" stroke="#111111" strokeWidth="2" />
+              <rect x="42" y="55" width="26" height="35" fill="#FFFFFF" stroke="#111111" strokeWidth="1.8" />
+              <circle cx="63" cy="72" r="2" fill="#111111" />
+              <line x1="15" y1="50" x2="95" y2="50" strokeDasharray="3 3" stroke="#111111" />
+              <rect x="25" y="60" width="12" height="12" fill="#FFFFFF" stroke="#111111" />
+              <rect x="73" y="60" width="12" height="12" fill="#FFFFFF" stroke="#111111" />
+            </svg>
+            <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '4px' }}>RESIDENCE BLUEPRINT</span>
+          </div>
+
+          {/* MODEL 06: HOUSE PRICE PREDICTION MODEL */}
+          <div
+            onClick={() => navigate('/models/house-price')}
+            className="card-rotate-pos05 card-hover-lift card-responsive-padding"
+            style={{
+              backgroundColor: '#F8D8C9',
+              border: '2.5px dashed #111111',
+              borderRadius: '20px',
+              padding: '44px 48px',
+              boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)',
+              position: 'relative',
+              zIndex: 2,
+              cursor: 'pointer'
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px' }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', color: '#111111', fontWeight: 'bold' }}>06</span>
+                  <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', backgroundColor: '#111111', color: '#FFFFFF', padding: '3px 10px', borderRadius: '4px' }}>
+                    XGBOOST REGRESSION
+                  </span>
+                  <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', color: '#111' }}>[CLICK FOR FULL VALUATION & PAGE →]</span>
+                </div>
+                <h2 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(28px, 3.5vw, 44px)', color: '#111111', textTransform: 'uppercase', lineHeight: '1.05', marginTop: '6px' }}>
+                  HOUSE PRICE PREDICTION MODEL
+                </h2>
+                <p style={{ fontSize: '14px', color: '#111111', fontFamily: 'Inter, sans-serif', marginTop: '2px' }}>
+                  XGBoost Regressor + Feature Importance · v1.0
+                </p>
+
+                <div style={{ marginTop: '20px', display: 'flex', flexWrap: 'wrap', gap: '10px', fontSize: '12px', fontFamily: 'JetBrains Mono, monospace' }}>
+                  <span style={{ backgroundColor: 'rgba(255,255,255,0.85)', border: '1.5px solid #111111', padding: '6px 12px', borderRadius: '6px' }}>
+                    INPUT: 2100 ft²
+                  </span>
+                  <span style={{ backgroundColor: 'rgba(255,255,255,0.85)', border: '1.5px solid #111111', padding: '6px 12px', borderRadius: '6px' }}>
+                    INPUT: 4 BED
+                  </span>
+                  <span style={{ backgroundColor: 'rgba(255,255,255,0.85)', border: '1.5px solid #111111', padding: '6px 12px', borderRadius: '6px' }}>
+                    INPUT: URBAN
+                  </span>
+                </div>
+              </div>
+
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', fontWeight: 'bold', color: '#111111' }}>MODEL OUTPUT</div>
+                <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: '800', color: '#111111', lineHeight: '1.0', marginTop: '6px' }}>
+                  $342,650 ESTIMATED VALUE
+                </div>
+                <div style={{ fontSize: '14px', fontWeight: '800', color: '#111111', fontFamily: 'JetBrains Mono, monospace', marginTop: '6px' }}>
+                  REC: Strong resale potential in Urban neighborhood
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right SVG: ARCHITECTURAL COMPASS */}
+          <div className="side-svg-column" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.9 }}>
+            <svg width="125" height="120" viewBox="0 0 100 100" fill="none" stroke="#111111" strokeWidth="1.8">
+              <circle cx="50" cy="20" r="8" fill="#FF2AA1" stroke="#111111" />
+              <line x1="50" y1="28" x2="25" y2="85" strokeWidth="2.2" stroke="#111111" />
+              <line x1="50" y1="28" x2="75" y2="85" strokeWidth="2.2" stroke="#111111" />
+              <path d="M33 60 Q50 68 67 60" stroke="#111111" strokeWidth="1.8" fill="none" />
+              <circle cx="50" cy="64" r="3" fill="#E4FF5B" stroke="#111111" />
+            </svg>
+            <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '800', color: '#333', marginTop: '4px' }}>DRAFTING COMPASS</span>
+          </div>
+        </div>
+
+        {/* ROW 07: CARD 07 - ASK CONARK AI ASSISTANT */}
         <div className="card-row-grid" style={{ display: 'grid', gridTemplateColumns: '160px 1fr 160px', gap: '16px', alignItems: 'center', marginTop: '-20px', zIndex: 1, position: 'relative' }}>
           {/* Left SVG: CONCRETE MIXER */}
           <div className="side-svg-column" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.9 }}>
@@ -783,7 +867,7 @@ export const CommandCenter: React.FC = () => {
             PRIORITY: HIGH
           </span>
           <span style={{ fontSize: '12px', fontFamily: 'JetBrains Mono, monospace', color: '#666666' }}>
-            Grounded in: 5 ML Models · SciPy Space Engine · Alert Engine
+            Grounded in: 6 ML Models · SciPy Space Engine · Alert Engine
           </span>
         </div>
       </div>
