@@ -11,43 +11,59 @@ class ProfileService:
     @staticmethod
     def get_profile(user_id: str) -> Optional[Dict[str, Any]]:
         """Retrieves a user profile by authenticated user ID."""
-        with get_db_cursor() as cur:
-            cur.execute(
-                "SELECT id, email, full_name, avatar_url, organization, role, created_at, updated_at "
-                "FROM public.profiles WHERE id = %s",
-                (user_id,)
-            )
-            row = cur.fetchone()
-            return dict(row) if row else None
+        u_id_str = str(user_id).strip()
+        try:
+            with get_db_cursor() as cur:
+                cur.execute(
+                    "SELECT id, email, full_name, avatar_url, organization, role, created_at, updated_at "
+                    "FROM public.profiles WHERE id::text = %s",
+                    (u_id_str,)
+                )
+                row = cur.fetchone()
+                return dict(row) if row else None
+        except Exception as e:
+            logger.warning(f"ProfileService.get_profile error for user {u_id_str}: {e}")
+            return None
 
     @staticmethod
     def update_profile(user_id: str, data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """Updates user profile information."""
+        u_id_str = str(user_id).strip()
         full_name = data.get("full_name")
         organization = data.get("organization")
         role = data.get("role")
         avatar_url = data.get("avatar_url")
 
-        with get_db_cursor() as cur:
-            cur.execute(
-                """
-                UPDATE public.profiles
-                SET full_name = COALESCE(%s, full_name),
-                    organization = COALESCE(%s, organization),
-                    role = COALESCE(%s, role),
-                    avatar_url = COALESCE(%s, avatar_url),
-                    updated_at = NOW()
-                WHERE id = %s
-                RETURNING id, email, full_name, avatar_url, organization, role, created_at, updated_at
-                """,
-                (full_name, organization, role, avatar_url, user_id)
-            )
-            row = cur.fetchone()
-            return dict(row) if row else None
+        try:
+            with get_db_cursor() as cur:
+                cur.execute(
+                    """
+                    UPDATE public.profiles
+                    SET full_name = COALESCE(%s, full_name),
+                        organization = COALESCE(%s, organization),
+                        role = COALESCE(%s, role),
+                        avatar_url = COALESCE(%s, avatar_url),
+                        updated_at = NOW()
+                    WHERE id::text = %s
+                    RETURNING id, email, full_name, avatar_url, organization, role, created_at, updated_at
+                    """,
+                    (full_name, organization, role, avatar_url, u_id_str)
+                )
+                row = cur.fetchone()
+                return dict(row) if row else None
+        except Exception as e:
+            logger.error(f"ProfileService.update_profile error for user {u_id_str}: {e}")
+            return None
 
     @staticmethod
     def delete_account(user_id: str) -> bool:
         """Cascading deletion of all user data and profile."""
-        with get_db_cursor() as cur:
-            cur.execute("DELETE FROM public.profiles WHERE id = %s", (user_id,))
-            return cur.rowcount > 0
+        u_id_str = str(user_id).strip()
+        try:
+            with get_db_cursor() as cur:
+                cur.execute("DELETE FROM public.profiles WHERE id::text = %s", (u_id_str,))
+                return cur.rowcount > 0
+        except Exception as e:
+            logger.error(f"ProfileService.delete_account error for user {u_id_str}: {e}")
+            return False
+

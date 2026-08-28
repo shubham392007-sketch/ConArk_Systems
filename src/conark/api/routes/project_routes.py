@@ -41,6 +41,11 @@ async def create_new_project(
 ):
     """Creates a new project for the authenticated user."""
     project = ProjectService.create_project(current_user["id"], request.model_dump())
+    if not project:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Could not create project workspace. Please verify your connection."
+        )
     return project
 
 
