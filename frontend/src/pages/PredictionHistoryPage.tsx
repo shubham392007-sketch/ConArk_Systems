@@ -45,6 +45,18 @@ export const PredictionHistoryPage: React.FC = () => {
     fetchUserProjects()
       .then(projs => setProjects(projs || []))
       .catch(() => {});
+
+    // Instant local cache hydration
+    try {
+      const localStr = localStorage.getItem('conark_local_predictions');
+      if (localStr) {
+        const parsed = JSON.parse(localStr);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setPredictions(parsed);
+          setLoading(false);
+        }
+      }
+    } catch {}
   }, []);
 
   useEffect(() => {
@@ -119,29 +131,26 @@ export const PredictionHistoryPage: React.FC = () => {
     });
 
   const getModelBadgeInfo = (modelName: string) => {
-    switch (modelName.toLowerCase()) {
-      case 'risk_intelligence':
-      case 'risk':
-        return { label: 'OPERATIONAL RISK MODEL', bg: '#FF3366', color: '#FFFFFF' };
-      case 'performance_intelligence':
-      case 'performance':
-        return { label: 'PERFORMANCE MODEL', bg: '#00CC66', color: '#FFFFFF' };
-      case 'cost_prediction':
-      case 'cost':
-        return { label: 'COST FORECAST MODEL', bg: '#FFAA00', color: '#111111' };
-      case 'time_prediction':
-      case 'time':
-        return { label: 'TIME FORECAST MODEL', bg: '#3366FF', color: '#FFFFFF' };
-      case 'space_layout':
-      case 'space_optimization':
-      case 'optimization':
-        return { label: 'SPACE OPTIMIZATION', bg: '#E4FF5B', color: '#111111' };
-      case 'house_price_prediction':
-      case 'house_price':
-        return { label: 'HOUSE PRICE PREDICTION', bg: '#F8D8C9', color: '#111111' };
-      default:
-        return { label: 'MULTIVARIATE INTELLIGENCE', bg: '#111111', color: '#E4FF5B' };
+    const m = (modelName || '').toLowerCase();
+    if (m === 'risk_intelligence' || m === 'risk' || m.includes('risk')) {
+      return { label: 'OPERATIONAL RISK MODEL', bg: '#FF3366', color: '#FFFFFF' };
     }
+    if (m === 'performance_intelligence' || m === 'performance' || m.includes('perf')) {
+      return { label: 'PERFORMANCE MODEL', bg: '#00CC66', color: '#FFFFFF' };
+    }
+    if (m === 'cost_prediction' || m === 'cost' || m.includes('cost')) {
+      return { label: 'COST FORECAST MODEL', bg: '#FFAA00', color: '#111111' };
+    }
+    if (m === 'time_prediction' || m === 'time' || m.includes('time')) {
+      return { label: 'TIME FORECAST MODEL', bg: '#3366FF', color: '#FFFFFF' };
+    }
+    if (m === 'space_layout' || m === 'space_optimizer' || m === 'space_optimization' || m === 'space' || m.includes('space') || m.includes('optimiz')) {
+      return { label: 'SPACE OPTIMIZATION', bg: '#E4FF5B', color: '#111111' };
+    }
+    if (m === 'house_price_prediction' || m === 'house_price' || m === 'house-price' || m === 'house' || m.includes('house')) {
+      return { label: 'HOUSE PRICE PREDICTION', bg: '#F8D8C9', color: '#111111' };
+    }
+    return { label: 'MULTIVARIATE INTELLIGENCE', bg: '#111111', color: '#E4FF5B' };
   };
 
   const renderMetricSnippets = (pred: any) => {

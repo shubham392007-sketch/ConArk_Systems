@@ -11,6 +11,25 @@ logger = get_logger("prediction_service")
 
 class PredictionService:
     @staticmethod
+    def _normalize_model_name(name: str) -> str:
+        n = (name or "").strip().lower()
+        if n in ["cost", "cost_forecast", "cost_prediction"]:
+            return "cost_prediction"
+        if n in ["time", "time_forecast", "time_prediction"]:
+            return "time_prediction"
+        if n in ["risk", "risk_prediction", "risk_intelligence"]:
+            return "risk_intelligence"
+        if n in ["performance", "performance_prediction", "performance_intelligence"]:
+            return "performance_intelligence"
+        if n in ["space", "space_layout", "space_optimizer", "space_optimization", "optimization"]:
+            return "space_optimizer"
+        if n in ["house", "house_price", "house_price_prediction", "house-price"]:
+            return "house_price_prediction"
+        if n in ["all", "all_models", "master", "multivariate_intelligence"]:
+            return "all_models"
+        return name
+
+    @staticmethod
     def save_prediction(
         user_id: str,
         model_name: str,
@@ -25,6 +44,7 @@ class PredictionService:
     ) -> Dict[str, Any]:
         """Saves a model prediction with input JSONB, output JSONB, explanation, and workspace association."""
         u_id_str = str(user_id).strip()
+        clean_model_name = PredictionService._normalize_model_name(model_name)
         clean_project_id = None
         if project_id and isinstance(project_id, str) and len(project_id.strip()) > 0:
             try:
@@ -74,7 +94,7 @@ class PredictionService:
                     (
                         u_id_str,
                         clean_project_id,
-                        model_name,
+                        clean_model_name,
                         model_version,
                         prediction_type,
                         json.dumps(input_data),
@@ -91,7 +111,7 @@ class PredictionService:
             return {
                 "user_id": u_id_str,
                 "project_id": clean_project_id,
-                "model_name": model_name,
+                "model_name": clean_model_name,
                 "prediction_output": prediction_output
             }
 
@@ -110,13 +130,25 @@ class PredictionService:
         params: List[Any] = [u_id_str]
         count_params: List[Any] = [u_id_str]
 
-        if model_name:
-            query += " AND mp.model_name = %s"
-            count_query += " AND model_name = %s"
-            params.append(model_name)
-            count_params.append(model_name)
+        if model_name and model_name.upper() != "ALL":
+            norm = PredictionService._normalize_model_name(model_name)
+            synonyms = {
+                "cost_prediction": ("cost", "cost_forecast", "cost_prediction"),
+                "time_prediction": ("time", "time_forecast", "time_prediction"),
+                "risk_intelligence": ("risk", "risk_prediction", "risk_intelligence"),
+                "performance_intelligence": ("performance", "performance_prediction", "performance_intelligence"),
+                "space_optimizer": ("space", "space_layout", "space_optimizer", "space_optimization", "optimization"),
+                "house_price_prediction": ("house", "house_price", "house_price_prediction", "house-price"),
+                "all_models": ("all", "all_models", "master", "multivariate_intelligence")
+            }
+            matched_syns = synonyms.get(norm, (norm,))
+            placeholders = ", ".join(["%s"] * len(matched_syns))
+            query += f" AND mp.model_name IN ({placeholders})"
+            count_query += f" AND model_name IN ({placeholders})"
+            params.extend(matched_syns)
+            count_params.extend(matched_syns)
 
-        if project_id:
+        if project_id and project_id.upper() != "ALL":
             query += " AND mp.project_id::text = %s"
             count_query += " AND project_id::text = %s"
             params.append(str(project_id).strip())

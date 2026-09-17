@@ -79,10 +79,12 @@ export const PredictionDetailPage: React.FC = () => {
     );
   }
 
-  const dateFormatted = new Date(prediction.created_at).toLocaleString('en-US', {
-    dateStyle: 'medium',
-    timeStyle: 'short'
-  });
+  const dateFormatted = prediction?.created_at
+    ? new Date(prediction.created_at).toLocaleString('en-US', {
+        dateStyle: 'medium',
+        timeStyle: 'short'
+      })
+    : 'Recent Telemetry Run';
 
   return (
     <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '24px 16px 80px' }}>
