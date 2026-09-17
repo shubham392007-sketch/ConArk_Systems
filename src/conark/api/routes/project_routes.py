@@ -40,7 +40,9 @@ async def create_new_project(
     current_user: Dict[str, Any] = Depends(get_current_user)
 ):
     """Creates a new project for the authenticated user."""
-    project = ProjectService.create_project(current_user["id"], request.model_dump())
+    email = current_user.get("email") or "user@conark.com"
+    full_name = current_user.get("user_metadata", {}).get("full_name") or "ConArk User"
+    project = ProjectService.create_project(current_user["id"], request.model_dump(), email=email, full_name=full_name)
     if not project:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

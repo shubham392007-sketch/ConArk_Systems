@@ -17,12 +17,18 @@ class ProjectService:
                 """
                 INSERT INTO public.profiles (id, email, full_name, organization, role)
                 VALUES (%s, %s, %s, %s, %s)
-                ON CONFLICT (id) DO NOTHING
+                ON CONFLICT (id) DO UPDATE SET
+                    email = COALESCE(NULLIF(EXCLUDED.email, 'user@conark.com'), public.profiles.email),
+                    full_name = COALESCE(NULLIF(EXCLUDED.full_name, 'ConArk User'), public.profiles.full_name)
                 """,
                 (str(user_id).strip(), email, full_name, "ConArk Systems", "Site Engineer")
             )
         except Exception as e:
             logger.debug(f"Profile check/creation notice: {e}")
+            try:
+                cur.connection.rollback()
+            except Exception:
+                pass
 
     @staticmethod
     def list_projects(user_id: str) -> List[Dict[str, Any]]:
@@ -96,7 +102,7 @@ class ProjectService:
             return None
 
     @staticmethod
-    def create_project(user_id: str, data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    def create_project(user_id: str, data: Dict[str, Any], email: str = "user@conark.com", full_name: str = "ConArk User") -> Optional[Dict[str, Any]]:
         """Creates a new project record for the user."""
         u_id_str = str(user_id).strip()
         project_name = data.get("project_name", "Untitled Project").strip()
@@ -107,7 +113,7 @@ class ProjectService:
 
         try:
             with get_db_cursor() as cur:
-                ProjectService.ensure_user_profile_exists(cur, u_id_str)
+                ProjectService.ensure_user_profile_exists(cur, u_id_str, email=email, full_name=full_name)
                 cur.execute(
                     """
                     INSERT INTO public.projects (user_id, project_name, description, project_type, location, status)
