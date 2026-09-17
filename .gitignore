@@ -50,3 +50,19 @@ data/processed/*
 .pytest_cache/
 .coverage
 htmlcov/
+
+# Archify
+archify-main/
+archify/
+*.architecture.json
+conark-systems-*.html
+conark-systems-*.png
+conark-systems-*.json
+frontend/public/architecture.html
+frontend/public/dataflow.html
+frontend/public/sequence.html
+frontend/dist/architecture.html
+frontend/dist/dataflow.html
+frontend/dist/sequence.html
+
+
