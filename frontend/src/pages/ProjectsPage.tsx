@@ -16,6 +16,13 @@ import { ProjectsListSkeleton } from '../components/Skeletons';
 export const ProjectsPage: React.FC = () => {
   const navigate = useNavigate();
   const [projects, setProjects] = useState<any[]>([]);
+  const [activeProjectId, setActiveProjectId] = useState<string>(() => {
+    try {
+      return localStorage.getItem('conark_active_project_id') || '';
+    } catch {
+      return '';
+    }
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,17 +39,31 @@ export const ProjectsPage: React.FC = () => {
     try {
       const cached = localStorage.getItem('conark_cached_projects');
       if (cached) {
-        setProjects(JSON.parse(cached));
-        setLoading(false);
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setProjects(parsed);
+          setLoading(false);
+          const saved = localStorage.getItem('conark_active_project_id');
+          if (saved && parsed.some((p: any) => p.id === saved)) {
+            setActiveProjectId(saved);
+          } else if (parsed.length > 0) {
+            setActiveProjectId(parsed[0].id);
+          }
+        }
       }
     } catch {}
 
     try {
       const data = await fetchUserProjects();
-      setProjects(data);
-      localStorage.setItem('conark_cached_projects', JSON.stringify(data));
-      if (data.length > 0 && !localStorage.getItem('conark_active_project_id')) {
-        localStorage.setItem('conark_active_project_id', data[0].id);
+      if (Array.isArray(data) && data.length > 0) {
+        setProjects(data);
+        const currentActive = localStorage.getItem('conark_active_project_id');
+        if (!currentActive || !data.some(p => p.id === currentActive)) {
+          localStorage.setItem('conark_active_project_id', data[0].id);
+          setActiveProjectId(data[0].id);
+        } else {
+          setActiveProjectId(currentActive);
+        }
       }
     } catch (err: any) {
       setError(err.message || 'Failed to load projects.');
@@ -54,6 +75,13 @@ export const ProjectsPage: React.FC = () => {
   useEffect(() => {
     loadProjects();
   }, []);
+
+  const handleSetActive = (id: string) => {
+    try {
+      localStorage.setItem('conark_active_project_id', id);
+      setActiveProjectId(id);
+    } catch {}
+  };
 
   const handleCreateProject = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,10 +99,8 @@ export const ProjectsPage: React.FC = () => {
         location: location.trim(),
         description: description.trim()
       });
-      const updated = [newProj, ...projects];
-      setProjects(updated);
-      localStorage.setItem('conark_active_project_id', newProj.id);
-      localStorage.setItem('conark_cached_projects', JSON.stringify(updated));
+      setProjects(prev => [newProj, ...prev.filter(p => p.id !== newProj.id)]);
+      handleSetActive(newProj.id);
       setShowCreateModal(false);
       setProjectName('');
       setLocation('');
@@ -90,7 +116,17 @@ export const ProjectsPage: React.FC = () => {
     if (!window.confirm(`Are you sure you want to delete workspace "${name}"? All associated predictions and telemetry will remain archived.`)) return;
     try {
       await deleteProject(id);
-      setProjects(projects.filter(p => p.id !== id));
+      setProjects(prev => {
+        const filtered = prev.filter(p => p.id !== id);
+        if (activeProjectId === id) {
+          if (filtered.length > 0) {
+            handleSetActive(filtered[0].id);
+          } else {
+            setActiveProjectId('');
+          }
+        }
+        return filtered;
+      });
     } catch (err: any) {
       alert('Error deleting project: ' + err.message);
     }
@@ -248,19 +284,53 @@ export const ProjectsPage: React.FC = () => {
                 }}
               >
                 <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                    <span style={{
-                      backgroundColor: '#E4FF5B',
-                      color: '#111111',
-                      border: '1.5px solid #111111',
-                      borderRadius: '4px',
-                      padding: '2px 8px',
-                      fontFamily: 'JetBrains Mono, monospace',
-                      fontSize: '10px',
-                      fontWeight: '800'
-                    }}>
-                      {proj.status?.toUpperCase() || 'ACTIVE'}
-                    </span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', flexWrap: 'wrap', gap: '6px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{
+                        backgroundColor: '#E4FF5B',
+                        color: '#111111',
+                        border: '1.5px solid #111111',
+                        borderRadius: '4px',
+                        padding: '2px 8px',
+                        fontFamily: 'JetBrains Mono, monospace',
+                        fontSize: '10px',
+                        fontWeight: '800'
+                      }}>
+                        {proj.status?.toUpperCase() || 'ACTIVE'}
+                      </span>
+                      {proj.id === activeProjectId ? (
+                        <span style={{
+                          backgroundColor: '#111111',
+                          color: '#E4FF5B',
+                          border: '1.5px solid #111111',
+                          borderRadius: '4px',
+                          padding: '2px 8px',
+                          fontFamily: 'JetBrains Mono, monospace',
+                          fontSize: '10px',
+                          fontWeight: '800'
+                        }}>
+                          ● ACTIVE
+                        </span>
+                      ) : (
+                        <button
+                          onClick={() => handleSetActive(proj.id)}
+                          style={{
+                            backgroundColor: '#FFFFFF',
+                            color: '#666666',
+                            border: '1px dashed #999999',
+                            borderRadius: '4px',
+                            padding: '2px 6px',
+                            fontFamily: 'JetBrains Mono, monospace',
+                            fontSize: '10px',
+                            fontWeight: '700',
+                            cursor: 'pointer'
+                          }}
+                          title="Set as active workspace"
+                        >
+                          SET ACTIVE
+                        </button>
+                      )}
+                    </div>
                     <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '11px', color: '#888' }}>
                       {dateFormatted}
                     </span>
@@ -300,22 +370,22 @@ export const ProjectsPage: React.FC = () => {
                 </div>
 
                 {/* Card Actions */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '14px', borderTop: '1.5px solid #EEEEEE' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '14px', borderTop: '1.5px solid #EEEEEE', flexWrap: 'wrap', gap: '8px' }}>
                   <div style={{ display: 'flex', gap: '8px' }}>
                     <span style={{
                       backgroundColor: '#F0F0F0',
                       border: '1px solid #111',
                       borderRadius: '4px',
-                      padding: '2px 6px',
+                      padding: '3px 8px',
                       fontFamily: 'JetBrains Mono, monospace',
                       fontSize: '11px',
                       fontWeight: '700'
                     }}>
-                      {proj.predictions_count || 0} Runs
+                      {proj.prediction_count ?? proj.predictions_count ?? 0} Runs
                     </span>
                   </div>
 
-                  <div style={{ display: 'flex', gap: '8px' }}>
+                  <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
                     <button
                       onClick={() => handleDeleteProject(proj.id, proj.project_name)}
                       style={{
@@ -326,12 +396,35 @@ export const ProjectsPage: React.FC = () => {
                         cursor: 'pointer',
                         color: '#666'
                       }}
-                      title="Delete Project"
+                      title="Delete Workspace"
                     >
                       <Trash2 size={15} />
                     </button>
                     <button
-                      onClick={() => navigate(`/history?project_id=${proj.id}`)}
+                      onClick={() => {
+                        handleSetActive(proj.id);
+                        navigate('/predict');
+                      }}
+                      style={{
+                        backgroundColor: '#E4FF5B',
+                        color: '#111111',
+                        border: '1.5px solid #111111',
+                        borderRadius: '6px',
+                        padding: '6px 10px',
+                        fontFamily: 'JetBrains Mono, monospace',
+                        fontSize: '11px',
+                        fontWeight: '800',
+                        cursor: 'pointer'
+                      }}
+                      title="Launch new prediction run in this workspace"
+                    >
+                      PREDICT
+                    </button>
+                    <button
+                      onClick={() => {
+                        handleSetActive(proj.id);
+                        navigate(`/history?project_id=${proj.id}`);
+                      }}
                       style={{
                         backgroundColor: '#111111',
                         color: '#FFFFFF',
